@@ -6,15 +6,19 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import Swal from "sweetalert2";
 import { motion } from "framer-motion";
+import { useForgot, useReset, useVerify } from "@/api/auth/auth.query";
 
-export const ForgotPassword = () => {
+export const ForgotPasswordPage = () => {
   const [step, setStep] = useState<"email" | "verify" | "reset">("email");
   const [email, setEmail] = useState("");
-  const [code, setCode] = useState(["", "", "", ""]);
+  const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const forgotMutation = useForgot(setStep);
+  const verifyMutation = useVerify(setStep);
+  const resetMutation = useReset();
 
   const handleEmailSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,29 +35,18 @@ export const ForgotPassword = () => {
       return;
     }
 
-    setLoading(true);
-    setTimeout(() => {
-      setLoading(false);
-      Swal.fire({
-        title: "<span style='color:white'>Kode berhasil dikirim!</span>",
-        text: "Kode verifikasi telah dikirim ke email Anda.",
-        icon: "success",
-        background: "#2794eb",
-        color: "white",
-        confirmButtonColor: "#ffffff",
-        confirmButtonText:
-          "<span style='color:#2794eb;font-weight:bold;'>OK</span>",
-      }).then(() => setStep("verify"));
-    }, 1000);
+    // ✅ Panggil API forgotPassword
+    forgotMutation.mutate({ email });
   };
 
   const handleVerifySubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (code.some((digit) => digit.trim() === "")) {
+    const otp = code.join("");
+    if (otp.length < 6) {
       Swal.fire({
         title: "<span style='color:white'>Kode belum lengkap</span>",
-        text: "Silakan isi semua 4 digit kode verifikasi.",
+        text: "Silakan isi semua 6 digit kode verifikasi.",
         icon: "warning",
         background: "#d11a2a",
         color: "white",
@@ -62,54 +55,34 @@ export const ForgotPassword = () => {
       return;
     }
 
-    Swal.fire({
-      title: "<span style='color:white'>Verifikasi Berhasil!</span>",
-      text: "Silakan ubah kata sandi Anda.",
-      icon: "success",
-      background: "#2794eb",
-      color: "white",
-      confirmButtonColor: "#ffffff",
-      confirmButtonText:
-        "<span style='color:#2794eb;font-weight:bold;'>OK</span>",
-    }).then(() => setStep("reset"));
+    // ✅ Kirim OTP ke backend
+    verifyMutation.mutate({
+      email,
+      otp,
+    });
   };
 
   const handleResetSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
     if (password.length < 8) {
-      Swal.fire({
-        title: "<span style='color:white'>Kata sandi terlalu pendek</span>",
-        text: "Minimal 8 karakter kombinasi huruf besar, kecil, dan angka",
-        icon: "warning",
-        background: "#d11a2a",
-        color: "white",
-        confirmButtonColor: "#ffffff",
-      });
+      Swal.fire("Gagal", "Kata sandi minimal 8 karakter", "error");
       return;
     }
 
     if (password !== confirm) {
-      Swal.fire({
-        title: "<span style='color:white'>Kata sandi tidak cocok</span>",
-        text: "Pastikan kedua kolom kata sandi sama.",
-        icon: "error",
-        background: "#d11a2a",
-        color: "white",
-        confirmButtonColor: "#ffffff",
-      });
+      Swal.fire("Gagal", "Kata sandi tidak cocok", "error");
       return;
     }
 
-    Swal.fire({
-      title: "<span style='color:white'>Kata sandi berhasil diubah!</span>",
-      icon: "success",
-      background: "#2794eb",
-      color: "white",
-      confirmButtonColor: "#ffffff",
-      confirmButtonText:
-        "<span style='color:#2794eb;font-weight:bold;'>OK</span>",
-    }).then(() => navigate("/login"));
+    const otp = code.join("");
+    // ✅ Kirim ke backend
+    resetMutation.mutate({
+      email,
+      otp,
+      password,
+      password_confirmation: confirm,
+    });
   };
 
   const handleCodeChange = (index: number, value: string) => {
@@ -144,8 +117,8 @@ export const ForgotPassword = () => {
                   {step === "email"
                     ? "Reset Password"
                     : step === "verify"
-                    ? "Verifikasi Kode"
-                    : "Ubah Kata Sandi"}
+                      ? "Verifikasi Kode"
+                      : "Ubah Kata Sandi"}
                 </CardTitle>
                 <p className="text-gray-600 text-sm sm:text-base mt-1">
                   {step === "email" &&
@@ -180,14 +153,13 @@ export const ForgotPassword = () => {
 
                     <Button
                       type="submit"
-                      disabled={loading}
-                      className={`w-full h-11 ${
-                        loading
-                          ? "bg-gray-400 cursor-not-allowed"
-                          : "bg-blue-600 hover:bg-blue-700"
-                      } text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 text-sm sm:text-base`}
+                      disabled={forgotMutation.isPending}
+                      className={`w-full h-11 ${forgotMutation.isPending
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700"
+                        } text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 text-sm sm:text-base`}
                     >
-                      {loading ? "Mengirim..." : "Submit"}
+                      {forgotMutation.isPending ? "Mengirim..." : "Submit"}
                     </Button>
                   </form>
                 )}
@@ -209,10 +181,14 @@ export const ForgotPassword = () => {
                       ))}
                     </div>
                     <Button
+                      disabled={verifyMutation.isPending}
                       type="submit"
-                      className="w-full h-11 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+                      className={`w-full h-11 ${verifyMutation.isPending
+                        ? "bg-gray-400 cursor-not-allowed"
+                        : "bg-blue-600 hover:bg-blue-700"
+                        } text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 text-sm sm:text-base`}
                     >
-                      Verifikasi
+                      {verifyMutation.isPending ? "Loading..." : "Submit"}
                     </Button>
                   </form>
                 )}

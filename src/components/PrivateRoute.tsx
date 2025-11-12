@@ -1,16 +1,9 @@
 // src/components/PrivateRoute.tsx
-import React from "react";
+import { useAuthStore } from "@/api/auth/auth.store";
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuth } from "@/contexts/AuthContext";
 
-export const PrivateRoute: React.FC = () => {
-  const { isAuthenticated } = useAuth();
+export const PrivateRoute = () => {
+  const { isAuthenticated } = useAuthStore();
 
-  // Kalau belum login, redirect ke halaman login
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-
-  // Kalau sudah login, izinkan akses ke route yang dilindungi
-  return <Outlet />;
+  return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;
 };

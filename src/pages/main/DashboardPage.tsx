@@ -164,7 +164,7 @@ export default function DashboardPage() {
         </Card>
 
         <Card className="bg-white p-4 shadow-sm flex flex-col justify-between h-fit w-full max-w-sm mx-auto lg:mx-0">
-          <ReactCalendar
+          {/* <ReactCalendar
             mode="single"
             selected={date}
             onSelect={handleDateSelect}
@@ -176,7 +176,7 @@ export default function DashboardPage() {
             showOutsideDays={false}
             modifiers={allModifiers}
             modifiersClassNames={modifiersClassNames}
-          />
+          /> */}
         </Card>
       </div>
 
