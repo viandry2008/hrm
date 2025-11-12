@@ -1,5 +1,5 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { loginApi, getProfileApi, forgotPasswordApi, verifyOtpApi, resetPasswordApi } from "./auth.api";
+import { loginApi, getProfileApi, forgotPasswordApi, verifyOtpApi, resetPasswordApi, logoutApi } from "./auth.api";
 import { useAuthStore } from "./auth.store";
 import { ForgotRequest, LoginRequest, ResetPasswordRequest, VerifyOtpRequest } from "./auth.types";
 import Swal from "sweetalert2";
@@ -12,6 +12,8 @@ export const useLogin = () => {
     return useMutation({
         mutationFn: (payload: LoginRequest) => loginApi(payload),
         onSuccess: async (data) => {
+            console.log("Login successful:", data);
+
             // Simpan token & user ke zustand (otomatis tersimpan ke localStorage)
             setAuth(data);
 
@@ -118,5 +120,25 @@ export const useProfile = () => {
     return useQuery({
         queryKey: ["profile"],
         queryFn: getProfileApi,
+    });
+};
+
+export const useLogout = () => {
+    const { logout: clearSession } = useAuthStore();
+
+    return useMutation({
+        mutationFn: logoutApi,
+        onSuccess: (res) => {
+            Swal.fire({
+                icon: "success",
+                title: "Berhasil Logout",
+                text: res.message || "Anda telah keluar dari sistem.",
+                confirmButtonColor: "#2794eb",
+            });
+            clearSession();
+        },
+        onError: (err: any) => {
+            Swal.fire("Gagal", err.response?.data?.message || "Terjadi kesalahan logout", "error");
+        },
     });
 };

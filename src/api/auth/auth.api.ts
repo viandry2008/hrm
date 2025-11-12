@@ -26,3 +26,8 @@ export const getProfileApi = async () => {
     const { data } = await apiClient.get(ENDPOINTS.USER_PROFILE);
     return data;
 };
+
+export const logoutApi = async (): Promise<responOnlyMessage> => {
+    const { data } = await apiClient.post(ENDPOINTS.LOGOUT);
+    return data;
+};

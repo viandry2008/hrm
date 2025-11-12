@@ -23,8 +23,9 @@ import {
   Mail,
   MapPinCheck,
   Menu,
-  ArrowLeft, 
+  ArrowLeft,
 } from 'lucide-react';
+import { useLogout } from '@/api/auth/auth.query';
 
 interface SidebarProps {
   onLogout: () => void;
@@ -117,6 +118,11 @@ export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({});
   const [isOpen, setIsOpen] = useState(true);
   const navigate = useNavigate();
+  const logoutMutation = useLogout();
+
+  const handleLogout = () => {
+    logoutMutation.mutate(); // Panggil API logout
+  };
 
   const handleNavigate = (path: string) => {
     navigate(`/${path}`);
@@ -224,10 +230,11 @@ export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
         <Button
           variant="ghost"
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-white hover:bg-blue-800 transition-all duration-150 justify-start"
-          onClick={onLogout}
+          onClick={handleLogout}
+          disabled={logoutMutation.isPending}
         >
           <LogOut className="h-5 w-5" />
-          {isOpen && 'Log out'}
+          {isOpen && (logoutMutation.isPending ? "Logging out..." : "Log out")}
         </Button>
       </div>
     </div>

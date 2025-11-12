@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ThemeProvider } from "@/components/theme-provider";
 
-import { HRISApp } from "@/components/HRISApp";
+import { HRISApp } from "@/layouts/HRISApp";
 import NotFound from "./pages/NotFound";
 
 // Import semua halaman

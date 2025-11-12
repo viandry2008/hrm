@@ -1,7 +1,7 @@
-  import { HRISApp } from '@/components/HRISApp';
+import { HRISApp } from '@/layouts/HRISApp';
 
-  const Index = () => {
-    return <HRISApp />;
-  };
+const Index = () => {
+  return <HRISApp />;
+};
 
-  export default Index;
+export default Index;

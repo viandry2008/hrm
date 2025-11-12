@@ -1,5 +1,5 @@
 import { Outlet, useLocation } from "react-router-dom";
-import { Sidebar } from "./Sidebar";
+import { Sidebar } from "../components/Sidebar";
 import { useState } from "react";
 import { Bell, Building2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -11,9 +11,11 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { APP_CONFIG } from "@/config";
 import { useAuthStore } from "@/api/auth/auth.store";
+import { useLogout } from "@/api/auth/auth.query";
 
 export const HRISApp = () => {
-  const { isAuthenticated, logout, user } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
+  const logoutMutation = useLogout();
   const [isMobileMenuOpen, setIsMobileMenuMenuOpen] = useState(false);
   const location = useLocation();
 
@@ -28,7 +30,7 @@ export const HRISApp = () => {
       >
         <Sidebar
           currentPath={location.pathname.split("/").pop() || ""}
-          onLogout={logout}
+          onLogout={() => logoutMutation.mutate()}
         // onCloseMobileMenu={() => setIsMobileMenuMenuOpen(false)}
         />
       </div>
@@ -68,7 +70,8 @@ export const HRISApp = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-white shadow-md rounded-md mt-2 text-black">
                 <DropdownMenuItem>Profil</DropdownMenuItem>
-                <DropdownMenuItem className="text-red-600" onClick={logout}>
+                <DropdownMenuItem className="text-red-600" onClick={() => logoutMutation.mutate()}
+                >
                   Keluar
                 </DropdownMenuItem>
               </DropdownMenuContent>
