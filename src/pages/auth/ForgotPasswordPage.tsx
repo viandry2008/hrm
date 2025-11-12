@@ -14,7 +14,6 @@ export const ForgotPasswordPage = () => {
   const [code, setCode] = useState(["", "", "", "", "", ""]);
   const [password, setPassword] = useState("");
   const [confirm, setConfirm] = useState("");
-  const navigate = useNavigate();
 
   const forgotMutation = useForgot(setStep);
   const verifyMutation = useVerify(setStep);

@@ -5,4 +5,7 @@ export const ENDPOINTS = {
     RESET_PASSWORD: "/reset-password",
     LOGOUT: "/logout",
     USER_PROFILE: "/me",
+
+    // trial
+    TRIAL_REGISTER: "register-trial",
 };

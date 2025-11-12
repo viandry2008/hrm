@@ -13,8 +13,9 @@ import {
   Mail,
   MapPin,
 } from 'lucide-react';
+import { useTrialRegister } from '@/api/trial/trial.query';
 
-export const RegisterPage = () => {
+export const TrialRegisterPage = () => {
   const [form, setForm] = useState({
     name: '',
     company: '',
@@ -22,30 +23,42 @@ export const RegisterPage = () => {
     employees: '1',
     phone: '',
     email: '',
-    meetingLocation: 'Online', // default
+    meetingLocation: 'online', // default
     companyAddress: '',
   });
+
+  const resetForm = () => {
+    setForm({
+      name: '',
+      company: '',
+      position: '',
+      employees: '1',
+      phone: '',
+      email: '',
+      meetingLocation: 'online',
+      companyAddress: '',
+    });
+  };
 
   const handleChange = (field: string, value: string) => {
     setForm({ ...form, [field]: value });
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const trialRegisterMutation = useTrialRegister(resetForm);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    Swal.fire({
-      icon: 'success',
-      title: '<span style="color: white;">Berhasil Mendaftar!</span>',
-      text: 'Tim Kami Akan Segera Menghubungi Anda Segera dalam 1x24jam',
-      background: '#1166d8',
-      color: 'white',
-      confirmButtonColor: '#ffffff',
-      confirmButtonText:
-        '<span style="color: #1166d8; font-weight: bold;">OK</span>',
-      customClass: {
-        popup: 'rounded-xl',
-        title: 'text-xl',
-        confirmButton: 'text-sm px-6 py-2 rounded-lg',
-      },
+    console.log('Form submitted:', form);
+
+    trialRegisterMutation.mutate({
+      full_name: form.name,
+      company_name: form.company,
+      company_position: form.position,
+      total_employees: parseInt(form.employees, 10),
+      phone_number: form.phone,
+      email: form.email,
+      meeting_location: form.meetingLocation,
+      company_address: form.meetingLocation === 'offline' ? form.companyAddress : undefined,
     });
   };
 
@@ -145,9 +158,9 @@ export const RegisterPage = () => {
                     <input
                       type="radio"
                       name="meetingLocation"
-                      value="Online"
-                      checked={form.meetingLocation === 'Online'}
-                      onChange={() => handleChange('meetingLocation', 'Online')}
+                      value="online"
+                      checked={form.meetingLocation === 'online'}
+                      onChange={() => handleChange('meetingLocation', 'online')}
                     />
                     Online
                   </label>
@@ -155,17 +168,17 @@ export const RegisterPage = () => {
                     <input
                       type="radio"
                       name="meetingLocation"
-                      value="Offline"
-                      checked={form.meetingLocation === 'Offline'}
-                      onChange={() => handleChange('meetingLocation', 'Offline')}
+                      value="offline"
+                      checked={form.meetingLocation === 'offline'}
+                      onChange={() => handleChange('meetingLocation', 'offline')}
                     />
                     Offline
                   </label>
                 </div>
               </div>
 
-              {/* Alamat Perusahaan (hanya jika Offline) */}
-              {form.meetingLocation === 'Offline' && (
+              {/* Alamat Perusahaan (hanya jika offline) */}
+              {form.meetingLocation === 'offline' && (
                 renderField(
                   'Alamat Perusahaan',
                   'Jl. Contoh No.123, Jakarta',

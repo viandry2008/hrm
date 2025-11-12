@@ -26,7 +26,7 @@ import { POPage } from "./components/POPage";
 import { PengunduranDiriPage } from './components/PengunduranDiriPage';
 import { KeteranganBekerjaPage } from './components/KeteranganBekerjaPage';
 import { PaklaringPage } from './components/PaklaringPage';
-import { RegisterPage } from "./components/RegisterPage";
+import { TrialRegisterPage } from "./pages/trial/TrialRegisterPage";
 import { ResetPassword } from "./components/ResetPassword";
 import { SuratPeringatanPage } from "./components/SuratPeringatanPage";
 import { KelolaKaryawanPage } from "./components/KelolaKaryawan/KelolaKaryawanPage";
@@ -53,7 +53,7 @@ const App = () => (
           <BrowserRouter>
             <Routes>
 
-              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/register" element={<TrialRegisterPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPassword />} />
