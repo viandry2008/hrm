@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
-import { Card,CardContent,CardHeader,CardTitle,} from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem,
+import React, { useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
   SelectTrigger,
   SelectValue,
-} from '@/components/ui/select';
+} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -13,32 +16,28 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from '@/components/ui/table';
-import { Edit, Trash2, Plus, Search, Users } from 'lucide-react';
-
-const divisiData = [
-  { id: 1, nama: 'Divisi SDM' },
-  { id: 2, nama: 'Divisi Keuangan' },
-  { id: 3, nama: 'Divisi Operasional' },
-];
+} from "@/components/ui/table";
+import { Edit, Trash2, Plus, Search, Users } from "lucide-react";
+import { useDeleteDepartment, useGetDepartments } from "@/api/division/division.query";
 
 export const DivisiPage = () => {
-  const [searchTerm, setSearchTerm] = useState('');
-  const [showEntries, setShowEntries] = useState('10');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [showEntries, setShowEntries] = useState("10");
   const [currentPage, setCurrentPage] = useState(1);
 
-  // Filter data
-  const filteredData = divisiData.filter((item) =>
-    item.nama.toLowerCase().includes(searchTerm.toLowerCase())
-  );
+  /** ===============================
+   *  GET LIST DATA FROM API
+   *  =============================== */
+  const { data, isLoading, refetch } = useGetDepartments({
+    search: searchTerm,
+    page: currentPage,
+    limit: Number(showEntries),
+  });
 
-  // Pagination
-  const entriesPerPage = parseInt(showEntries);
-  const totalPages = Math.ceil(filteredData.length / entriesPerPage);
-  const paginatedData = filteredData.slice(
-    (currentPage - 1) * entriesPerPage,
-    currentPage * entriesPerPage
-  );
+  const deleteMutation = useDeleteDepartment(() => refetch());
+
+  const items = data?.data.items ?? [];
+  const pagination = data?.data.pagination;
 
   return (
     <div className="p-6 space-y-6">
@@ -55,7 +54,13 @@ export const DivisiPage = () => {
           <div className="flex justify-between items-center flex-wrap gap-4">
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-600">Show</span>
-              <Select value={showEntries} onValueChange={setShowEntries}>
+              <Select
+                value={showEntries}
+                onValueChange={(v) => {
+                  setShowEntries(v);
+                  setCurrentPage(1); // reset page
+                }}
+              >
                 <SelectTrigger className="w-20">
                   <SelectValue />
                 </SelectTrigger>
@@ -74,7 +79,10 @@ export const DivisiPage = () => {
                 <Input
                   placeholder="Cari divisi..."
                   value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
+                  onChange={(e) => {
+                    setSearchTerm(e.target.value);
+                    setCurrentPage(1);
+                  }}
                   className="pl-10 w-64"
                 />
               </div>
@@ -90,80 +98,113 @@ export const DivisiPage = () => {
             <Table className="w-full border border-gray-300 border-collapse">
               <TableHeader>
                 <TableRow className="bg-blue-600 hover:bg-blue-600 text-white">
-                  <TableHead className="text-white border border-gray-200">No.</TableHead>
-                  <TableHead className="text-white border border-gray-200">Nama Divisi</TableHead>
-                  <TableHead className="text-white border border-gray-200">Aksi</TableHead>
+                  <TableHead className="text-white border border-gray-200">
+                    No.
+                  </TableHead>
+                  <TableHead className="text-white border border-gray-200">
+                    Nama Divisi
+                  </TableHead>
+                  <TableHead className="text-white border border-gray-200">
+                    Aksi
+                  </TableHead>
                 </TableRow>
               </TableHeader>
+
               <TableBody>
-                {paginatedData.map((item, idx) => (
-                  <TableRow key={item.id} className="hover:bg-gray-50">
-                    <TableCell className="border border-gray-200">
-                      {(currentPage - 1) * entriesPerPage + idx + 1}
-                    </TableCell>
-                    <TableCell className="border border-gray-200">{item.nama}</TableCell>
-                    <TableCell className="border border-gray-200">
-                      <div className="flex space-x-2">
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="bg-blue-400 text-white hover:bg-blue-500"
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button
-                          size="sm"
-                          variant="ghost"
-                          className="bg-red-600 text-white hover:bg-red-700"
-                        >
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
-                      </div>
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center py-6">
+                      Loading...
                     </TableCell>
                   </TableRow>
-                ))}
+                ) : items.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={3} className="text-center py-6">
+                      Tidak ada data
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  items.map((item, idx) => (
+                    <TableRow key={item.id} className="hover:bg-gray-50">
+                      <TableCell className="border border-gray-200">
+                        {(currentPage - 1) * Number(showEntries) + idx + 1}
+                      </TableCell>
+
+                      <TableCell className="border border-gray-200">
+                        {item.department_name}
+                      </TableCell>
+
+                      <TableCell className="border border-gray-200">
+                        <div className="flex space-x-2">
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            className="bg-blue-400 text-white hover:bg-blue-500"
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+
+                          <Button
+                            size="sm"
+                            variant="ghost"
+                            onClick={() => deleteMutation.mutate(item.id)}
+                            className="bg-red-600 text-white hover:bg-red-700"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
               </TableBody>
             </Table>
           </div>
 
           {/* Footer / Pagination */}
           <div className="flex justify-between items-center mt-4">
-            {/* Informasi pagination */}
+            {/* Info */}
             <div className="text-sm text-gray-500">
-              Menampilkan{' '}
+              Menampilkan{" "}
+              <strong>{items.length > 0 ? (pagination?.current_page - 1) * pagination?.per_page + 1 : 0}</strong>{" "}
+              sampai{" "}
               <strong>
-                {Math.max((currentPage - 1) * entriesPerPage + 1, 1)} sampai{' '}
-                {Math.min(currentPage * entriesPerPage, filteredData.length)}
-              </strong>{' '}
-              dari <strong>{filteredData.length}</strong> data
+                {items.length > 0
+                  ? (pagination?.current_page - 1) * pagination?.per_page +
+                  items.length
+                  : 0}
+              </strong>{" "}
+              dari <strong>{pagination?.total ?? 0}</strong> data
             </div>
-            {/* Navigasi pagination */}
+
+            {/* Pagination Navigation */}
             <div className="flex gap-2">
               <Button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                disabled={pagination?.current_page === 1}
+                onClick={() => setCurrentPage((p) => p - 1)}
                 className="bg-blue-500 text-white hover:bg-blue-600"
               >
                 Sebelumnya
               </Button>
-              {[...Array(totalPages)].map((_, i) => (
+
+              {[...Array(pagination?.last_page || 1)].map((_, i) => (
                 <Button
                   key={i}
-                  variant={currentPage === i + 1 ? 'default' : 'outline'}
                   size="sm"
                   onClick={() => setCurrentPage(i + 1)}
                   className={
-                    currentPage === i + 1
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-white text-blue-600 border border-blue-600 hover:bg-blue-50'
+                    pagination?.current_page === i + 1
+                      ? "bg-blue-500 text-white"
+                      : "bg-white text-blue-600 border border-blue-600 hover:bg-blue-50"
                   }
                 >
                   {i + 1}
                 </Button>
               ))}
+
               <Button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                disabled={pagination?.current_page === pagination?.last_page}
+                onClick={() => setCurrentPage((p) => p + 1)}
                 className="bg-blue-500 text-white hover:bg-blue-600"
               >
                 Selanjutnya
