@@ -1,7 +1,4 @@
 import { useState } from 'react';
-import { DataKaryawanPage } from '@/components/KelolaKaryawan/DataKaryawanPage';
-import { DivisiPage } from '@/components/KelolaKaryawan/DivisiPage';
-import { JabatanPage } from '@/components/KelolaKaryawan/JabatanPage';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu,
@@ -10,6 +7,9 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ChevronDown } from 'lucide-react';
+import { DataKaryawanPage } from './DataKaryawanPage';
+import { JabatanPage } from './JabatanPage';
+import { DivisiPage } from './DivisiPage';
 
 export const KelolaKaryawanPage = () => {
   const [activeTab, setActiveTab] = useState<'divisi' | 'jabatan' | 'data-karyawan'>('data-karyawan');
@@ -27,8 +27,8 @@ export const KelolaKaryawanPage = () => {
             <Button variant="outline" className="flex items-center space-x-2">
               <span>
                 {activeTab === 'divisi' ? 'Divisi' :
-                 activeTab === 'jabatan' ? 'Jabatan' :
-                 'Data Karyawan'}
+                  activeTab === 'jabatan' ? 'Jabatan' :
+                    'Data Karyawan'}
               </span>
               <ChevronDown className="h-4 w-4" />
             </Button>

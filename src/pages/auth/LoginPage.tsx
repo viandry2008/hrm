@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "@/co
 import { Checkbox } from "@/components/ui/checkbox";
 import { User, Lock, Eye, EyeOff, Briefcase, UserCircle, LogIn, } from "lucide-react";
 import Swal from "sweetalert2";
-import { useAuth } from "@/contexts/AuthContext";
+// import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
 import { useLogin } from "@/api/auth/auth.query";
 import { useAuthStore } from "@/api/auth/auth.store";
@@ -22,25 +22,14 @@ export const LoginPage = () => {
   const navigate = useNavigate();
   // const { login } = useAuth();
   const loginMutation = useLogin();
-  const { setAuth } = useAuthStore();
+  // const { setAuth } = useAuthStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
       if (username.trim() && password.trim()) {
-        const data = await loginMutation.mutateAsync({ username, password });
-        setAuth(data); // Simpan ke Zustand
+        await loginMutation.mutateAsync({ username, password });
 
-        Swal.fire({
-          title: '<span style="color: white">Berhasil Masuk!</span>',
-          text: "Selamat Datang di SMART HRM",
-          icon: "success",
-          background: "#2794eb",
-          color: "white",
-          confirmButtonColor: "#ffffff",
-          confirmButtonText:
-            '<span style="color: #2794eb; font-weight: bold;">OK</span>',
-        }).then(() => navigate("/dashboard")); // redirect setelah klik OK
       } else {
         Swal.fire({
           title: '<span style="color: white">Login Gagal</span>',

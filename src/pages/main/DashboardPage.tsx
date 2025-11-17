@@ -26,9 +26,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useAuth } from "@/contexts/AuthContext";
+import { useAuthStore } from "@/api/auth/auth.store";
 
-function getGreeting() {
+const getGreeting = () => {
   const hour = new Date().getHours();
   if (hour < 11) return "Selamat Pagi";
   if (hour < 15) return "Selamat Siang";
@@ -36,7 +36,7 @@ function getGreeting() {
   return "Selamat Malam";
 }
 
-function formatTanggalIndonesia(date: Date) {
+const formatTanggalIndonesia = (date: Date) => {
   return date.toLocaleDateString("id-ID", {
     weekday: "long",
     day: "numeric",
@@ -45,9 +45,9 @@ function formatTanggalIndonesia(date: Date) {
   });
 }
 
-export default function DashboardPage() {
+export const DashboardPage = () => {
   const [date, setDate] = useState<Date | undefined>(new Date());
-  const { username } = useAuth();
+  const { user } = useAuthStore();
   const greeting = getGreeting();
   const today = formatTanggalIndonesia(new Date());
 
@@ -84,7 +84,7 @@ export default function DashboardPage() {
     items: [] as string[],
   });
 
-  function handleDateSelect(d: Date | undefined) {
+  const handleDateSelect = (d: Date | undefined) => {
     setDate(d);
     if (!d) return;
 
@@ -130,7 +130,7 @@ export default function DashboardPage() {
 
       <div className="mt-2 mb-4">
         <h2 className="text-2xl font-bold text-blue-600">
-          {greeting}, {username || "Pengguna"}
+          {greeting}, {user.username || "Pengguna"}
         </h2>
         <p className="text-sm text-gray-500 flex items-center gap-1">
           Selamat Beraktivitas. {today} • <Clock className="w-4 h-4 text-gray-700" />
