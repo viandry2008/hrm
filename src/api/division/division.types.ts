@@ -26,7 +26,7 @@ export interface DepartmentListResponse {
 
 export interface DepartmentPostRequest {
     department_name: string;
-    description: string | null;
+    description?: string | null;
 }
 
 export interface DepartmentPostResponse {

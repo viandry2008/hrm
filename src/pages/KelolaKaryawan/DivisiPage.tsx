@@ -18,25 +18,57 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Edit, Trash2, Plus, Search, Users } from "lucide-react";
-import { useDeleteDepartment, useGetDepartments } from "@/api/division/division.query";
+
+import {
+  useCreateDepartment,
+  useDeleteDepartment,
+  useGetDepartments,
+  useUpdateDepartment,
+} from "@/api/division/division.query";
+
+import { DivisionFormModal } from "@/components/KelolaKaryawan/DivisionFormModal";
+import { DepartmentPostRequest, DepartmentItem } from "@/api/division/division.types";
 
 export const DivisiPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showEntries, setShowEntries] = useState("10");
   const [currentPage, setCurrentPage] = useState(1);
 
-  /** ===============================
-   *  GET LIST DATA FROM API
-   *  =============================== */
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editData, setEditData] = useState<DepartmentItem | null>(null);
+
   const { data, isLoading, refetch } = useGetDepartments({
     search: searchTerm,
     page: currentPage,
     limit: Number(showEntries),
   });
 
+  const createMutation = useCreateDepartment(() => {
+    refetch();
+    setModalOpen(false);
+  });
+
+  const updateMutation = useUpdateDepartment(() => {
+    refetch();
+    setModalOpen(false);
+  });
+
+  const handleSubmit = (payload: { id?: number; department_name: string }) => {
+    if (payload.id) {
+      updateMutation.mutate({
+        id: payload.id,
+        payload: { department_name: payload.department_name },
+      });
+    } else {
+      createMutation.mutate({
+        department_name: payload.department_name,
+      });
+    }
+  };
+
   const deleteMutation = useDeleteDepartment(() => refetch());
 
-  const items = data?.data.items ?? [];
+  const items: DepartmentItem[] = data?.data.items ?? [];
   const pagination = data?.data.pagination;
 
   return (
@@ -52,13 +84,15 @@ export const DivisiPage = () => {
         <CardContent className="space-y-4">
           {/* Controls */}
           <div className="flex justify-between items-center flex-wrap gap-4">
+            {/* Show Entries */}
             <div className="flex items-center space-x-2">
               <span className="text-sm text-gray-600">Show</span>
+
               <Select
                 value={showEntries}
                 onValueChange={(v) => {
                   setShowEntries(v);
-                  setCurrentPage(1); // reset page
+                  setCurrentPage(1);
                 }}
               >
                 <SelectTrigger className="w-20">
@@ -70,9 +104,11 @@ export const DivisiPage = () => {
                   <SelectItem value="50">50</SelectItem>
                 </SelectContent>
               </Select>
+
               <span className="text-sm text-gray-600">entries</span>
             </div>
 
+            {/* Search + Add Button */}
             <div className="flex items-center space-x-2">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
@@ -86,7 +122,14 @@ export const DivisiPage = () => {
                   className="pl-10 w-64"
                 />
               </div>
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+
+              <Button
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={() => {
+                  setEditData(null);
+                  setModalOpen(true);
+                }}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Tambah Divisi
               </Button>
@@ -98,15 +141,9 @@ export const DivisiPage = () => {
             <Table className="w-full border border-gray-300 border-collapse">
               <TableHeader>
                 <TableRow className="bg-blue-600 hover:bg-blue-600 text-white">
-                  <TableHead className="text-white border border-gray-200">
-                    No.
-                  </TableHead>
-                  <TableHead className="text-white border border-gray-200">
-                    Nama Divisi
-                  </TableHead>
-                  <TableHead className="text-white border border-gray-200">
-                    Aksi
-                  </TableHead>
+                  <TableHead className="text-white">No.</TableHead>
+                  <TableHead className="text-white">Nama Divisi</TableHead>
+                  <TableHead className="text-white">Aksi</TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -126,24 +163,29 @@ export const DivisiPage = () => {
                 ) : (
                   items.map((item, idx) => (
                     <TableRow key={item.id} className="hover:bg-gray-50">
-                      <TableCell className="border border-gray-200">
+                      <TableCell>
                         {(currentPage - 1) * Number(showEntries) + idx + 1}
                       </TableCell>
 
-                      <TableCell className="border border-gray-200">
-                        {item.department_name}
-                      </TableCell>
+                      <TableCell>{item.department_name}</TableCell>
 
-                      <TableCell className="border border-gray-200">
+                      <TableCell>
                         <div className="flex space-x-2">
+
+                          {/* Edit */}
                           <Button
                             size="sm"
                             variant="ghost"
                             className="bg-blue-400 text-white hover:bg-blue-500"
+                            onClick={() => {
+                              setEditData(item);
+                              setModalOpen(true);
+                            }}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
 
+                          {/* Delete */}
                           <Button
                             size="sm"
                             variant="ghost"
@@ -161,12 +203,15 @@ export const DivisiPage = () => {
             </Table>
           </div>
 
-          {/* Footer / Pagination */}
+          {/* Pagination */}
           <div className="flex justify-between items-center mt-4">
-            {/* Info */}
             <div className="text-sm text-gray-500">
               Menampilkan{" "}
-              <strong>{items.length > 0 ? (pagination?.current_page - 1) * pagination?.per_page + 1 : 0}</strong>{" "}
+              <strong>
+                {items.length > 0
+                  ? (pagination?.current_page - 1) * pagination?.per_page + 1
+                  : 0}
+              </strong>{" "}
               sampai{" "}
               <strong>
                 {items.length > 0
@@ -177,7 +222,6 @@ export const DivisiPage = () => {
               dari <strong>{pagination?.total ?? 0}</strong> data
             </div>
 
-            {/* Pagination Navigation */}
             <div className="flex gap-2">
               <Button
                 disabled={pagination?.current_page === 1}
@@ -213,6 +257,15 @@ export const DivisiPage = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Modal */}
+      <DivisionFormModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        initialData={editData}
+        loading={createMutation.isPending || updateMutation.isPending}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 };

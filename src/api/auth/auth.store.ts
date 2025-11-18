@@ -1,6 +1,5 @@
-// src/store/auth.store.ts
 import { create } from "zustand";
-import { persist } from "zustand/middleware";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { LoginResponse } from "./auth.types";
 
 type AuthState = {
@@ -20,19 +19,29 @@ export const useAuthStore = create<AuthState>()(
 
             setAuth: (data) => {
                 const token = data?.data?.token;
+
                 if (token) localStorage.setItem("token", token);
+
                 set({
                     user: data.data,
-                    token: token,
+                    token,
                     isAuthenticated: true,
                 });
             },
 
             logout: () => {
                 localStorage.removeItem("token");
-                set({ user: null, token: null, isAuthenticated: false });
+
+                set({
+                    user: null,
+                    token: null,
+                    isAuthenticated: false,
+                });
             },
         }),
-        { name: "auth-storage" }
+        {
+            name: "auth-storage",
+            storage: createJSONStorage(() => localStorage),
+        }
     )
 );
