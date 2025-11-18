@@ -19,23 +19,50 @@ import {
 } from "@/components/ui/table";
 import { Edit, Trash2, Plus, Search, Briefcase } from "lucide-react";
 import {
+  useCreatePosition,
   useDeletePosition,
   useGetPositions,
+  useUpdatePosition,
 } from "@/api/position/position.query";
+import { PositionItem } from "@/api/position/position.types";
+import { PositionFormModal } from "@/components/KelolaKaryawan/PositionFormModal";
 
 export const JabatanPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [showEntries, setShowEntries] = useState("10");
   const [currentPage, setCurrentPage] = useState(1);
 
-  /** ===============================
-   *  GET LIST DATA FROM API
-   *  =============================== */
+  const [modalOpen, setModalOpen] = useState(false);
+  const [editData, setEditData] = useState<PositionItem | null>(null);
+
   const { data, isLoading, refetch } = useGetPositions({
     search: searchTerm,
     page: currentPage,
     limit: Number(showEntries),
   });
+
+  const createMutation = useCreatePosition(() => {
+    refetch();
+    setModalOpen(false);
+  });
+
+  const updateMutation = useUpdatePosition(() => {
+    refetch();
+    setModalOpen(false);
+  });
+
+  const handleSubmit = (payload: { id?: number; position_name: string }) => {
+    if (payload.id) {
+      updateMutation.mutate({
+        id: payload.id,
+        payload: { position_name: payload.position_name },
+      });
+    } else {
+      createMutation.mutate({
+        position_name: payload.position_name,
+      });
+    }
+  };
 
   const deleteMutation = useDeletePosition(() => refetch());
 
@@ -92,7 +119,11 @@ export const JabatanPage = () => {
                 />
               </div>
 
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+              <Button className="bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={() => {
+                  setEditData(null);
+                  setModalOpen(true);
+                }}>
                 <Plus className="h-4 w-4 mr-2" />
                 Tambah Jabatan
               </Button>
@@ -146,6 +177,10 @@ export const JabatanPage = () => {
                             size="sm"
                             variant="ghost"
                             className="bg-blue-400 text-white hover:bg-blue-500"
+                            onClick={() => {
+                              setEditData(item);
+                              setModalOpen(true);
+                            }}
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
@@ -223,6 +258,14 @@ export const JabatanPage = () => {
           </div>
         </CardContent>
       </Card>
+      {/* Modal */}
+      <PositionFormModal
+        open={modalOpen}
+        onClose={() => setModalOpen(false)}
+        initialData={editData}
+        loading={createMutation.isPending || updateMutation.isPending}
+        onSubmit={handleSubmit}
+      />
     </div>
   );
 };

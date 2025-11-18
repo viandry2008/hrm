@@ -27,8 +27,8 @@ export interface PositionListResponse {
 
 export interface PositionPostRequest {
     position_name: string;
-    allowance_position: string | null;
-    description: string | null;
+    allowance_position?: string | null;
+    description?: string | null;
 }
 
 export interface PositionPostResponse {
