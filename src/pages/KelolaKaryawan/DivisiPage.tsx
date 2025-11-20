@@ -141,9 +141,9 @@ export const DivisiPage = () => {
             <Table className="w-full border border-gray-300 border-collapse">
               <TableHeader>
                 <TableRow className="bg-blue-600 hover:bg-blue-600 text-white">
-                  <TableHead className="text-white">No.</TableHead>
-                  <TableHead className="text-white">Nama Divisi</TableHead>
-                  <TableHead className="text-white">Aksi</TableHead>
+                  <TableHead className="text-white border border-gray-200">No.</TableHead>
+                  <TableHead className="text-white border border-gray-200">Nama Divisi</TableHead>
+                  <TableHead className="text-white border border-gray-200">Aksi</TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -163,13 +163,13 @@ export const DivisiPage = () => {
                 ) : (
                   items.map((item, idx) => (
                     <TableRow key={item.id} className="hover:bg-gray-50">
-                      <TableCell>
+                      <TableCell className="border border-gray-200">
                         {(currentPage - 1) * Number(showEntries) + idx + 1}
                       </TableCell>
 
-                      <TableCell>{item.department_name}</TableCell>
+                      <TableCell className="border border-gray-200">{item.department_name}</TableCell>
 
-                      <TableCell>
+                      <TableCell className="border border-gray-200">
                         <div className="flex space-x-2">
 
                           {/* Edit */}

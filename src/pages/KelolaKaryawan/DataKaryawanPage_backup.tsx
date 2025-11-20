@@ -29,7 +29,6 @@ import {
   Calendar,
   Trash,
 } from 'lucide-react';
-import { useDeleteEmployee, useGetEmployees } from '@/api/employee/employee.query';
 
 // Komponen Label Status
 const StatusLabel = ({ status }: { status: string }) => {
@@ -44,6 +43,178 @@ const StatusLabel = ({ status }: { status: string }) => {
     </span>
   );
 };
+
+interface Karyawan {
+  id: string;
+  nama: string;
+  divisi: string;
+  jabatan: string;
+  kategori: string;
+  tanggalBergabung: string;
+  tanggalKontrak: string;
+  selesaiKontrak: string;
+  statusKerja: string;
+  statusAkun: string;
+  pengingat: string;
+  foto: string;
+}
+
+const mockData: Karyawan[] = [
+  {
+    id: 'K001',
+    nama: 'Andi Prasetyo',
+    divisi: 'IT',
+    jabatan: 'Software Engineer',
+    kategori: 'Full Time',
+    tanggalBergabung: '2021-03-15',
+    tanggalKontrak: '2021-03-15',
+    selesaiKontrak: '2024-03-15',
+    statusKerja: 'Aktif',
+    statusAkun: 'Aktif',
+    pengingat: 'Kontrak akan habis dalam 90 hari',
+    foto: 'https://randomuser.me/api/portraits/men/19.jpg ',
+  },
+  {
+    id: 'K001',
+    nama: 'Andi Prasetyo',
+    divisi: 'IT',
+    jabatan: 'Software Engineer',
+    kategori: 'Full Time',
+    tanggalBergabung: '2021-03-15',
+    tanggalKontrak: '2021-03-15',
+    selesaiKontrak: '2024-03-15',
+    statusKerja: 'Aktif',
+    statusAkun: 'Aktif',
+    pengingat: 'Kontrak akan habis dalam 90 hari',
+    foto: 'https://randomuser.me/api/portraits/men/2.jpg ',
+  },
+  {
+    id: 'K002',
+    nama: 'Budi Santoso',
+    divisi: 'HRD',
+    jabatan: 'HR Manager',
+    kategori: 'Full Time',
+    tanggalBergabung: '2019-07-20',
+    tanggalKontrak: '2019-07-20',
+    selesaiKontrak: '2024-07-20',
+    statusKerja: 'Tidak Aktif',
+    statusAkun: 'Tidak Aktif',
+    pengingat: '-',
+    foto: 'https://randomuser.me/api/portraits/men/13.jpg ',
+  },
+  {
+    id: 'K002',
+    nama: 'Budi Santoso',
+    divisi: 'HRD',
+    jabatan: 'HR Manager',
+    kategori: 'Full Time',
+    tanggalBergabung: '2019-07-20',
+    tanggalKontrak: '2019-07-20',
+    selesaiKontrak: '2024-07-20',
+    statusKerja: 'Tidak Aktif',
+    statusAkun: 'Tidak Aktif',
+    pengingat: '-',
+    foto: 'https://randomuser.me/api/portraits/men/15.jpg ',
+  },
+  {
+    id: 'K002',
+    nama: 'Budi Santoso',
+    divisi: 'HRD',
+    jabatan: 'HR Manager',
+    kategori: 'Full Time',
+    tanggalBergabung: '2019-07-20',
+    tanggalKontrak: '2019-07-20',
+    selesaiKontrak: '2024-07-20',
+    statusKerja: 'Tidak Aktif',
+    statusAkun: 'Tidak Aktif',
+    pengingat: '-',
+    foto: 'https://randomuser.me/api/portraits/men/28.jpg ',
+  },
+  {
+    id: 'K003',
+    nama: 'Cindy Putri',
+    divisi: 'Marketing',
+    jabatan: 'Digital Marketing',
+    kategori: 'Internship',
+    tanggalBergabung: '2023-06-01',
+    tanggalKontrak: '2023-06-01',
+    selesaiKontrak: '2024-06-01',
+    statusKerja: 'Aktif',
+    statusAkun: 'Aktif',
+    pengingat: 'Kontrak akan habis dalam 365 hari',
+    foto: 'https://randomuser.me/api/portraits/men/11.jpg ',
+  },
+  {
+    id: 'K003',
+    nama: 'Cindy Putri',
+    divisi: 'Marketing',
+    jabatan: 'Digital Marketing',
+    kategori: 'Internship',
+    tanggalBergabung: '2023-06-01',
+    tanggalKontrak: '2023-06-01',
+    selesaiKontrak: '2024-06-01',
+    statusKerja: 'Aktif',
+    statusAkun: 'Aktif',
+    pengingat: 'Kontrak akan habis dalam 365 hari',
+    foto: 'https://randomuser.me/api/portraits/men/19.jpg ',
+  },
+  {
+    id: 'K003',
+    nama: 'Cindy Putri',
+    divisi: 'Marketing',
+    jabatan: 'Digital Marketing',
+    kategori: 'Internship',
+    tanggalBergabung: '2023-06-01',
+    tanggalKontrak: '2023-06-01',
+    selesaiKontrak: '2024-06-01',
+    statusKerja: 'Aktif',
+    statusAkun: 'Aktif',
+    pengingat: 'Kontrak akan habis dalam 365 hari',
+    foto: 'https://randomuser.me/api/portraits/men/20.jpg ',
+  },
+  {
+    id: 'K003',
+    nama: 'Cindy Putri',
+    divisi: 'Marketing',
+    jabatan: 'Digital Marketing',
+    kategori: 'Internship',
+    tanggalBergabung: '2023-06-01',
+    tanggalKontrak: '2023-06-01',
+    selesaiKontrak: '2024-06-01',
+    statusKerja: 'Aktif',
+    statusAkun: 'Aktif',
+    pengingat: 'Kontrak akan habis dalam 365 hari',
+    foto: 'https://randomuser.me/api/portraits/men/22.jpg ',
+  },
+  {
+    id: 'K003',
+    nama: 'Cindy Putri',
+    divisi: 'Marketing',
+    jabatan: 'Digital Marketing',
+    kategori: 'Internship',
+    tanggalBergabung: '2023-06-01',
+    tanggalKontrak: '2023-06-01',
+    selesaiKontrak: '2024-06-01',
+    statusKerja: 'Aktif',
+    statusAkun: 'Aktif',
+    pengingat: 'Kontrak akan habis dalam 365 hari',
+    foto: 'https://randomuser.me/api/portraits/men/28.jpg ',
+  },
+  {
+    id: 'K003',
+    nama: 'Cindy Putri',
+    divisi: 'Marketing',
+    jabatan: 'Digital Marketing',
+    kategori: 'Internship',
+    tanggalBergabung: '2023-06-01',
+    tanggalKontrak: '2023-06-01',
+    selesaiKontrak: '2024-06-01',
+    statusKerja: 'Aktif',
+    statusAkun: 'Aktif',
+    pengingat: 'Kontrak akan habis dalam 365 hari',
+    foto: 'https://randomuser.me/api/portraits/men/35.jpg ',
+  },
+];
 
 const formatTanggal = (tanggal: string): string => {
   const [year, month, day] = tanggal.split('-');
@@ -66,43 +237,48 @@ const ReminderLabel = ({ text }: { text: string }) => {
 
 
 export const DataKaryawanPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [showEntries, setShowEntries] = useState("10");
+  const [data, setData] = useState<Karyawan[]>(mockData);
+  const [search, setSearch] = useState('');
+  const [show, setShow] = useState('10');
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [selectAll, setSelectAll] = useState(false);
   const [currentPage, setCurrentPage] = useState(1);
 
-  const [selectedIds, setSelectedIds] = useState<number[]>([]);
-  const [selectAll, setSelectAll] = useState(false);
+  // Filter data berdasarkan search
+  const filteredData = data.filter((k) =>
+    [k.id, k.nama, k.divisi, k.jabatan, k.statusKerja]
+      .some((field) => field.toLowerCase().includes(search.toLowerCase()))
+  );
 
-  const { data, isLoading, refetch } = useGetEmployees({
-    search: searchTerm,
-    page: currentPage,
-    limit: Number(showEntries),
-  });
+  // Pagination
+  const entriesPerPage = parseInt(show);
+  const totalPages = Math.ceil(filteredData.length / entriesPerPage);
+  const paginatedData = filteredData.slice(
+    (currentPage - 1) * entriesPerPage,
+    currentPage * entriesPerPage
+  );
 
-  const deleteSingle = useDeleteEmployee(() => refetch());
-
-  // const updateStatusMutation = useUpdateStatusAkun(() => refetch());
-  // const deleteSingle = useDeleteKaryawan(() => refetch());
-  // const deleteMultiple = useDeleteMultipleKaryawan(() => {
-  //   setSelectedIds([]);
-  //   refetch();
-  // });
-
-  const items = data?.data.items ?? [];
-  const pagination = data?.data.pagination;
+  // Reset halaman dan selected saat show/search berubah
+  useEffect(() => {
+    setCurrentPage(1);
+    setSelectedIds([]);
+    setSelectAll(false);
+  }, [show, search]);
 
   const toggleSelectAll = () => {
     if (selectAll) {
       setSelectedIds([]);
     } else {
-      setSelectedIds(items.map((item) => item.id));
+      setSelectedIds(paginatedData.map((k) => k.id));
     }
     setSelectAll(!selectAll);
   };
 
-  const toggleSelect = (id: number) => {
+  const toggleSelectRow = (id: string) => {
     setSelectedIds((prev) =>
-      prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id]
+      prev.includes(id)
+        ? prev.filter((item) => item !== id)
+        : [...prev, id]
     );
   };
 
@@ -126,11 +302,11 @@ export const DataKaryawanPage = () => {
       iconColor: '#bfdbfe',
     }).then((result) => {
       if (result.isConfirmed) {
-        // setData((prevData) =>
-        //   prevData.map((k) =>
-        //     selectedIds.includes(k.id) ? { ...k, statusAkun: statusBaru } : k
-        //   )
-        // );
+        setData((prevData) =>
+          prevData.map((k) =>
+            selectedIds.includes(k.id) ? { ...k, statusAkun: statusBaru } : k
+          )
+        );
         setSelectedIds([]);
         setSelectAll(false);
         Swal.fire({
@@ -149,26 +325,39 @@ export const DataKaryawanPage = () => {
     });
   };
 
-  const handleDeleteSingle = (id: number) => {
+  const handleDeleteSingle = (id: string) => {
     Swal.fire({
-      title: "Apakah Anda yakin?",
-      text: "Data karyawan ini akan dihapus permanen!",
-      icon: "warning",
+      title: 'Apakah Anda yakin?',
+      text: 'Data karyawan ini akan dihapus permanen!',
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: "Ya, Hapus!",
-      cancelButtonText: "Batal",
-      background: "#3b82f6",
-      color: "#ffffff",
+      confirmButtonText: 'Ya, Hapus!',
+      cancelButtonText: 'Batal',
+      background: '#3b82f6',
+      color: '#ffffff',
       customClass: {
-        popup: "bg-blue-500 text-white",
-        title: "text-white",
-        confirmButton: "bg-white text-blue-500 hover:bg-blue-100",
-        cancelButton: "bg-gray-300 text-gray-800 hover:bg-gray-400",
+        popup: 'bg-blue-500 text-white',
+        title: 'text-white',
+        confirmButton: 'bg-white text-blue-500 hover:bg-blue-100',
+        cancelButton: 'bg-gray-300 text-gray-800 hover:bg-gray-400',
       },
-      iconColor: "#bfdbfe",
+      iconColor: '#bfdbfe',
     }).then((result) => {
       if (result.isConfirmed) {
-        deleteSingle.mutate(id);
+        setData((prev) => prev.filter((k) => k.id !== id));
+        setSelectedIds((prev) => prev.filter((item) => item !== id));
+        Swal.fire({
+          title: 'Berhasil!',
+          text: 'Karyawan berhasil dihapus.',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false,
+          background: '#3b82f6',
+          color: '#ffffff',
+          customClass: {
+            popup: 'bg-blue-500 text-white',
+          },
+        });
       }
     });
   };
@@ -192,23 +381,23 @@ export const DataKaryawanPage = () => {
       },
       iconColor: '#bfdbfe',
     }).then((result) => {
-      // if (result.isConfirmed) {
-      //   setData((prev) => prev.filter((k) => !selectedIds.includes(k.id)));
-      //   setSelectedIds([]);
-      //   setSelectAll(false);
-      //   Swal.fire({
-      //     title: 'Berhasil!',
-      //     text: 'Karyawan berhasil dihapus.',
-      //     icon: 'success',
-      //     timer: 1500,
-      //     showConfirmButton: false,
-      //     background: '#3b82f6',
-      //     color: '#ffffff',
-      //     customClass: {
-      //       popup: 'bg-blue-500 text-white',
-      //     },
-      //   });
-      // }
+      if (result.isConfirmed) {
+        setData((prev) => prev.filter((k) => !selectedIds.includes(k.id)));
+        setSelectedIds([]);
+        setSelectAll(false);
+        Swal.fire({
+          title: 'Berhasil!',
+          text: 'Karyawan berhasil dihapus.',
+          icon: 'success',
+          timer: 1500,
+          showConfirmButton: false,
+          background: '#3b82f6',
+          color: '#ffffff',
+          customClass: {
+            popup: 'bg-blue-500 text-white',
+          },
+        });
+      }
     });
   };
 
@@ -237,13 +426,13 @@ export const DataKaryawanPage = () => {
         <Card className="bg-green-700 border-green-800 shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-semibold text-white">
-              Total Karyawan Aktif
+              Total Karyawan Aktif 
             </CardTitle>
             <CheckCircle className="h-4 w-4 text-white" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-white">
-              {/* {data.filter(k => k.statusKerja === 'Aktif').length} */}
+              {data.filter(k => k.statusKerja === 'Aktif').length}
             </div>
             <p className="text-xs text-white">Karyawan</p>
           </CardContent>
@@ -253,13 +442,13 @@ export const DataKaryawanPage = () => {
         <Card className="bg-red-600 border-red-800 shadow-md">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-semibold text-white">
-              Total Karyawan Tidak Aktif
+              Total Karyawan Tidak Aktif 
             </CardTitle>
             <XCircle className="h-4 w-4 text-white" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-white">
-              {/* {data.filter(k => k.statusKerja === 'Tidak Aktif').length} */}
+              {data.filter(k => k.statusKerja === 'Tidak Aktif').length}
             </div>
             <p className="text-xs text-white">Karyawan</p>
           </CardContent>
@@ -303,7 +492,7 @@ export const DataKaryawanPage = () => {
             <div className="flex items-center gap-4 flex-wrap">
               <div className="flex items-center gap-2">
                 <span className="text-sm text-muted-foreground">Show</span>
-                <Select value={showEntries} onValueChange={setShowEntries}>
+                <Select value={show} onValueChange={setShow}>
                   <SelectTrigger className="w-20">
                     <SelectValue placeholder="10" />
                   </SelectTrigger>
@@ -320,11 +509,8 @@ export const DataKaryawanPage = () => {
                 <Input
                   placeholder="Cari ID, nama, divisi, jabatan atau jenis"
                   className="pl-10 w-64"
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
-                  }}
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
                 />
               </div>
             </div>
@@ -370,119 +556,99 @@ export const DataKaryawanPage = () => {
                 </TableRow>
               </TableHeader>
               <TableBody>
-
-                {isLoading && (
-                  <TableRow>
-                    <TableCell colSpan={15} className="text-center py-4">Memuat data...</TableCell>
-                  </TableRow>
-                )}
-
-                {!isLoading && items.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={15} className="text-center py-4">Tidak ada data</TableCell>
-                  </TableRow>
-                )}
-
-                {items.map((k, idx) => (
-                  <TableRow key={k.id}>
-                    <TableCell>
+                {paginatedData.map((k, idx) => (
+                  <TableRow key={`${k.id}-${idx}`}>
+                    <TableCell className="border border-gray-200">
                       <input
                         type="checkbox"
                         checked={selectedIds.includes(k.id)}
-                        onChange={() => toggleSelect(k.id)}
+                        onChange={() => toggleSelectRow(k.id)}
                       />
                     </TableCell>
-
-                    <TableCell className="border border-gray-200">{(currentPage - 1) * Number(showEntries) + idx + 1}</TableCell>
-                    <TableCell className="border border-gray-200">
-                      {/* <img
+                    <TableCell className="border border-gray-200 whitespace-nowrap">
+                      {(currentPage - 1) * entriesPerPage + idx + 1}
+                    </TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">
+                      <img
                         src={k.foto}
                         alt={k.nama}
                         className="rounded-full w-8 h-8 object-cover"
-                      /> */}
-                    </TableCell >
-                    <TableCell className="border border-gray-200">{k.employee_code}</TableCell>
-                    <TableCell className="border border-gray-200">{k.full_name}</TableCell>
-                    <TableCell className="border border-gray-200">{k.department.department_name}</TableCell>
-                    <TableCell className="border border-gray-200">{k.position.position_name}</TableCell>
-                    <TableCell className="border border-gray-200">{formatTanggal(k.join_date)}</TableCell>
-                    <TableCell className="border border-gray-200">{k.employee_type}</TableCell>
-                    <TableCell className="border border-gray-200">
-                      {/* {formatTanggal(k.tanggal_kontrak)} */}
+                      />
                     </TableCell>
-                    <TableCell className="border border-gray-200">
-                      {/* {formatTanggal(k.selesai_kontrak)} */}
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{k.id}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{k.nama}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{k.divisi}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{k.jabatan}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">
+                      {formatTanggal(k.tanggalBergabung)}
                     </TableCell>
-                    <TableCell className="border border-gray-200">
-                      {/* {k.status_kerja} */}
-                      Aktif
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{k.kategori}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">
+                      {formatTanggal(k.tanggalKontrak)}
                     </TableCell>
-                    <TableCell className="border border-gray-200"><StatusLabel status={k.employment_status} /></TableCell>
-                    <TableCell className="border border-gray-200">
-                      <ReminderLabel text={"Kontrak akan habis dalam 365 hari"} />
+                    <TableCell className="border border-gray-200 whitespace-nowrap">
+                      {formatTanggal(k.selesaiKontrak)}
                     </TableCell>
-
-                    <TableCell>
-                      <div className="flex gap-2">
-                        <Button size="sm" className="bg-blue-600 text-white"><Eye className="w-4 h-4" /></Button>
-                        <Button size="sm" className="bg-red-600 text-white" onClick={() => handleDeleteSingle(k.id)}>
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{k.statusKerja}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap"> 
+                      <StatusLabel status={k.statusAkun} />
                     </TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap"><ReminderLabel text={k.pengingat} /></TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">
+                      <div className="flex justify-start space-x-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="bg-blue-600 text-white hover:bg-blue-700"
+                      title="Lihat Detail"
+                    >
+                      <Eye className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="bg-red-600 text-white hover:bg-red-700"
+                      title="Hapus Data"
+                      onClick={() => handleDeleteSingle(k.id)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
+                    </div>
+                  </TableCell>
                   </TableRow>
                 ))}
-
               </TableBody>
             </Table>
           </div>
           {/* Pagination */}
           <div className="flex justify-between items-center mt-4">
             <div className="text-sm text-gray-500">
-              Menampilkan{" "}
+              Menampilkan{' '}
               <strong>
-                {items.length > 0
-                  ? (pagination?.current_page - 1) * pagination?.per_page + 1
-                  : 0}
-              </strong>{" "}
-              sampai{" "}
-              <strong>
-                {items.length > 0
-                  ? (pagination?.current_page - 1) * pagination?.per_page +
-                  items.length
-                  : 0}
-              </strong>{" "}
-              dari <strong>{pagination?.total ?? 0}</strong> data
+                {Math.max((currentPage - 1) * entriesPerPage + 1, 1)} to{' '}
+                {Math.min(currentPage * entriesPerPage, filteredData.length)}
+              </strong>{' '}
+              of <strong>{filteredData.length}</strong> data
             </div>
-
             <div className="flex gap-2">
               <Button
-                disabled={pagination?.current_page === 1}
-                onClick={() => setCurrentPage((p) => p - 1)}
-                className="bg-blue-500 text-white hover:bg-blue-600"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
               >
                 Sebelumnya
               </Button>
-
-              {[...Array(pagination?.last_page || 1)].map((_, i) => (
+              {[...Array(totalPages)].map((_, i) => (
                 <Button
                   key={i}
-                  size="sm"
+                  variant={currentPage === i + 1 ? 'default' : 'outline'}
                   onClick={() => setCurrentPage(i + 1)}
-                  className={
-                    pagination?.current_page === i + 1
-                      ? "bg-blue-500 text-white"
-                      : "bg-white text-blue-600 border border-blue-600 hover:bg-blue-50"
-                  }
                 >
                   {i + 1}
                 </Button>
               ))}
-
               <Button
-                disabled={pagination?.current_page === pagination?.last_page}
-                onClick={() => setCurrentPage((p) => p + 1)}
-                className="bg-blue-500 text-white hover:bg-blue-600"
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
               >
                 Selanjutnya
               </Button>

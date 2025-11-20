@@ -14,4 +14,7 @@ export const ENDPOINTS = {
 
     // position
     POSITIONS: "/positions",
+
+    // employee
+    EMPLOYEES: "/employees",
 };
