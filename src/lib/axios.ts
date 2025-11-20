@@ -15,19 +15,21 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
-// Interceptor untuk token expired
 api.interceptors.response.use(
     (response) => response,
-    (error: AxiosError) => {
-        if (error.response?.status === 401) {
-            const logout = useAuthStore.getState().logout;
+    (error) => {
+        const originalRequest = error.config;
 
-            // Hapus session user
-            logout();
+        // Jangan logout kalau error dari request login
+        const isLoginRequest = originalRequest?.url?.includes("/login");
 
-            // Redirect ke login
-            window.location.href = "/login";
+        const isUnauthorized = error.response?.status === 401;
+
+        // Hanya logout untuk 401 dan tidak untuk login
+        if (isUnauthorized && !isLoginRequest) {
+            useAuthStore.getState().logout();
         }
+
         return Promise.reject(error);
     }
 );

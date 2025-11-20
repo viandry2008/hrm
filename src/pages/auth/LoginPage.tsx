@@ -7,10 +7,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, } from "@/co
 import { Checkbox } from "@/components/ui/checkbox";
 import { User, Lock, Eye, EyeOff, Briefcase, UserCircle, LogIn, } from "lucide-react";
 import Swal from "sweetalert2";
-// import { useAuth } from "@/contexts/AuthContext";
 import { motion } from "framer-motion";
 import { useLogin } from "@/api/auth/auth.query";
-import { useAuthStore } from "@/api/auth/auth.store";
 
 export const LoginPage = () => {
   const [username, setUsername] = useState("");
@@ -20,27 +18,48 @@ export const LoginPage = () => {
   const [role, setRole] = useState<"management" | "employee">("management");
 
   const navigate = useNavigate();
-  // const { login } = useAuth();
   const loginMutation = useLogin();
-  // const { setAuth } = useAuthStore();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      if (username.trim() && password.trim()) {
-        await loginMutation.mutateAsync({ username, password });
 
-      } else {
-        Swal.fire({
-          title: '<span style="color: white">Login Gagal</span>',
-          text: "Username dan password harus diisi!",
-          icon: "error",
-          background: "#d11a2a",
-          color: "white",
-        });
-      }
+    if (!username.trim() || !password.trim()) {
+      Swal.fire({
+        title: '<span style="color: white">Login Gagal</span>',
+        text: "Username dan password harus diisi!",
+        icon: "error",
+        background: "#d11a2a",
+        color: "white",
+      });
+      return;
+    }
+
+    try {
+      const res = await loginMutation.mutateAsync({ username, password });
+
+      await Swal.fire({
+        title: '<span style="color: white">Berhasil Masuk!</span>',
+        text: "Selamat Datang di SMART HRM",
+        icon: "success",
+        background: "#2794eb",
+        color: "white",
+        confirmButtonColor: "#ffffff",
+        confirmButtonText:
+          '<span style="color: #2794eb; font-weight: bold;">OK</span>',
+        customClass: {
+          popup: "rounded-xl",
+          title: "text-xl",
+          confirmButton: "text-sm px-6 py-2 rounded-lg",
+        },
+      });
+
+      navigate("/dashboard", { replace: true });
     } catch (err: any) {
-      Swal.fire("Gagal", err.response?.data?.message || "Login gagal", "error");
+      Swal.fire(
+        "Gagal",
+        err?.response?.data?.message || "Login gagal",
+        "error"
+      );
     }
   };
 

@@ -7,35 +7,11 @@ import { useNavigate } from "react-router-dom";
 
 export const useLogin = () => {
     const setAuth = useAuthStore((s) => s.setAuth);
-    const navigate = useNavigate();
 
     return useMutation({
         mutationFn: (payload: LoginRequest) => loginApi(payload),
         onSuccess: async (data) => {
-            console.log("Login successful:", data);
-
-            // Simpan token & user ke zustand (otomatis tersimpan ke localStorage)
             setAuth(data);
-
-            // Tampilkan notifikasi
-            await Swal.fire({
-                title: '<span style="color: white">Berhasil Masuk!</span>',
-                text: "Selamat Datang di SMART HRM",
-                icon: "success",
-                background: "#2794eb",
-                color: "white",
-                confirmButtonColor: "#ffffff",
-                confirmButtonText:
-                    '<span style="color: #2794eb; font-weight: bold;">OK</span>',
-                customClass: {
-                    popup: "rounded-xl",
-                    title: "text-xl",
-                    confirmButton: "text-sm px-6 py-2 rounded-lg",
-                },
-            });
-
-            // ✅ Pastikan navigate baru dijalankan setelah token tersimpan
-            navigate("/dashboard", { replace: true });
         },
         onError: (err: any) => {
             Swal.fire("Gagal", err.response?.data?.message || "Login gagal", "error");
@@ -117,9 +93,12 @@ export const useReset = () => {
 };
 
 export const useProfile = () => {
+    const { token } = useAuthStore();
+
     return useQuery({
         queryKey: ["profile"],
         queryFn: getProfileApi,
+        enabled: !!token,
     });
 };
 
