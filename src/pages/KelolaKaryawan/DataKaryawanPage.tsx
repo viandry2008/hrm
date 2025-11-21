@@ -30,6 +30,7 @@ import {
   Trash,
 } from 'lucide-react';
 import { useDeleteEmployee, useGetEmployees } from '@/api/employee/employee.query';
+import { useNavigate } from 'react-router-dom';
 
 // Komponen Label Status
 const StatusLabel = ({ status }: { status: string }) => {
@@ -66,6 +67,7 @@ const ReminderLabel = ({ text }: { text: string }) => {
 
 
 export const DataKaryawanPage = () => {
+  const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
   const [showEntries, setShowEntries] = useState("10");
   const [currentPage, setCurrentPage] = useState(1);
@@ -337,7 +339,11 @@ export const DataKaryawanPage = () => {
                 <Download className="w-4 h-4" />
                 Export
               </Button>
-              <Button className="bg-blue-600 text-white hover:bg-blue-700">
+              <Button className="bg-blue-600 text-white hover:bg-blue-700"
+                onClick={() => {
+                  console.log("Tombol diklik!");
+                  navigate('/tambah-karyawan');
+                }}>
                 + Tambah Karyawan
               </Button>
             </div>

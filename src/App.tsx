@@ -39,6 +39,7 @@ import { KontrakKerjaPage } from "./components/KontrakKerjaPage";
 import { PrivateRoute } from "@/components/PrivateRoute";
 import { LoginPage } from "./pages/auth/LoginPage";
 import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
+import TambahKaryawanPage from "./pages/KelolaKaryawan/TambahKaryawanPage";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,7 @@ const App = () => (
                   <Route path="data-kehadiran" element={<DataKehadiranPage />} />
                   <Route path="rekap-kehadiran" element={<RekapKehadiranPage />} /> */}
                 <Route path="kelola-karyawan" element={<KelolaKaryawanPage />} />
+                <Route path="tambah-karyawan" element={<TambahKaryawanPage />} />
                 <Route path="data-karyawan" element={<DataKaryawanPage />} />
                 <Route path="request-absen" element={<RequestAbsenPage />} />
                 <Route path="divisi" element={<DivisiPage />} />
