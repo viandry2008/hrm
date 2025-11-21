@@ -75,9 +75,41 @@ export interface EmployeeListResponse {
 //========= create & update
 
 
-//========= delete
-export interface EmployeeDeleteResponse {
+//========= message
+export interface EmployeeMessageResponse {
     success: boolean;
     code: number;
     message: string;
+}
+
+//========= summary
+export interface EmployeeSummaryResponse {
+    success: boolean;
+    code: number;
+    message: string;
+    data: {
+        total: number;
+        active: number;
+        inactive: number;
+    };
+}
+
+//========= multiple delete employees
+export interface EmployeeMultipleDeleteRequest {
+    ids: number[];
+}
+
+//========= multiple change status employees
+export interface EmployeeMultipleChangeRequest {
+    ids: number[];
+    status: 'Active' | 'Inactive';
+}
+
+//========= multiple change contract employees
+export interface EmployeeMultipleContractRequest {
+    ids: number[];
+    contract_type: string;
+    start_date: string;
+    end_date: string;
+    notes: string;
 }
