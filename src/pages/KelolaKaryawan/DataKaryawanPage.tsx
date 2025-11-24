@@ -74,6 +74,12 @@ export const DataKaryawanPage = () => {
 
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
+  // State modal perbarui kontrak
+  const [isContractModalOpen, setContractModalOpen] = useState(false);
+  const [contractType, setContractType] = useState("");
+  const [contractStart, setContractStart] = useState("");
+  const [contractEnd, setContractEnd] = useState("");
+  const [contractNotes, setContractNotes] = useState("");
 
   const { data, isLoading, refetch } = useGetEmployees({
     search: searchTerm,
@@ -196,6 +202,52 @@ export const DataKaryawanPage = () => {
     setIsOpen(false);
   };
 
+  const openContractModal = () => {
+    if (selectedIds.length === 0) {
+      Swal.fire("Peringatan", "Pilih minimal 1 karyawan.", "warning");
+      return;
+    }
+    setContractModalOpen(true);
+  };
+
+  const closeContractModal = () => {
+    setContractModalOpen(false);
+    setContractType("");
+    setContractStart("");
+    setContractEnd("");
+    setContractNotes("");
+  };
+
+  const submitUpdateContract = () => {
+    if (!contractType || !contractStart || !contractEnd) {
+      Swal.fire("Error", "Semua field wajib diisi.", "error");
+      return;
+    }
+
+    updateContractMutation.mutate(
+      {
+        ids: selectedIds,
+        contract_type: contractType,
+        start_date: contractStart,
+        end_date: contractEnd,
+        notes: contractNotes,
+      },
+      {
+        onSuccess: () => {
+          Swal.fire("Berhasil", "Kontrak berhasil diperbarui!", "success");
+          closeContractModal();
+          setSelectedIds([]);
+          setSelectAll(false);
+        },
+        onError: () => {
+          Swal.fire("Gagal", "Terjadi kesalahan saat memperbarui kontrak", "error");
+        },
+      }
+    );
+  };
+
+
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -257,7 +309,11 @@ export const DataKaryawanPage = () => {
             >
               <XCircle className="w-4 h-4" /> Non Aktifkan
             </Button>
-            <Button className="bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1">
+            <Button
+              className="bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1"
+              disabled={selectedIds.length === 0}
+              onClick={openContractModal}
+            >
               <Calendar className="w-4 h-4" /> Perbarui Kontrak
             </Button>
             <Button
@@ -381,10 +437,10 @@ export const DataKaryawanPage = () => {
                     <TableCell className="border border-gray-200">{formatTanggal(k.join_date)}</TableCell>
                     <TableCell className="border border-gray-200">{k.employee_type}</TableCell>
                     <TableCell className="border border-gray-200">
-                      {/* {formatTanggal(k.tanggal_kontrak)} */}
+                      {formatTanggal(k.latest_contract.start_date)}
                     </TableCell>
                     <TableCell className="border border-gray-200">
-                      {/* {formatTanggal(k.selesai_kontrak)} */}
+                      {formatTanggal(k.latest_contract.end_date)}
                     </TableCell>
                     <TableCell className="border border-gray-200">
                       {/* {k.status_kerja} */}
@@ -492,6 +548,78 @@ export const DataKaryawanPage = () => {
           </div>
         </div>
       )}
+      {isContractModalOpen && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg w-full max-w-md space-y-4">
+
+            <h2 className="text-xl font-bold mb-2">Perbarui Kontrak</h2>
+
+            {/* CONTRACT TYPE */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Jenis Kontrak</label>
+              <Select value={contractType} onValueChange={setContractType}>
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih jenis kontrak" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="PKWT">PKWT</SelectItem>
+                  <SelectItem value="PKWTT">PKWTT</SelectItem>
+                  <SelectItem value="Internship">Magang</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
+            {/* START DATE */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Tanggal Mulai</label>
+              <Input
+                type="date"
+                value={contractStart}
+                onChange={(e) => setContractStart(e.target.value)}
+              />
+            </div>
+
+            {/* END DATE */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Tanggal Berakhir</label>
+              <Input
+                type="date"
+                value={contractEnd}
+                onChange={(e) => setContractEnd(e.target.value)}
+              />
+            </div>
+
+            {/* NOTES */}
+            <div className="space-y-2">
+              <label className="text-sm font-medium">Catatan (opsional)</label>
+              <textarea
+                className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                rows={3}
+                placeholder="Tambahkan catatan jika diperlukan"
+                value={contractNotes}
+                onChange={(e) => setContractNotes(e.target.value)}
+              />
+            </div>
+
+            {/* ACTION BUTTONS */}
+            <div className="flex justify-end gap-2 pt-4">
+              <Button variant="outline" onClick={closeContractModal}>
+                Batal
+              </Button>
+
+              <Button
+                className="bg-blue-600 hover:bg-blue-700 text-white"
+                onClick={submitUpdateContract}
+                disabled={updateContractMutation.isPending}
+              >
+                {updateContractMutation.isPending ? "Menyimpan..." : "Simpan"}
+              </Button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

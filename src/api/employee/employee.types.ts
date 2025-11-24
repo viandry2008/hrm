@@ -16,6 +16,14 @@ export interface DepartmentItem {
     updated_at: string | null;
 }
 
+export interface LatestItem {
+    id: number,
+    employee_id: number,
+    contract_number: string,
+    start_date: string,
+    end_date: string
+}
+
 export interface EmployeeItem {
     id: number;
     employee_code: string;
@@ -54,6 +62,7 @@ export interface EmployeeItem {
 
     department: DepartmentItem;
     position: PositionItem;
+    latest_contract: LatestItem;
 }
 
 export interface EmployeeListResponse {
