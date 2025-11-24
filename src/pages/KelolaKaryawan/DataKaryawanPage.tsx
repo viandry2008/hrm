@@ -29,12 +29,12 @@ import {
   Calendar,
   Trash,
 } from 'lucide-react';
-import { useDeleteEmployee, useGetEmployees } from '@/api/employee/employee.query';
+import { useDeleteEmployee, useDeleteMultipleEmployee, useGetEmployees, useGetEmployeeSummary, useUpdateMultipleContractEmployee, useUpdateMultipleStatusEmployee } from '@/api/employee/employee.query';
 import { useNavigate } from 'react-router-dom';
 
 // Komponen Label Status
 const StatusLabel = ({ status }: { status: string }) => {
-  const isAktif = status === 'Aktif';
+  const isAktif = status === 'Active';
   const color = isAktif ? 'bg-green-700 text-white' : 'bg-red-700 text-white';
   const Icon = isAktif ? CheckCircle : XCircle;
 
@@ -81,14 +81,28 @@ export const DataKaryawanPage = () => {
     limit: Number(showEntries),
   });
 
+  const { data: dataSummary, isLoading: loadingSummary, refetch: refetchSummary } =
+    useGetEmployeeSummary();
+
   const deleteSingle = useDeleteEmployee(() => refetch());
 
-  // const updateStatusMutation = useUpdateStatusAkun(() => refetch());
-  // const deleteSingle = useDeleteKaryawan(() => refetch());
-  // const deleteMultiple = useDeleteMultipleKaryawan(() => {
-  //   setSelectedIds([]);
-  //   refetch();
-  // });
+  const updateStatusMutation = useUpdateMultipleStatusEmployee(() => {
+    setSelectedIds([]);
+    setSelectAll(false);
+    refetch();
+  });
+
+  const deleteMultiple = useDeleteMultipleEmployee(() => {
+    setSelectedIds([]);
+    setSelectAll(false);
+    refetch();
+  });
+
+  const updateContractMutation = useUpdateMultipleContractEmployee(() => {
+    setSelectedIds([]);
+    setSelectAll(false);
+    refetch();
+  });
 
   const items = data?.data.items ?? [];
   const pagination = data?.data.pagination;
@@ -110,42 +124,17 @@ export const DataKaryawanPage = () => {
 
   const updateStatusAkun = (statusBaru: string) => {
     if (selectedIds.length === 0) return;
+
     Swal.fire({
-      title: `Apakah Anda yakin?`,
-      text: `Karyawan terpilih akan ${statusBaru === 'Aktif' ? 'diaktifkan' : 'dinonaktifkan'}!`,
-      icon: 'question',
+      title: "Apakah Anda yakin?",
+      text: `Status karyawan terpilih akan diubah menjadi ${statusBaru}.`,
+      icon: "question",
       showCancelButton: true,
-      confirmButtonText: `Ya, ${statusBaru === 'Aktif' ? 'Aktifkan' : 'Non Aktifkan'}!`,
-      cancelButtonText: 'Batal',
-      background: '#3b82f6',
-      color: '#ffffff',
-      customClass: {
-        popup: 'bg-blue-500 text-white',
-        title: 'text-white',
-        confirmButton: 'bg-white text-blue-500 hover:bg-blue-100',
-        cancelButton: 'bg-gray-300 text-gray-800 hover:bg-gray-400',
-      },
-      iconColor: '#bfdbfe',
     }).then((result) => {
       if (result.isConfirmed) {
-        // setData((prevData) =>
-        //   prevData.map((k) =>
-        //     selectedIds.includes(k.id) ? { ...k, statusAkun: statusBaru } : k
-        //   )
-        // );
-        setSelectedIds([]);
-        setSelectAll(false);
-        Swal.fire({
-          title: 'Berhasil!',
-          text: `Karyawan berhasil ${statusBaru === 'Aktif' ? 'diaktifkan' : 'dinonaktifkan'}.`,
-          icon: 'success',
-          timer: 1500,
-          showConfirmButton: false,
-          background: '#3b82f6',
-          color: '#ffffff',
-          customClass: {
-            popup: 'bg-blue-500 text-white',
-          },
+        updateStatusMutation.mutate({
+          ids: selectedIds,
+          status: statusBaru,
         });
       }
     });
@@ -177,40 +166,18 @@ export const DataKaryawanPage = () => {
 
   const handleDeleteMultiple = () => {
     if (selectedIds.length === 0) return;
+
     Swal.fire({
-      title: 'Apakah Anda yakin?',
-      text: 'Data karyawan terpilih akan dihapus permanen!',
-      icon: 'warning',
+      title: "Apakah Anda yakin?",
+      text: "Data karyawan terpilih akan dihapus permanen!",
+      icon: "warning",
       showCancelButton: true,
-      confirmButtonText: 'Ya, Hapus!',
-      cancelButtonText: 'Batal',
-      background: '#3b82f6',
-      color: '#ffffff',
-      customClass: {
-        popup: 'bg-blue-500 text-white',
-        title: 'text-white',
-        confirmButton: 'bg-white text-blue-500 hover:bg-blue-100',
-        cancelButton: 'bg-gray-300 text-gray-800 hover:bg-gray-400',
-      },
-      iconColor: '#bfdbfe',
+      confirmButtonText: "Ya, Hapus!",
+      cancelButtonText: "Batal",
     }).then((result) => {
-      // if (result.isConfirmed) {
-      //   setData((prev) => prev.filter((k) => !selectedIds.includes(k.id)));
-      //   setSelectedIds([]);
-      //   setSelectAll(false);
-      //   Swal.fire({
-      //     title: 'Berhasil!',
-      //     text: 'Karyawan berhasil dihapus.',
-      //     icon: 'success',
-      //     timer: 1500,
-      //     showConfirmButton: false,
-      //     background: '#3b82f6',
-      //     color: '#ffffff',
-      //     customClass: {
-      //       popup: 'bg-blue-500 text-white',
-      //     },
-      //   });
-      // }
+      if (result.isConfirmed) {
+        deleteMultiple.mutate({ ids: selectedIds });
+      }
     });
   };
 
@@ -245,7 +212,7 @@ export const DataKaryawanPage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-white">
-              {/* {data.filter(k => k.statusKerja === 'Aktif').length} */}
+              {dataSummary?.data?.active ?? 0}
             </div>
             <p className="text-xs text-white">Karyawan</p>
           </CardContent>
@@ -261,7 +228,7 @@ export const DataKaryawanPage = () => {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold text-white">
-              {/* {data.filter(k => k.statusKerja === 'Tidak Aktif').length} */}
+              {dataSummary?.data?.inactive ?? 0}
             </div>
             <p className="text-xs text-white">Karyawan</p>
           </CardContent>
@@ -278,7 +245,7 @@ export const DataKaryawanPage = () => {
             <Button
               className="bg-green-700 hover:bg-green-600 text-white flex items-center gap-1"
               disabled={selectedIds.length === 0}
-              onClick={() => updateStatusAkun('Aktif')}
+              onClick={() => updateStatusAkun('Active')}
             >
               <CheckCircle className="w-4 h-4" /> Aktifkan
             </Button>
@@ -286,7 +253,7 @@ export const DataKaryawanPage = () => {
             <Button
               className="bg-yellow-400 hover:bg-yellow-500 text-black flex items-center gap-1"
               disabled={selectedIds.length === 0}
-              onClick={() => updateStatusAkun('Tidak Aktif')}
+              onClick={() => updateStatusAkun('Inactive')}
             >
               <XCircle className="w-4 h-4" /> Non Aktifkan
             </Button>

@@ -33,28 +33,28 @@ export const deleteEmployeeApi = async (
 
 export const getSummaryEmployeeApi = async (
 ): Promise<EmployeeSummaryResponse> => {
-    const { data } = await apiClient.post(`${ENDPOINTS.EMPLOYEES_SUMMARY}`);
+    const { data } = await apiClient.get(`${ENDPOINTS.EMPLOYEES_SUMMARY}`);
     return data;
 };
 
 export const deleteMultipleEmployeeApi = async (
     payload: EmployeeMultipleDeleteRequest
 ): Promise<EmployeeMessageResponse> => {
-    const { data } = await apiClient.post(`${ENDPOINTS.EMPLOYEES}`, payload);
+    const { data } = await apiClient.post(`${ENDPOINTS.MULTIPLE_DELETE_EMPLOYEE}`, payload);
     return data;
 };
 
 export const updateMultipleStatusEmployeeApi = async (
     payload: EmployeeMultipleChangeRequest
 ): Promise<EmployeeMessageResponse> => {
-    const { data } = await apiClient.post(`${ENDPOINTS.EMPLOYEES}`, payload);
+    const { data } = await apiClient.post(`${ENDPOINTS.MULTIPLE_STATUS_EMPLOYEE}`, payload);
     return data;
 };
 
 export const updateMultipleContractEmployeeApi = async (
     payload: EmployeeMultipleContractRequest
 ): Promise<EmployeeMessageResponse> => {
-    const { data } = await apiClient.post(`${ENDPOINTS.EMPLOYEES}`, payload);
+    const { data } = await apiClient.post(`${ENDPOINTS.MULTIPLE_CONTRACT_EMPLOYEE}`, payload);
     return data;
 };
 

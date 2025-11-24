@@ -102,7 +102,7 @@ export interface EmployeeMultipleDeleteRequest {
 //========= multiple change status employees
 export interface EmployeeMultipleChangeRequest {
     ids: number[];
-    status: 'Active' | 'Inactive';
+    status: string;
 }
 
 //========= multiple change contract employees
