@@ -1,6 +1,6 @@
 import React from "react";
 
-const KepegawaianSection = ({ updateForm }: any) => {
+const DataKepegawaianSection = ({ updateForm }: any) => {
   return (
     <div className="mt-4 grid grid-cols-2 gap-4">
 
@@ -25,39 +25,74 @@ const KepegawaianSection = ({ updateForm }: any) => {
           <option>-- Pilih Divisi --</option>
           <option>Marketing</option>
           <option>Sales</option>
-          <option>Finance</option>
-          <option>HR</option>
+          <option>IT</option>
+          <option>Finance & Accounting</option>
+          <option>HR & GA</option>
+          <option>Warehouse</option>
+          <option>Produksi</option>
+          <option>Operasional</option>
+          <option>Logistik</option>
         </select>
       </div>
 
       {/* Jabatan */}
       <div>
-        <label className="font-semibold">Jabatan *</label>
+        <label className="font-semibold">Jabatan*</label>
         <select
           className="border p-2 w-full rounded"
           onChange={(e) => updateForm("jabatan", e.target.value)}
         >
           <option>-- Pilih Jabatan --</option>
-          <option>Supervisor</option>
           <option>Staff</option>
+          <option>Leader</option>
+          <option>Supervisor</option>
           <option>Manager</option>
+          <option>Senior Manager</option>
+          <option>General Manager</option>
+          <option>Head</option>
+          <option>Asisten Direktur</option>
+          <option>Direktur</option>
         </select>
       </div>
 
-      {/* Lokasi Kerja */}
+      {/* Bagian */}
       <div>
-        <label className="font-semibold">Lokasi Kerja *</label>
-        <input
-          type="text"
-          value="PT Godrej Consumer Products Inc"
-          className="border p-2 w-full rounded bg-gray-100"
-          readOnly
-        />
+        <label className="font-semibold">Bagian*</label>
+        <select
+          className="border p-2 w-full rounded"
+          onChange={(e) => updateForm("bagian", e.target.value)}
+        >
+          <option>-- Pilih Bagian ---</option>
+          <option>IT Support</option>
+          <option>IT Helpdesk</option>
+          <option>IT Management</option>
+          <option>System Analyst</option>
+          <option>Infrastructure & Network</option>
+          <option>Database Administrator</option>
+          <option>Back End Developer</option>
+          <option>Front End Developer</option>
+          <option>Full Stack Developer</option>
+          <option>Mobile Developer</option>
+          <option>AI Engineer</option>
+          <option>Product Owner</option>
+        </select>
+      </div>
+
+      {/*Kategori Karyawan */}
+      <div>
+        <label className="font-semibold">Lokasi Kerja*</label>
+        <select
+          className="border p-2 w-full rounded"
+          onChange={(e) => updateForm("lokasi", e.target.value)}
+        >
+          <option>-- Pilih Lokasi Kerja --</option>
+          <option>PT Proven Force Indonesia</option>
+        </select>
       </div>
 
       {/* Tanggal Bergabung */}
       <div>
-        <label className="font-semibold">Tanggal Bergabung *</label>
+        <label className="font-semibold">Tanggal Bergabung*</label>
         <input
           type="date"
           className="border p-2 w-full rounded"
@@ -67,7 +102,7 @@ const KepegawaianSection = ({ updateForm }: any) => {
 
       {/* Tanggal Kontrak */}
       <div>
-        <label className="font-semibold">Tanggal Kontrak *</label>
+        <label className="font-semibold">Tanggal Kontrak*</label>
         <input
           type="date"
           className="border p-2 w-full rounded"
@@ -77,7 +112,7 @@ const KepegawaianSection = ({ updateForm }: any) => {
 
       {/* Selesai Kontrak */}
       <div>
-        <label className="font-semibold">Selesai Kontrak *</label>
+        <label className="font-semibold">Selesai Kontrak*</label>
         <input
           type="date"
           className="border p-2 w-full rounded"
@@ -85,9 +120,10 @@ const KepegawaianSection = ({ updateForm }: any) => {
         />
       </div>
 
+
       {/* Grup */}
       <div>
-        <label className="font-semibold">Grup *</label>
+        <label className="font-semibold">Grup</label>
         <select
           className="border p-2 w-full rounded"
           onChange={(e) => updateForm("grup", e.target.value)}
@@ -98,34 +134,24 @@ const KepegawaianSection = ({ updateForm }: any) => {
         </select>
       </div>
 
-      {/* Bagian */}
+      {/*Kategori Karyawan */}
       <div>
-        <label className="font-semibold">Bagian *</label>
-        <input
-          type="text"
-          placeholder="Isi Bagian Karyawan"
-          className="border p-2 w-full rounded"
-          onChange={(e) => updateForm("bagian", e.target.value)}
-        />
-      </div>
-
-      {/* Golongan Karyawan */}
-      <div>
-        <label className="font-semibold">Golongan Karyawan *</label>
+        <label className="font-semibold">Kategori Karyawan*</label>
         <select
           className="border p-2 w-full rounded"
-          onChange={(e) => updateForm("golongan", e.target.value)}
+          onChange={(e) => updateForm("kategori", e.target.value)}
         >
-          <option>-- Pilih Golongan Karyawan --</option>
-          <option>I</option>
-          <option>II</option>
-          <option>III</option>
+          <option>-- Pilih Kategori Karyawan --</option>
+          <option>Magang</option>
+          <option>PKWT</option>
+          <option>PKWTT</option>
+          <option>KHL</option>
         </select>
       </div>
 
       {/* Status Marital */}
       <div>
-        <label className="font-semibold">Status Marital *</label>
+        <label className="font-semibold">Status Marital*</label>
         <select
           className="border p-2 w-full rounded"
           onChange={(e) => updateForm("marital", e.target.value)}
@@ -137,16 +163,6 @@ const KepegawaianSection = ({ updateForm }: any) => {
           <option>K/3</option>
           <option>K/3</option>
         </select>
-      </div>
-
-      {/* Email */}
-      <div>
-        <label className="font-semibold">Email *</label>
-        <input
-          type="email"
-          className="border p-2 w-full rounded"
-          onChange={(e) => updateForm("email", e.target.value)}
-        />
       </div>
 
       {/* Password */}
@@ -185,4 +201,4 @@ const KepegawaianSection = ({ updateForm }: any) => {
   );
 };
 
-export default KepegawaianSection;
+export default DataKepegawaianSection;

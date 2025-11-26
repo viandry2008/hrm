@@ -4,23 +4,38 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
   return (
     <div className="mt-4 grid grid-cols-2 gap-4">
 
-      {/* Foto */}
-      <div>
-        <label className="font-semibold">Foto Karyawan</label>
-        <input 
-          type="file"
-          className="border p-2 w-full rounded"
-          onChange={(e) => updateForm("foto", e.target.files?.[0])}
-        />
+      {/* Foto Preview + Upload */}
+      <div className="flex items-center gap-4">
+        <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+          {formData.foto ? (
+            <img
+              src={URL.createObjectURL(formData.foto)}
+              alt="Foto"
+              className="w-full h-full object-cover"
+            />
+          ) : (
+            <span className="text-xs text-gray-500">Default</span>
+          )}
+        </div>
+
+        {/* Input File */}
+        <div className="flex-1">
+          <label className="font-semibold block mb-1">File Foto Profile</label>
+          <input
+            type="file"
+            className="border p-2 w-full rounded h-[42px] flex items-center"
+            onChange={(e) => updateForm("foto", e.target.files?.[0])}
+          />
+        </div>
       </div>
 
       {/* Nama */}
-      <div>
-        <label className="font-semibold">Nama Karyawan *</label>
+      <div className="flex flex-col mt-[3px]">
+        <label className="font-semibold mb-1">Nama Karyawan *</label>
         <input
           type="text"
           placeholder="Nama Karyawan"
-          className="border p-2 w-full rounded"
+          className="border p-2 w-full rounded h-[42px]"
           onChange={(e) => updateForm("nama", e.target.value)}
         />
       </div>
@@ -33,6 +48,16 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
           placeholder="08xxx"
           className="border p-2 w-full rounded"
           onChange={(e) => updateForm("telepon", e.target.value)}
+        />
+      </div>
+
+      {/* Email */}
+      <div>
+        <label className="font-semibold">Email *</label>
+        <input
+          type="email"
+          className="border p-2 w-full rounded"
+          onChange={(e) => updateForm("email", e.target.value)}
         />
       </div>
 
@@ -70,31 +95,6 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
         </select>
       </div>
 
-         {/* Alamat KTP */}
-      <div>
-        <label className="font-semibold">Alamat KTP *</label>
-        <textarea
-          placeholder=""
-          className="border p-2 w-full rounded"
-          onChange={(e) => updateForm("alamatKTP", e.target.value)}
-        />
-        <p className="text-xs italic">
-          *) Isi alamat sesuai KTP
-        </p>
-      </div>
-
-       {/* Alamat Domisili */}
-      <div>
-        <label className="font-semibold">Alamat Domisili *</label>
-        <textarea
-          className="border p-2 w-full rounded"
-          onChange={(e) => updateForm("alamatDomisili", e.target.value)}
-        />
-        <p className="text-xs italic">
-          *) Jika mengisi domisili harap input nama kota
-        </p>
-      </div>
-
       {/* Pendidikan */}
       <div>
         <label className="font-semibold">Pendidikan *</label>
@@ -114,6 +114,33 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
           <option>S3</option>
         </select>
       </div>
+
+      {/* Alamat KTP */}
+      <div>
+        <label className="font-semibold">Alamat KTP *</label>
+        <textarea
+          placeholder=""
+          className="border p-2 w-full rounded"
+          onChange={(e) => updateForm("alamatKTP", e.target.value)}
+        />
+        <p className="text-xs italic">
+          *) Isi alamat sesuai KTP
+        </p>
+      </div>
+
+      {/* Alamat Domisili */}
+      <div>
+        <label className="font-semibold">Alamat Domisili *</label>
+        <textarea
+          className="border p-2 w-full rounded"
+          onChange={(e) => updateForm("alamatDomisili", e.target.value)}
+        />
+        <p className="text-xs italic">
+          *) Jika mengisi domisili harap input nama kota
+        </p>
+      </div>
+
+
 
       {/* Agama */}
       <div>

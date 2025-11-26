@@ -7,13 +7,15 @@ import { User, Briefcase, FileText, CreditCard, Phone, Car } from "lucide-react"
 // import BankSection from "./Sections/BankSection";
 // import KontakSection from "./Sections/KontakSection";
 // import KendaraanSection from "./Sections/KendaraanSection";
+// import AkunSection from "./Sections/AkunSection";
 import { Button } from "@/components/ui/button";
 import DataPribadiSection from "@/components/KelolaKaryawan/Sections/DataPribadiSection";
-import KepegawaianSection from "@/components/KelolaKaryawan/Sections/DataKepegawaianSection";
 import DokumenSection from "@/components/KelolaKaryawan/Sections/DokumenSection";
 import BankSection from "@/components/KelolaKaryawan/Sections/BankSection";
 import KontakSection from "@/components/KelolaKaryawan/Sections/KontakSection";
 import KendaraanSection from "@/components/KelolaKaryawan/Sections/KendaraanSection";
+import AkunSection from "@/components/KelolaKaryawan/Sections/AkunSection";
+import DataKepegawaianSection from "@/components/KelolaKaryawan/Sections/DataKepegawaianSection";
 
 const TambahKaryawanPage = () => {
     const [formData, setFormData] = useState<any>({});
@@ -30,8 +32,15 @@ const TambahKaryawanPage = () => {
         <div className="bg-white p-5 rounded-lg shadow-md">
             <h1 className="text-2xl font-bold mb-5">Tambah Karyawan</h1>
 
-            <Tabs defaultValue="data-pribadi" className="w-full">
-                <TabsList className="grid grid-cols-6 w-full bg-blue-100 rounded-md">
+            <Tabs defaultValue="akun" className="w-full">
+                <TabsList className="grid grid-cols-7 w-full bg-blue-100 rounded-md">
+
+                    {/* INFORMASI AKUN */}
+                    <TabsTrigger value="akun" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
+                        <User className="w-4 h-4 mr-2" /> Informasi Akun
+                    </TabsTrigger>
+
+                    {/* DATA PRIBADI */}
                     <TabsTrigger value="data-pribadi" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
                         <User className="w-4 h-4 mr-2" /> Data Pribadi
                     </TabsTrigger>
@@ -45,11 +54,11 @@ const TambahKaryawanPage = () => {
                     </TabsTrigger>
 
                     <TabsTrigger value="bank" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
-                        <CreditCard className="w-4 h-4 mr-2" /> Bank
+                        <CreditCard className="w-4 h-4 mr-2" /> Informasi Bank
                     </TabsTrigger>
 
                     <TabsTrigger value="kontak" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
-                        <Phone className="w-4 h-4 mr-2" /> Kontak
+                        <Phone className="w-4 h-4 mr-2" /> Kontak Darurat
                     </TabsTrigger>
 
                     <TabsTrigger value="kendaraan" className="data-[state=active]:bg-blue-500 data-[state=active]:text-white">
@@ -57,12 +66,17 @@ const TambahKaryawanPage = () => {
                     </TabsTrigger>
                 </TabsList>
 
+                {/* INFORMASI AKUN */}
+                <TabsContent value="akun">
+                    <AkunSection formData={formData} updateForm={updateForm} />
+                </TabsContent>
+
                 <TabsContent value="data-pribadi">
                     <DataPribadiSection formData={formData} updateForm={updateForm} />
                 </TabsContent>
 
                 <TabsContent value="kepegawaian">
-                    <KepegawaianSection formData={formData} updateForm={updateForm} />
+                    <DataKepegawaianSection formData={formData} updateForm={updateForm} />
                 </TabsContent>
 
                 <TabsContent value="dokumen">
