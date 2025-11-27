@@ -44,74 +44,74 @@ const menuItems = [
       { id: 'data-karyawan', label: 'Data Karyawan' },
     ],
   },
-  // {
-  //   id: 'kehadiran',
-  //   label: 'Kehadiran',
-  //   icon: Clock,
-  //   submenu: [
-  //     { id: 'data-kehadiran', label: 'Data Kehadiran' },
-  //     { id: 'rekap-kehadiran', label: 'Rekap Kehadiran' },
-  //   ],
-  // },
-  // { id: 'request-absen', label: 'Request Absen', icon: MapPinCheck },
-  // {
-  //   id: 'cuti',
-  //   label: 'Cuti',
-  //   icon: CalendarClock,
-  //   submenu: [
-  //     { id: 'data-cuti', label: 'Data Cuti' },
-  //     { id: 'rekap-cuti', label: 'Rekap Cuti' },
-  //     { id: 'kategori-cuti', label: 'Kategori Cuti' },
-  //   ],
-  // },
-  // {
-  //   id: 'izin',
-  //   label: 'Izin',
-  //   icon: FileText,
-  //   submenu: [
-  //     { id: 'data-izin', label: 'Data Izin' },
-  //     { id: 'rekap-izin', label: 'Rekap Izin' },
-  //   ],
-  // },
-  // {
-  //   id: 'lembur',
-  //   label: 'Lembur',
-  //   icon: CalendarClock,
-  //   submenu: [
-  //     { id: 'data-lembur', label: 'Data Lembur' },
-  //     { id: 'rekap-lembur', label: 'Rekap Lembur' },
-  //   ],
-  // },
-  // {
-  //   id: 'penggajian',
-  //   label: 'Penggajian',
-  //   icon: DollarSign,
-  //   submenu: [
-  //     { id: 'hitung-gaji', label: 'Hitung Gaji' },
-  //     { id: 'rekap-gaji', label: 'Rekap Gaji' },
-  //   ],
-  // },
-  // {
-  //   id: 'jadwal-shift',
-  //   label: 'Jadwal Shift',
-  //   icon: Calendar,
-  //   submenu: [
-  //     { id: 'shift', label: 'Shift' },
-  //     { id: 'group', label: 'Group' },
-  //     { id: 'atur-shift', label: 'Atur Shift' },
-  //     { id: 'rekap-jadwal', label: 'Rekap Jadwal' },
-  //   ],
-  // },
-  // { id: 'pinjaman', label: 'Pinjaman', icon: CreditCard },
-  // { id: 'reimbursement', label: 'Reimbursement', icon: Receipt },
-  // { id: 'kontrak-kerja', label: 'Kontrak Kerja', icon: Users },
-  // { id: 'paklaring', label: 'Paklaring', icon: FileCheck },
-  // { id: 'surat-peringatan', label: 'Surat Peringatan', icon: AlertTriangle },
-  // { id: 'pengunduran-diri', label: 'Surat Pengunduran Diri', icon: Mail },
-  // { id: 'keterangan-bekerja', label: 'Surat Keterangan Bekerja', icon: Mail },
-  // { id: 'po', label: 'PO', icon: ShoppingCart },
-  // { id: 'kpi', label: 'KPI', icon: BarChart3 },
-  // { id: 'pengaturan', label: 'Pengaturan Akun', icon: Settings },
+  {
+    id: 'kehadiran',
+    label: 'Kehadiran',
+    icon: Clock,
+    submenu: [
+      { id: 'data-kehadiran', label: 'Data Kehadiran' },
+      { id: 'rekap-kehadiran', label: 'Rekap Kehadiran' },
+    ],
+  },
+  { id: 'request-absen', label: 'Request Absen', icon: MapPinCheck },
+  {
+    id: 'cuti',
+    label: 'Cuti',
+    icon: CalendarClock,
+    submenu: [
+      { id: 'data-cuti', label: 'Data Cuti' },
+      { id: 'rekap-cuti', label: 'Rekap Cuti' },
+      { id: 'kategori-cuti', label: 'Kategori Cuti' },
+    ],
+  },
+  {
+    id: 'izin',
+    label: 'Izin',
+    icon: FileText,
+    submenu: [
+      { id: 'data-izin', label: 'Data Izin' },
+      { id: 'rekap-izin', label: 'Rekap Izin' },
+    ],
+  },
+  {
+    id: 'lembur',
+    label: 'Lembur',
+    icon: CalendarClock,
+    submenu: [
+      { id: 'data-lembur', label: 'Data Lembur' },
+      { id: 'rekap-lembur', label: 'Rekap Lembur' },
+    ],
+  },
+  {
+    id: 'penggajian',
+    label: 'Penggajian',
+    icon: DollarSign,
+    submenu: [
+      { id: 'hitung-gaji', label: 'Hitung Gaji' },
+      { id: 'rekap-gaji', label: 'Rekap Gaji' },
+    ],
+  },
+  {
+    id: 'jadwal-shift',
+    label: 'Jadwal Shift',
+    icon: Calendar,
+    submenu: [
+      { id: 'shift', label: 'Shift' },
+      { id: 'group', label: 'Group' },
+      { id: 'atur-shift', label: 'Atur Shift' },
+      { id: 'rekap-jadwal', label: 'Rekap Jadwal' },
+    ],
+  },
+  { id: 'pinjaman', label: 'Pinjaman', icon: CreditCard },
+  { id: 'reimbursement', label: 'Reimbursement', icon: Receipt },
+  { id: 'kontrak-kerja', label: 'Kontrak Kerja', icon: Users },
+  { id: 'paklaring', label: 'Paklaring', icon: FileCheck },
+  { id: 'surat-peringatan', label: 'Surat Peringatan', icon: AlertTriangle },
+  { id: 'pengunduran-diri', label: 'Surat Pengunduran Diri', icon: Mail },
+  { id: 'keterangan-bekerja', label: 'Surat Keterangan Bekerja', icon: Mail },
+  { id: 'po', label: 'PO', icon: ShoppingCart },
+  { id: 'kpi', label: 'KPI', icon: BarChart3 },
+  { id: 'pengaturan', label: 'Pengaturan Akun', icon: Settings },
 ];
 
 export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
