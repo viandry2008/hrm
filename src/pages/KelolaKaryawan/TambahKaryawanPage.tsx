@@ -2,11 +2,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import AkunSection from "@/components/KelolaKaryawan/Sections/AkunSection";
 import DataPribadiSection from "@/components/KelolaKaryawan/Sections/DataPribadiSection";
-import KepegawaianSection from "@/components/KelolaKaryawan/Sections/DataKepegawaianSection";
+import DataKepegawaianSection from "@/components/KelolaKaryawan/Sections/DataKepegawaianSection";
 import DokumenSection from "@/components/KelolaKaryawan/Sections/DokumenSection";
 import BankSection from "@/components/KelolaKaryawan/Sections/BankSection";
 import KontakSection from "@/components/KelolaKaryawan/Sections/KontakSection";
 import KendaraanSection from "@/components/KelolaKaryawan/Sections/KendaraanSection";
+import InformasiGajiSection from "@/components/KelolaKaryawan/Sections/InformasiGajiSection";
 
 const TambahKaryawanPage = () => {
     const [formData, setFormData] = useState<any>({});
@@ -26,10 +27,8 @@ const TambahKaryawanPage = () => {
             <div className="space-y-6">
                 <AkunSection formData={formData} updateForm={updateForm} />
                 <DataPribadiSection formData={formData} updateForm={updateForm} />
-
-                {/* Data Kepegawaian — Header biru langsung di komponennya */}
-                <KepegawaianSection formData={formData} updateForm={updateForm} />
-
+                <DataKepegawaianSection formData={formData} updateForm={updateForm} />
+                <InformasiGajiSection formData={formData} updateForm={updateForm} />
                 <DokumenSection formData={formData} updateForm={updateForm} />
                 <BankSection formData={formData} updateForm={updateForm} />
                 <KontakSection formData={formData} updateForm={updateForm} />

@@ -7,51 +7,59 @@ import { Label } from "@/components/ui/label";
 const DataPribadiSection = ({ formData, updateForm }: any) => {
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-      {/* Header Biru #2794EB */}
       <div className="flex items-center space-x-2 p-3 bg-[#2794EB] text-white rounded-t-lg">
         <User className="w-5 h-5" />
         <h3 className="font-semibold">Data Pribadi</h3>
       </div>
-
       <div className="p-4">
         <div className="grid grid-cols-2 gap-6">
+
           {/* FOTO */}
           <div className="flex items-center gap-4">
-            <div className="w-20 h-20 rounded-full bg-gray-200 flex items-center justify-center overflow-hidden">
+
+            {/* PREVIEW FOTO */}
+            <div className="w-20 h-20 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center overflow-hidden shadow-sm">
               {formData.foto ? (
                 <img
                   src={URL.createObjectURL(formData.foto)}
-                  alt="foto"
+                  alt="avatar"
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <span className="text-xs text-gray-500">Default</span>
+                <User className="w-10 h-10 text-gray-400" />
               )}
             </div>
 
+            {/* CUSTOM FILE INPUT */}
             <div className="flex-1">
               <Label className="font-semibold mb-1 block">File Foto Profile</Label>
-              <Input
+
+              <div className="flex items-center h-[42px] border border-gray-300 rounded-md overflow-hidden">
+                <label
+                  htmlFor="fotoUpload"
+                  className="bg-blue-600 text-white px-4 py-5 cursor-pointer hover:bg-blue-700 transition text-sm flex items-center"
+                >
+                  Pilih File
+                </label>
+
+                <span className="px-3 text-sm text-gray-600 truncate">
+                  {formData.foto ? formData.foto.name : "Tidak ada file yang dipilih"}
+                </span>
+              </div>
+
+              <input
+                id="fotoUpload"
                 type="file"
+                accept="image/*"
+                className="hidden"
                 onChange={(e) => updateForm("foto", e.target.files?.[0])}
-                className="
-                h-[42px]
-                h-[42px]
-                file:bg-blue-600
-                file:text-white
-                file:border-0
-                file:px-4
-                file:py-2
-                file:rounded-md
-                file:cursor-pointer
-                hover:file:bg-blue-700"
               />
             </div>
           </div>
 
           {/* NAMA */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Nama Karyawan *</Label>
+            <Label className="font-semibold mb-1">Nama Karyawan <span className="text-red-500">*</span></Label>
             <Input
               type="text"
               placeholder="Nama Karyawan"
@@ -62,7 +70,7 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
 
           {/* TELEPON */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Nomor Telepon *</Label>
+            <Label className="font-semibold mb-1">Nomor Telepon <span className="text-red-500">*</span></Label>
             <Input
               type="text"
               placeholder="08xxx"
@@ -73,7 +81,7 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
 
           {/* TEMPAT LAHIR */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Tempat Lahir *</Label>
+            <Label className="font-semibold mb-1">Tempat Lahir <span className="text-red-500">*</span></Label>
             <Input
               type="text"
               placeholder="Tempat Lahir"
@@ -85,7 +93,7 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
 
           {/* TANGGAL LAHIR */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold">Tanggal Lahir *</Label>
+            <Label className="font-semibold">Tanggal Lahir <span className="text-red-500">*</span></Label>
             <Input
               type="date"
               className="bg-[#ffff] text-sm"
@@ -95,7 +103,7 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
 
           {/* JENIS KELAMIN */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Jenis Kelamin *</Label>
+            <Label className="font-semibold mb-1">Jenis Kelamin <span className="text-red-500">*</span></Label>
             <Select onValueChange={(value) => updateForm("jeniskelamin", value)}>
               <SelectTrigger className="h-[42px] bg-white">
                 <SelectValue placeholder="-- Pilih Jenis Kelamin --" />
@@ -110,7 +118,7 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
 
           {/* ALAMAT KTP */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Alamat KTP *</Label>
+            <Label className="font-semibold mb-1">Alamat KTP <span className="text-red-500">*</span></Label>
             <textarea
               className="border rounded-md px-3 py-2 bg-white"
               onChange={(e) => updateForm("alamatKTP", e.target.value)}
@@ -121,7 +129,7 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
 
           {/* ALAMAT DOMISILI */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Alamat Domisili *</Label>
+            <Label className="font-semibold mb-1">Alamat Domisili <span className="text-red-500">*</span></Label>
             <textarea
               className="border rounded-md px-3 py-2 bg-white"
               onChange={(e) => updateForm("alamatDomisili", e.target.value)}
@@ -131,7 +139,7 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
 
           {/* PENDIDIKAN */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Pendidikan *</Label>
+            <Label className="font-semibold mb-1">Pendidikan <span className="text-red-500">*</span></Label>
             <Select onValueChange={(value) => updateForm("pendidikan", value)}>
               <SelectTrigger className="h-[42px] bg-white">
                 <SelectValue placeholder="-- Pilih Pendidikan --" />
@@ -150,10 +158,9 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
             </Select>
           </div>
 
-
           {/* AGAMA */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Agama *</Label>
+            <Label className="font-semibold mb-1">Agama <span className="text-red-500">*</span></Label>
             <Select onValueChange={(value) => updateForm("agama", value)}>
               <SelectTrigger className="h-[42px] bg-white">
                 <SelectValue placeholder="-- Pilih Agama --" />

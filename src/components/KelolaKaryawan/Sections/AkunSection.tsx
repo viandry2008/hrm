@@ -12,18 +12,17 @@ interface AkunSectionProps {
 const AkunSection: React.FC<AkunSectionProps> = ({ formData, updateForm }) => {
     return (
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-            {/* Header Biru #2794EB */}
             <div className="flex items-center space-x-2 p-3 bg-[#2794EB] text-white rounded-t-lg">
                 <User className="w-5 h-5" />
                 <h3 className="font-semibold">Informasi Akun</h3>
             </div>
-
-            {/* Konten Form */}
             <div className="p-4">
                 <div className="grid grid-cols-2 gap-6">
+
                     {/* USERNAME */}
                     <div className="flex flex-col gap-2">
-                        <Label className="font-semibold text-sm">Username *</Label>
+                        <Label className="font-semibold text-sm">Username <span className="text-red-500">*</span></Label>
+
                         <Input
                             type="text"
                             placeholder="Masukkan username"
@@ -35,7 +34,7 @@ const AkunSection: React.FC<AkunSectionProps> = ({ formData, updateForm }) => {
 
                     {/* EMAIL */}
                     <div className="flex flex-col gap-2">
-                        <Label className="font-semibold text-sm">Email *</Label>
+                        <Label className="font-semibold text-sm">Email <span className="text-red-500">*</span></Label>
                         <Input
                             type="text"
                             placeholder="Masukkan email"
@@ -47,7 +46,7 @@ const AkunSection: React.FC<AkunSectionProps> = ({ formData, updateForm }) => {
 
                     {/* PASSWORD */}
                     <div className="flex flex-col gap-2">
-                        <Label className="font-semibold text-sm">Password *</Label>
+                        <Label className="font-semibold text-sm">Password <span className="text-red-500">*</span></Label>
                         <Input
                             type="password"
                             placeholder="••••"
@@ -59,7 +58,7 @@ const AkunSection: React.FC<AkunSectionProps> = ({ formData, updateForm }) => {
 
                     {/* ROLE */}
                     <div className="flex flex-col gap-2">
-                        <Label className="font-semibold text-sm">Role *</Label>
+                        <Label className="font-semibold text-sm">Role <span className="text-red-500">*</span></Label>
                         <Select
                             onValueChange={(value) => updateForm("role", value)}
                             value={formData.role || ""}

@@ -7,19 +7,16 @@ import { Label } from "@/components/ui/label";
 const DataKepegawaianSection = ({ updateForm, formData }: any) => {
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-      {/* Header Biru #2794EB */}
       <div className="flex items-center space-x-2 p-3 bg-[#2794EB] text-white rounded-t-lg">
         <Briefcase className="w-5 h-5" />
         <h3 className="font-semibold">Data Kepegawaian</h3>
       </div>
-
-      {/* Konten Form (TIDAK DIUBAH) */}
       <div className="p-4">
         <div className="grid grid-cols-2 gap-6">
 
           {/* ID Karyawan */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold">ID Karyawan *</Label>
+            <Label className="font-semibold">ID Karyawan <span className="text-red-500">*</span></Label>
             <Input
               type="text"
               className="bg-[#f9fbfd] text-sm"
@@ -31,7 +28,7 @@ const DataKepegawaianSection = ({ updateForm, formData }: any) => {
 
           {/* Divisi */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold">Divisi *</Label>
+            <Label className="font-semibold">Divisi <span className="text-red-500">*</span></Label>
             <Select
               onValueChange={(value) => updateForm("divisi", value)}
               defaultValue={formData?.divisi}
@@ -55,7 +52,7 @@ const DataKepegawaianSection = ({ updateForm, formData }: any) => {
 
           {/* Jabatan */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold">Jabatan *</Label>
+            <Label className="font-semibold">Jabatan <span className="text-red-500">*</span></Label>
             <Select
               onValueChange={(value) => updateForm("jabatan", value)}
               defaultValue={formData?.jabatan}
@@ -81,7 +78,7 @@ const DataKepegawaianSection = ({ updateForm, formData }: any) => {
 
           {/* Bagian */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold">Bagian *</Label>
+            <Label className="font-semibold">Bagian <span className="text-red-500">*</span></Label>
             <Select
               onValueChange={(value) => updateForm("bagian", value)}
               defaultValue={formData?.bagian}
@@ -108,7 +105,7 @@ const DataKepegawaianSection = ({ updateForm, formData }: any) => {
 
           {/* Lokasi Kerja */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold">Lokasi Kerja *</Label>
+            <Label className="font-semibold">Lokasi Kerja <span className="text-red-500">*</span></Label>
             <Select
               onValueChange={(value) => updateForm("lokasi", value)}
               defaultValue={formData?.lokasi}
@@ -124,7 +121,7 @@ const DataKepegawaianSection = ({ updateForm, formData }: any) => {
 
           {/* Tanggal Bergabung */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold">Tanggal Bergabung *</Label>
+            <Label className="font-semibold">Tanggal Bergabung <span className="text-red-500">*</span></Label>
             <Input
               type="date"
               className="bg-[#ffff] text-sm"
@@ -135,7 +132,7 @@ const DataKepegawaianSection = ({ updateForm, formData }: any) => {
 
           {/* Tanggal Kontrak */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold">Tanggal Kontrak *</Label>
+            <Label className="font-semibold">Tanggal Kontrak <span className="text-red-500">*</span></Label>
             <Input
               type="date"
               className="bg-[#ffff] text-sm"
@@ -146,7 +143,7 @@ const DataKepegawaianSection = ({ updateForm, formData }: any) => {
 
           {/* Selesai Kontrak */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold">Selesai Kontrak *</Label>
+            <Label className="font-semibold">Selesai Kontrak <span className="text-red-500">*</span></Label>
             <Input
               type="date"
               className="bg-[#ffff] text-sm"
@@ -174,7 +171,7 @@ const DataKepegawaianSection = ({ updateForm, formData }: any) => {
 
           {/* Kategori Karyawan */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold">Kategori Karyawan *</Label>
+            <Label className="font-semibold">Kategori Karyawan <span className="text-red-500">*</span></Label>
             <Select
               onValueChange={(value) => updateForm("kategori", value)}
               defaultValue={formData?.kategori}
@@ -193,7 +190,7 @@ const DataKepegawaianSection = ({ updateForm, formData }: any) => {
 
           {/* Status Marital */}
           <div className="flex flex-col gap-2">
-            <Label className="font-semibold">Status Marital *</Label>
+            <Label className="font-semibold">Status Marital <span className="text-red-500">*</span></Label>
             <Select
               onValueChange={(value) => updateForm("marital", value)}
               defaultValue={formData?.marital}

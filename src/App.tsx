@@ -33,6 +33,7 @@ import { KelolaKaryawanPage } from "./pages/KelolaKaryawan/KelolaKaryawanPage";
 import { DataKaryawanPage } from "./pages/KelolaKaryawan/DataKaryawanPage";
 import { DivisiPage } from "./pages/KelolaKaryawan/DivisiPage";
 import { JabatanPage } from "./pages/KelolaKaryawan/JabatanPage";
+import { BagianPage } from "./pages/KelolaKaryawan/BagianPage";
 import { KontrakKerjaPage } from "./components/KontrakKerjaPage";
 
 // Auth
@@ -40,6 +41,8 @@ import { PrivateRoute } from "@/components/PrivateRoute";
 import { LoginPage } from "./pages/auth/LoginPage";
 import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
 import TambahKaryawanPage from "./pages/KelolaKaryawan/TambahKaryawanPage";
+import { DataKehadiranPage } from "./pages/Kehadiran/DataKehadiranPage";
+import { RekapKehadiranPage } from "./pages/Kehadiran/RekapKehadiranPage";
 
 const queryClient = new QueryClient();
 
@@ -59,15 +62,16 @@ const App = () => (
             <Route path="/" element={<PrivateRoute />}>
               <Route path="" element={<HRISApp />}>
                 <Route path="dashboard" element={< DashboardPage />} />
-                {/* <Route path="kehadiran-page" element={<KehadiranPage />} />
-                  <Route path="data-kehadiran" element={<DataKehadiranPage />} />
-                  <Route path="rekap-kehadiran" element={<RekapKehadiranPage />} /> */}
+                {/* <Route path="kehadiran-page" element={<KehadiranPage />} /> */}
+                <Route path="data-kehadiran" element={<DataKehadiranPage />} />
+                <Route path="rekap-kehadiran" element={<RekapKehadiranPage />} />
                 <Route path="kelola-karyawan" element={<KelolaKaryawanPage />} />
                 <Route path="tambah-karyawan" element={<TambahKaryawanPage />} />
                 <Route path="data-karyawan" element={<DataKaryawanPage />} />
                 <Route path="request-absen" element={<RequestAbsenPage />} />
                 <Route path="divisi" element={<DivisiPage />} />
                 <Route path="jabatan" element={<JabatanPage />} />
+                <Route path="bagian" element={<BagianPage />} />
                 <Route path="data-cuti" element={<DataCutiPage />} />
                 <Route path="data-izin" element={<DataIzinPage />} />
                 <Route path="data-lembur" element={<DataLemburPage />} />
