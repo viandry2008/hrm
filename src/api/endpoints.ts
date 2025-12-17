@@ -15,6 +15,9 @@ export const ENDPOINTS = {
     // position
     POSITIONS: "/positions",
 
+    // section
+    SECTIONS: "/sections",
+
     // employee
     EMPLOYEES: "/employees",
     EMPLOYEES_SUMMARY: "/employees/summary",
