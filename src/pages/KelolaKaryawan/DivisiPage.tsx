@@ -261,7 +261,7 @@ export const DivisiPage = () => {
       {/* Modal */}
       <DivisionFormModal
         open={modalOpen}
-        onClose={() => setModalOpen(false)}
+        onClose={setModalOpen}
         initialData={editData}
         loading={createMutation.isPending || updateMutation.isPending}
         onSubmit={handleSubmit}
