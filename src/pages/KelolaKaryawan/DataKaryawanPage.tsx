@@ -31,17 +31,20 @@ import {
 } from 'lucide-react';
 import { useDeleteEmployee, useDeleteMultipleEmployee, useGetEmployees, useGetEmployeeSummary, useUpdateMultipleContractEmployee, useUpdateMultipleStatusEmployee } from '@/api/employee/employee.query';
 import { useNavigate } from 'react-router-dom';
+import * as Dialog from '@radix-ui/react-dialog';
+import { Cross2Icon } from '@radix-ui/react-icons';
 
 // Komponen Label Status
 const StatusLabel = ({ status }: { status: string }) => {
   const isAktif = status === 'Active';
-  const color = isAktif ? 'bg-green-700 text-white' : 'bg-red-700 text-white';
+  const textAktif = status === 'Active' ? 'Aktif' : 'Tidak Aktif';
+  const color = isAktif ? 'bg-green-600 text-white' : 'bg-red-600 text-white';
   const Icon = isAktif ? CheckCircle : XCircle;
 
   return (
-    <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${color} whitespace-nowrap max-w-full truncate`}>
+    <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-md ${color} whitespace-nowrap max-w-full truncate`}>
       <Icon className="w-3 h-3" />
-      {status}
+      {textAktif}
     </span>
   );
 };
@@ -80,6 +83,9 @@ export const DataKaryawanPage = () => {
   const [contractStart, setContractStart] = useState("");
   const [contractEnd, setContractEnd] = useState("");
   const [contractNotes, setContractNotes] = useState("");
+
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
   const { data, isLoading, refetch } = useGetEmployees({
     search: searchTerm,
@@ -246,7 +252,57 @@ export const DataKaryawanPage = () => {
     );
   };
 
+  const handleViewDetail = (id: string) => {
+    navigate(`/detail-karyawan/${id}`);
+  };
 
+  const openUploadModal = () => {
+    setIsUploadModalOpen(true);
+    setSelectedFile(null);
+  };
+
+  const closeUploadModal = () => {
+    setIsUploadModalOpen(false);
+  };
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
+    }
+  };
+
+  const handleUpload = () => {
+    if (!selectedFile) {
+      Swal.fire({
+        title: 'Error!',
+        text: 'Silakan pilih file Excel terlebih dahulu.',
+        icon: 'error',
+        timer: 2000,
+        showConfirmButton: false,
+        background: '#3b82f6',
+        color: '#ffffff',
+        customClass: {
+          popup: 'bg-blue-500 text-white',
+        },
+      });
+      return;
+    }
+
+    Swal.fire({
+      title: 'Berhasil!',
+      text: `File "${selectedFile.name}" berhasil diunggah.`,
+      icon: 'success',
+      timer: 2000,
+      showConfirmButton: false,
+      background: '#3b82f6',
+      color: '#ffffff',
+      customClass: {
+        popup: 'bg-blue-500 text-white',
+      },
+    });
+
+    closeUploadModal();
+  };
 
   return (
     <div className="p-6 space-y-6">
@@ -354,13 +410,17 @@ export const DataKaryawanPage = () => {
               </div>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" className="flex items-center gap-1">
+              <Button
+                variant="outline"
+                className="flex items-center gap-1"
+                onClick={openUploadModal}
+              >
                 <Upload className="w-4 h-4" />
-                Import
+                Unggah Data
               </Button>
               <Button variant="outline" className="flex items-center gap-1">
                 <Download className="w-4 h-4" />
-                Export
+                Download Data
               </Button>
               <Button className="bg-blue-600 text-white hover:bg-blue-700"
                 onClick={() => {
@@ -443,10 +503,11 @@ export const DataKaryawanPage = () => {
                       {formatTanggal(k.latest_contract.end_date)}
                     </TableCell>
                     <TableCell className="border border-gray-200">
-                      {/* {k.status_kerja} */}
-                      Aktif
+                      <StatusLabel status={k.employment_status} />
                     </TableCell>
-                    <TableCell className="border border-gray-200"><StatusLabel status={k.employment_status} /></TableCell>
+                    <TableCell className="border border-gray-200">
+                      <StatusLabel status={k.employment_status} />
+                    </TableCell>
                     <TableCell className="border border-gray-200">
                       <ReminderLabel text={"Kontrak akan habis dalam 365 hari"} />
                     </TableCell>
@@ -519,6 +580,112 @@ export const DataKaryawanPage = () => {
           </div>
         </CardContent>
       </Card>
+
+      {/* Modal Upload */}
+      <Dialog.Root open={isUploadModalOpen} onOpenChange={setIsUploadModalOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50 z-[9998]" />
+          <Dialog.Content className="fixed z-[9999] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white w-full max-w-2xl rounded-lg shadow-lg p-6 focus:outline-none max-h-[90vh] overflow-y-auto">
+            <div className="flex justify-between items-center mb-4 border-b pb-2">
+              <Dialog.Title className="text-xl font-bold">Unggah Data Baru Karyawan</Dialog.Title>
+              <Dialog.Close asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0 hover:bg-gray-200"
+                >
+                  <Cross2Icon className="h-4 w-4" />
+                </Button>
+              </Dialog.Close>
+            </div>
+
+            {/* Bagian Unggah Excel */}
+            <div className="mb-6 pt-2">
+              <label className="font-medium text-sm text-gray-700 block mb-2">Unggah dokumen Excel</label>
+              <div className="flex items-center gap-0">
+                <input
+                  type="file"
+                  accept=".xlsx, .xls"
+                  onChange={handleFileChange}
+                  className="hidden"
+                  id="upload-excel"
+                />
+                <label
+                  htmlFor="upload-excel"
+                  className="border border-gray-300 p-2 rounded-l-md bg-gray-100 text-sm text-gray-700 cursor-pointer whitespace-nowrap"
+                >
+                  Pilih File
+                </label>
+                <div className="border border-gray-300 p-2 rounded-r-md w-full text-sm text-gray-400 truncate">
+                  {selectedFile ? selectedFile.name : "Tidak ada file yang dipilih"}
+                </div>
+              </div>
+              <a href="#" className="text-blue-600 hover:text-blue-800 text-sm mt-2 inline-block">
+                Download Template disini
+              </a>
+            </div>
+
+            {/* Panduan Pengisian */}
+            <div className="mb-6">
+              <h3 className="font-semibold mb-2">Panduan pengisian data karyawan di excel</h3>
+              <ul className="list-disc pl-5 space-y-1 text-sm">
+                <li>
+                  Kolom <strong>Username</strong> harus diisi dengan 3–20 karakter tanpa spasi, hanya huruf, angka, titik (<code>.</code>) atau underscore (<code>_</code>), dan tidak boleh diawali dengan simbol.
+                </li>
+                <li>
+                  Password akun karyawan yang baru ditambahkan akan menggunakan password otomatis dari sistem: <strong>“1234”</strong>.
+                </li>
+                <li>
+                  Kolom <strong>Email</strong> harus diisi dengan format <code>nama@domain.com</code> tanpa spasi dan menggunakan domain yang valid.
+                </li>
+                <li>
+                  Kolom <strong>Role</strong> hanya dapat diisi dengan salah satu pilihan berikut: “Karyawan”, “Atasan”, “HRD”, “Direktur”, atau “Finance”.
+                </li>
+                <li>
+                  Pengisian <strong>Tanggal</strong> harus berformat <strong>DD/MM/YYYY</strong>. Contoh: <code>25/05/2025</code>.
+                </li>
+                <li>
+                  Kolom <strong>Jenis Kelamin</strong> hanya dapat diisi dengan “L” (Laki-laki) atau “P” (Perempuan).
+                </li>
+                <li>
+                  Kolom <strong>Pendidikan</strong> hanya dapat diisi dengan salah satu pilihan berikut: “SD”, “SMP”, “SMA”, “SMK”, “MA”, “D1”, “D2”, “D3”, “D4”, “S1”, “S2”, atau “S3”.
+                </li>
+                <li>
+                  Kolom <strong>Agama</strong> hanya dapat diisi dengan salah satu dari pilihan berikut: “Islam”, “Kristen”, “Katolik”, “Hindu”, “Buddha”, “Konghucu”, atau “Atheis”. Pengisian di luar opsi ini akan dianggap tidak valid.
+                </li>
+                <li>
+                  Sebelum mengisi kolom <strong>Divisi</strong>, <strong>Jabatan</strong>, <strong>Bagian</strong>, dan <strong>Lokasi Kerja</strong>, pastikan bahwa data tersebut sudah terdaftar dalam aplikasi yang digunakan serta penulisannya harus sama persis antara data yang tersedia di sistem dengan data yang diisi di Excel.
+                </li>
+                <li>
+                  Kolom <strong>Kategori Karyawan</strong> hanya dapat diisi dengan salah satu pilihan berikut: “Magang”, “PKWT”, “PKWTT”, “KHL”, “Harian”, atau “Borongan”.
+                </li>
+                <li>
+                  Kolom <strong>Status Marital</strong> hanya dapat diisi dengan salah satu pilihan berikut: “TK/0”, “TK/1”, “TK/2”, “TK/3”, “K/0”, “K/1”, “K/2”, atau “K/3”.
+                </li>
+                <li>
+                  Kolom <strong>Nomor KTP, KK, NPWP, KPJ, JKN, SIM</strong>, dan <strong>STNK</strong> harus diisi sesuai format resmi yang berlaku.
+                </li>
+                <li>
+                  Kolom <strong>Hubungan</strong> hanya dapat diisi dengan salah satu pilihan berikut: “Orang Tua (Ayah)”, “Orang Tua (Ibu)”, “Suami”, “Istri”, “Saudara Kandung”, “Saudara Sepupu”, “Teman”, atau “Lainnya”.
+                </li>
+              </ul>
+            </div>
+
+            {/* Tombol Aksi */}
+            <div className="flex justify-end gap-3">
+              <Dialog.Close asChild>
+                <Button variant="outline">Batal</Button>
+              </Dialog.Close>
+              <Button
+                className="bg-blue-600 text-white hover:bg-blue-700"
+                onClick={handleUpload}
+              >
+                Upload
+              </Button>
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
 
       {/* Modal untuk menampilkan lokasi */}
       {isOpen && (
