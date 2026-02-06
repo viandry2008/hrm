@@ -7,7 +7,7 @@ export const ENDPOINTS = {
     USER_PROFILE: "/me",
 
     // trial
-    TRIAL_REGISTER: "register-trial",
+    TRIAL_REGISTER: "register",
 
     // department / division
     DEPARTMENTS: "/departments",
