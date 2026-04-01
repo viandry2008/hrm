@@ -75,6 +75,8 @@ export const DataKaryawanPage = () => {
   const [showEntries, setShowEntries] = useState("10");
   const [currentPage, setCurrentPage] = useState(1);
 
+  const [filterStatus, setFilterStatus] = useState<string>('all');
+
   const [selectedIds, setSelectedIds] = useState<number[]>([]);
   const [selectAll, setSelectAll] = useState(false);
   // State modal perbarui kontrak
@@ -252,8 +254,9 @@ export const DataKaryawanPage = () => {
     );
   };
 
-  const handleViewDetail = (id: string) => {
-    navigate(`/detail-karyawan/${id}`);
+  const handleViewDetail = (id: number) => {
+    // navigate(`/detail-karyawan/${id}`);
+    navigate(`/detail-karyawan/K001`);
   };
 
   const openUploadModal = () => {
@@ -379,6 +382,21 @@ export const DataKaryawanPage = () => {
             >
               <Trash className="w-4 h-4" /> Hapus karyawan terpilih
             </Button>
+
+            {/* filter status */}
+            <Select value={filterStatus} onValueChange={setFilterStatus}>
+              <SelectTrigger className="w-[240px]">
+                <SelectValue>
+                  {filterStatus === 'all' ? '-- Filter berdasarkan status --' : null}
+                </SelectValue>
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">Semua Karyawan</SelectItem>
+                <SelectItem value="aktif">Karyawan Aktif</SelectItem>
+                <SelectItem value="tidak_aktif">Karyawan Tidak Aktif</SelectItem>
+                <SelectItem value="habis_kontrak">Karyawan Habis Kontrak</SelectItem>
+              </SelectContent>
+            </Select>
           </div>
           <div className="flex justify-between items-center flex-wrap gap-4">
             <div className="flex items-center gap-4 flex-wrap">
@@ -410,23 +428,27 @@ export const DataKaryawanPage = () => {
               </div>
             </div>
             <div className="flex gap-2">
+              {/* 🔵 Tombol Unggah Data berwarna biru */}
               <Button
                 variant="outline"
-                className="flex items-center gap-1"
+                className="bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1"
                 onClick={openUploadModal}
               >
                 <Upload className="w-4 h-4" />
                 Unggah Data
               </Button>
-              <Button variant="outline" className="flex items-center gap-1">
+              {/* 🟢 Tombol Download Data berwarna hijau */}
+              <Button
+                variant="outline"
+                className="bg-green-500 hover:bg-green-600 text-white flex items-center gap-1"
+              >
                 <Download className="w-4 h-4" />
                 Download Data
               </Button>
-              <Button className="bg-blue-600 text-white hover:bg-blue-700"
-                onClick={() => {
-                  console.log("Tombol diklik!");
-                  navigate('/tambah-karyawan');
-                }}>
+              <Button
+                className="bg-blue-600 text-white hover:bg-blue-700"
+                onClick={() => navigate('/tambah-karyawan')}
+              >
                 + Tambah Karyawan
               </Button>
             </div>
@@ -434,7 +456,7 @@ export const DataKaryawanPage = () => {
           <div className="overflow-auto rounded border border-gray-300">
             <Table className="w-full border border-gray-300 border-collapse">
               <TableHeader>
-                <TableRow className="bg-[#196de3] hover:bg-[#196de3] text-white">
+                <TableRow className="bg-[#2794eb] hover:bg-[#2794eb] text-white">
                   <TableHead className="text-white border border-gray-200">
                     <input
                       type="checkbox"
@@ -514,7 +536,16 @@ export const DataKaryawanPage = () => {
 
                     <TableCell>
                       <div className="flex gap-2">
-                        <Button size="sm" className="bg-blue-600 text-white"><Eye className="w-4 h-4" /></Button>
+                        {/* <Button size="sm" className="bg-blue-600 text-white"><Eye className="w-4 h-4" /></Button> */}
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="bg-blue-600 text-white hover:bg-blue-700"
+                          title="Lihat Detail"
+                          onClick={() => handleViewDetail(k.id)}
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
                         <Button size="sm" className="bg-red-600 text-white" onClick={() => handleDeleteSingle(k.id)}>
                           <Trash2 className="w-4 h-4" />
                         </Button>

@@ -43,6 +43,7 @@ import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
 import TambahKaryawanPage from "./pages/KelolaKaryawan/TambahKaryawanPage";
 import { DataKehadiranPage } from "./pages/Kehadiran/DataKehadiranPage";
 import { RekapKehadiranPage } from "./pages/Kehadiran/RekapKehadiranPage";
+import DetailKaryawanPage from "./pages/KelolaKaryawan/DetailKaryawanPage";
 
 const queryClient = new QueryClient();
 
@@ -68,6 +69,7 @@ const App = () => (
                 <Route path="kelola-karyawan" element={<KelolaKaryawanPage />} />
                 <Route path="tambah-karyawan" element={<TambahKaryawanPage />} />
                 <Route path="data-karyawan" element={<DataKaryawanPage />} />
+                <Route path="detail-karyawan/:id" element={<DetailKaryawanPage />} />
                 <Route path="request-absen" element={<RequestAbsenPage />} />
                 <Route path="divisi" element={<DivisiPage />} />
                 <Route path="jabatan" element={<JabatanPage />} />
