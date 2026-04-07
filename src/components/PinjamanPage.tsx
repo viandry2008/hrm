@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Plus, Eye, Trash2, ChevronLeft, ChevronRight, Clock, CheckCircle, XCircle, FileText } from 'lucide-react';
+import { PinjamanModal } from './PinjamanModal';
+import Swal from 'sweetalert2';
 
 interface PinjamanData {
   no: number;
@@ -21,7 +23,6 @@ interface PinjamanData {
   status: 'Menunggu Disetujui' | 'Disetujui' | 'Ditolak';
   tanggalDisetujui?: Date;
   tanggalDitolak?: Date;
-
 }
 
 const mockData: PinjamanData[] = [
@@ -32,10 +33,10 @@ const mockData: PinjamanData[] = [
     divisi: 'IT',
     jabatan: 'Developer',
     jumlahPinjaman: 5000000,
-    keteranganPinjaman: 'Pinjaman untuk renovasi rumah',
+    keteranganPinjaman: 'Pinjaman akan Dipotong setiap tanggal 25',
     termin: '12 bulan',
     tanggalPengajuan: new Date('2024-01-15T09:30:00'),
-    catatan: 'Pembayaran setiap tanggal 15',
+    catatan: 'Renovasi rumah',
     status: 'Menunggu Disetujui'
   },
   {
@@ -45,36 +46,37 @@ const mockData: PinjamanData[] = [
     divisi: 'HR',
     jabatan: 'HR Manager',
     jumlahPinjaman: 3000000,
-    keteranganPinjaman: 'Pinjaman pendidikan anak',
+    keteranganPinjaman: 'Pinjaman akan Dipotong setiap tanggal 25',
     termin: '6 bulan',
     tanggalPengajuan: new Date('2024-01-10T14:20:00'),
-    catatan: 'Potong gaji bulanan',
+    catatan: 'Pendidikan anak',
     status: 'Disetujui',
     tanggalDisetujui: new Date('2024-01-12T10:15:00')
   },
   {
     no: 3,
-    idKaryawan: 'EMP002',
-    namaKaryawan: 'Siti Nurhaliza',
-    divisi: 'HR',
-    jabatan: 'HR Manager',
-    jumlahPinjaman: 3000000,
-    keteranganPinjaman: 'Pinjaman pendidikan anak',
-    termin: '6 bulan',
-    tanggalPengajuan: new Date('2024-01-10T14:20:00'),
-    catatan: 'Potong gaji bulanan',
+    idKaryawan: 'EMP003',
+    namaKaryawan: 'Budi Santoso',
+    divisi: 'Finance',
+    jabatan: 'Accountant',
+    jumlahPinjaman: 2000000,
+    keteranganPinjaman: 'Pinjaman akan Dipotong setiap tanggal 25',
+    termin: '4 bulan',
+    tanggalPengajuan: new Date('2024-02-01T10:00:00'),
+    catatan: 'Biaya medis keluarga',
     status: 'Ditolak',
-    tanggalDitolak: new Date('2024-01-22T11:45:00')
+    tanggalDitolak: new Date('2024-02-05T14:30:00')
   }
 ];
 
 export const PinjamanPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [data] = useState<PinjamanData[]>(mockData);
+  const [data, setData] = useState<PinjamanData[]>(mockData);
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const filteredData = data.filter(item => 
+  const filteredData = data.filter(item =>
     item.namaKaryawan.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.idKaryawan.toLowerCase().includes(searchTerm.toLowerCase()) ||
     item.divisi.toLowerCase().includes(searchTerm.toLowerCase())
@@ -96,117 +98,157 @@ export const PinjamanPage = () => {
   };
 
   const getStatusBadge = (
-  status: string,
-  tanggalDisetujui?: Date,
-  tanggalDitolak?: Date
-) => {
-  if (status === 'Disetujui') {
-    return (
-      <div className="flex flex-col">
-        <Badge className="bg-green-100 text-green-800 hover:bg-green-100 mb-1">
-          {status}
-        </Badge>
-        {tanggalDisetujui && (
-          <span className="text-xs text-gray-500">
-            {formatDateTime(tanggalDisetujui)}
-          </span>
-        )}
-      </div>
-    );
-  }
+    status: string,
+    tanggalDisetujui?: Date,
+    tanggalDitolak?: Date
+  ) => {
+    if (status === 'Disetujui') {
+      return (
+        <div className="flex flex-col">
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-100 mb-1">
+            {status}
+          </Badge>
+          {tanggalDisetujui && (
+            <span className="text-xs text-gray-500">
+              {formatDateTime(tanggalDisetujui)}
+            </span>
+          )}
+        </div>
+      );
+    }
 
-  if (status === 'Ditolak') {
-    return (
-      <div className="flex flex-col">
-        <Badge className="bg-red-100 text-red-800 hover:bg-red-100 mb-1">
-          {status}
-        </Badge>
-        {tanggalDitolak && (
-          <span className="text-xs text-gray-500">
-            {formatDateTime(tanggalDitolak)}
-          </span>
-        )}
-      </div>
-    );
-  }
+    if (status === 'Ditolak') {
+      return (
+        <div className="flex flex-col">
+          <Badge className="bg-red-100 text-red-800 hover:bg-red-100 mb-1">
+            {status}
+          </Badge>
+          {tanggalDitolak && (
+            <span className="text-xs text-gray-500">
+              {formatDateTime(tanggalDitolak)}
+            </span>
+          )}
+        </div>
+      );
+    }
 
-  return (
-    <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
-      {status}
-    </Badge>
-  );
-};
+    return (
+      <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100">
+        {status}
+      </Badge>
+    );
+  };
+
+  const handleOpenModal = () => {
+    setIsModalOpen(true);
+  };
+
+  const handleCloseModal = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleSavePinjaman = (pinjamanData: any) => {
+    const newPinjaman: PinjamanData = {
+      no: data.length + 1,
+      idKaryawan: pinjamanData.karyawan.id,
+      namaKaryawan: pinjamanData.karyawan.nama,
+      divisi: pinjamanData.karyawan.divisi,
+      jabatan: pinjamanData.karyawan.jabatan,
+      jumlahPinjaman: parseFloat(pinjamanData.jumlahPinjaman.replace(/\./g, '')) || 0,
+      keteranganPinjaman: 'Pinjaman akan Dipotong setiap tanggal 25',
+      termin: `${pinjamanData.termin} bulan`,
+      tanggalPengajuan: new Date(),
+      catatan: pinjamanData.tujuanPinjaman,
+      status: 'Menunggu Disetujui'
+    };
+
+    setData([newPinjaman, ...data]);
+
+    Swal.fire({
+      title: 'Berhasil!',
+      text: 'Pengajuan pinjaman berhasil diajukan.',
+      icon: 'success',
+      timer: 2000,
+      showConfirmButton: false,
+      background: '#3b82f6',
+      color: '#ffffff',
+      customClass: {
+        popup: 'bg-blue-500 text-white',
+      },
+    });
+  };
 
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Pinjaman Karyawan</h1>
       </div>
-      
+
+      {/* Summary Cards dengan border kiri - mengikuti style Data Karyawan */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Menunggu Disetujui */}
-        <Card className="bg-yellow-500 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">
-              Menunggu Disetujui
-            </CardTitle>
-            <Clock className="h-4 w-4 text-white" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">
-              {data.filter(d => d.status === 'Menunggu Disetujui').length}
+        <Card className="bg-white border-l-4 border-yellow-500 shadow-md">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-gray-700">Menunggu Disetujui</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {data.filter(d => d.status === 'Menunggu Disetujui').length}
+                </p>
+                <p className="text-xs text-gray-500">Pengajuan</p>
+              </div>
+              <Clock className="h-10 w-10 text-yellow-500" />
             </div>
-            <p className="text-xs text-white">Pengajuan </p>
           </CardContent>
         </Card>
 
         {/* Disetujui */}
-        <Card className="bg-green-700 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">
-              Total Pengajuan Disetujui
-            </CardTitle>
-            <CheckCircle className="h-4 w-4 text-white" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">
-              {data.filter(d => d.status === 'Disetujui').length}
+        <Card className="bg-white border-l-4 border-green-500 shadow-md">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-gray-700">Total Pengajuan Disetujui</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {data.filter(d => d.status === 'Disetujui').length}
+                </p>
+                <p className="text-xs text-gray-500">Pengajuan</p>
+              </div>
+              <CheckCircle className="h-10 w-10 text-green-500" />
             </div>
-            <p className="text-xs text-white">Pengajuan</p>
           </CardContent>
         </Card>
 
         {/* Ditolak */}
-        <Card className="bg-red-600 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">
-              Total Pengajuan Ditolak
-            </CardTitle>
-            <XCircle className="h-4 w-4 text-white" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">
-              {data.filter(d => d.status === 'Ditolak').length}
+        <Card className="bg-white border-l-4 border-red-500 shadow-md">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-gray-700">Total Pengajuan Ditolak</p>
+                <p className="text-3xl font-bold text-gray-900">
+                  {data.filter(d => d.status === 'Ditolak').length}
+                </p>
+                <p className="text-xs text-gray-500">Pengajuan</p>
+              </div>
+              <XCircle className="h-10 w-10 text-red-500" />
             </div>
-            <p className="text-xs text-white">Pengajuan</p>
           </CardContent>
         </Card>
 
         {/* Total Pengajuan */}
-        <Card className="bg-blue-600 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">
-              Total Pengajuan Pinjaman
-            </CardTitle>
-            <FileText className="h-4 w-4 text-white" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">{data.length}</div>
-            <p className="text-xs text-white">Pengajuan</p>
+        <Card className="bg-white border-l-4 border-blue-600 shadow-md">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-gray-700">Total Pengajuan Pinjaman</p>
+                <p className="text-3xl font-bold text-gray-900">{data.length}</p>
+                <p className="text-xs text-gray-500">Pengajuan</p>
+              </div>
+              <FileText className="h-10 w-10 text-blue-600" />
+            </div>
           </CardContent>
         </Card>
       </div>
-      
+
       <Card>
         <CardHeader className="bg-blue-50 border-b">
           <CardTitle className="text-blue-800">Data Pengajuan</CardTitle>
@@ -239,7 +281,10 @@ export const PinjamanPage = () => {
                 />
               </div>
             </div>
-            <Button className="bg-blue-600 hover:bg-blue-700">
+            <Button
+              className="bg-blue-600 hover:bg-blue-700"
+              onClick={handleOpenModal}
+            >
               <Plus className="w-4 h-4 mr-2" />
               Ajukan Pinjaman
             </Button>
@@ -248,17 +293,17 @@ export const PinjamanPage = () => {
           <div className="overflow-x-auto border rounded-lg">
             <Table>
               <TableHeader>
-                <TableRow className="bg-blue-600 hover:bg-blue-600">
+                <TableRow className="bg-gradient-to-r from-[#1E3A8A] to-[#1E40AF] hover:bg-gradient-to-r hover:from-[#1E3A8A] hover:to-[#1E40AF]">
                   <TableHead className="text-white border border-gray-200 whitespace-nowrap">No.</TableHead>
                   <TableHead className="text-white border border-gray-200 whitespace-nowrap">ID Karyawan</TableHead>
                   <TableHead className="text-white border border-gray-200 whitespace-nowrap">Nama Karyawan</TableHead>
                   <TableHead className="text-white border border-gray-200 whitespace-nowrap">Divisi</TableHead>
                   <TableHead className="text-white border border-gray-200 whitespace-nowrap">Jabatan</TableHead>
                   <TableHead className="text-white border border-gray-200 whitespace-nowrap">Jumlah Pinjaman</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Keterangan</TableHead>
+                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Keterangan Pinjaman</TableHead>
                   <TableHead className="text-white border border-gray-200 whitespace-nowrap">Termin</TableHead>
                   <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tanggal Pengajuan</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Catatan</TableHead>
+                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tujuan Pinjaman</TableHead>
                   <TableHead className="text-white border border-gray-200 whitespace-nowrap">Status</TableHead>
                   <TableHead className="text-white border border-gray-200 whitespace-nowrap">Aksi</TableHead>
                 </TableRow>
@@ -268,7 +313,7 @@ export const PinjamanPage = () => {
                   <TableRow key={item.no} className="border-b hover:bg-gray-50">
                     <TableCell className="border border-gray-200 whitespace-nowrap">{item.no}</TableCell>
                     <TableCell className="border border-gray-200 whitespace-nowrap">{item.idKaryawan}</TableCell>
-                    <TableCell className="border border-gray-200 whitespace-nowrapp">{item.namaKaryawan}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{item.namaKaryawan}</TableCell>
                     <TableCell className="border border-gray-200 whitespace-nowrap">{item.divisi}</TableCell>
                     <TableCell className="border border-gray-200 whitespace-nowrap">{item.jabatan}</TableCell>
                     <TableCell className="font-semibold border-r whitespace-nowrap">{formatCurrency(item.jumlahPinjaman)}</TableCell>
@@ -276,26 +321,19 @@ export const PinjamanPage = () => {
                     <TableCell className="border border-gray-200 whitespace-nowrap">{item.termin}</TableCell>
                     <TableCell className="border border-gray-200 whitespace-nowrap">{formatDateTime(item.tanggalPengajuan)}</TableCell>
                     <TableCell className="max-w-xs truncate border-r whitespace-nowrap">{item.catatan}</TableCell>
-                    <TableCell className="border border-gray-200 whitespace-nowrap"> {getStatusBadge(item.status, item.tanggalDisetujui, item.tanggalDitolak)}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">
+                      {getStatusBadge(item.status, item.tanggalDisetujui, item.tanggalDitolak)}
+                    </TableCell>
                     <TableCell>
                       <div className="flex space-x-2">
                         <Button
-                         variant="ghost"
-                         size="sm"
-                         className="bg-blue-600 text-white hover:bg-blue-700"
-                         title="Lihat Detail"
-                         >
-                         <Eye className="w-4 h-4" />
-                         </Button>
-                         <Button
-                         variant="ghost"
-                         size="sm"
-                         className="bg-red-600 text-white hover:bg-red-700"
-                         title="Hapus Data"
-                         onClick={() => handleDeleteSingle(k.id)}
-                         >
-                         <Trash2 className="w-4 h-4" />
-                         </Button>
+                          variant="ghost"
+                          size="sm"
+                          className="bg-blue-600 text-white hover:bg-blue-700"
+                          title="Lihat Detail"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -303,7 +341,7 @@ export const PinjamanPage = () => {
               </TableBody>
             </Table>
           </div>
-        
+
           <div className="flex justify-between items-center mt-4">
             <div className="text-sm text-gray-500">
               Menampilkan{' '}
@@ -347,8 +385,15 @@ export const PinjamanPage = () => {
               </Button>
             </div>
           </div>
-          </CardContent>
-          </Card>
-          </div>
-          );
-          };
+        </CardContent>
+      </Card>
+
+      {/* Modal Ajukan Pinjaman */}
+      <PinjamanModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        onSave={handleSavePinjaman}
+      />
+    </div>
+  );
+};

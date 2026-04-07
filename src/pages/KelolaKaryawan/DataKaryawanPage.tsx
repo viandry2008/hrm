@@ -36,8 +36,8 @@ import { Cross2Icon } from '@radix-ui/react-icons';
 
 // Komponen Label Status
 const StatusLabel = ({ status }: { status: string }) => {
-  const isAktif = status === 'Active';
-  const textAktif = status === 'Active' ? 'Aktif' : 'Tidak Aktif';
+  const isAktif = status === 'active';
+  const textAktif = status === 'active' ? 'Aktif' : 'Tidak Aktif';
   const color = isAktif ? 'bg-green-600 text-white' : 'bg-red-600 text-white';
   const Icon = isAktif ? CheckCircle : XCircle;
 
@@ -312,45 +312,45 @@ export const DataKaryawanPage = () => {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold text-gray-900">Manajemen Karyawan</h1>
       </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {/* Card Karyawan Aktif */}
-        <Card className="bg-green-700 border-green-800 shadow-md">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-semibold text-white">
-              Total Karyawan Aktif
-            </CardTitle>
-            <CheckCircle className="h-4 w-4 text-white" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">
-              {dataSummary?.data?.active ?? 0}
+        <Card className="bg-white border-l-4 border-green-500 shadow-md">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-gray-700">Total Karyawan Aktif</p>
+                <p className="text-3xl font-bold text-gray-900">{dataSummary?.data?.active ?? 0}</p>
+                <div className="flex items-center gap-1 text-sm text-green-600">
+                  {/* <TrendingUp className="w-4 h-4" /> */}
+                  <span>+2 bulan ini</span>
+                </div>
+              </div>
+              <CheckCircle className="h-10 w-10 text-green-500" />
             </div>
-            <p className="text-xs text-white">Karyawan</p>
           </CardContent>
         </Card>
 
         {/* Card Karyawan Tidak Aktif */}
-        <Card className="bg-red-600 border-red-800 shadow-md">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-semibold text-white">
-              Total Karyawan Tidak Aktif
-            </CardTitle>
-            <XCircle className="h-4 w-4 text-white" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">
-              {dataSummary?.data?.inactive ?? 0}
+        <Card className="bg-white border-l-4 border-red-500 shadow-md">
+          <CardContent className="p-6">
+            <div className="flex items-center justify-between">
+              <div className="space-y-1">
+                <p className="text-sm font-medium text-gray-700">Total Karyawan Tidak Aktif</p>
+                <p className="text-3xl font-bold text-gray-900">{dataSummary?.data?.inactive ?? 0}</p>
+                <div className="flex items-center gap-1 text-sm text-red-600">
+                  {/* <TrendingDown className="w-4 h-4" /> */}
+                  <span>-1 bulan ini</span>
+                </div>
+              </div>
+              <XCircle className="h-10 w-10 text-red-500" />
             </div>
-            <p className="text-xs text-white">Karyawan</p>
           </CardContent>
         </Card>
       </div>
 
-      <Card>
-        <CardHeader className="bg-blue-50 border-b mb-4">
-          <CardTitle className="text-blue-800">Data Karyawan</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
+      <Card className="bg-white">
+        <CardContent className="space-y-4 p-6">
           <div className="flex gap-2">
             {/* Tombol Aktifkan */}
             <Button
@@ -417,8 +417,8 @@ export const DataKaryawanPage = () => {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                 <Input
-                  placeholder="Cari ID, nama, divisi, jabatan atau jenis"
-                  className="pl-10 w-64"
+                  placeholder="Cari ID, nama, divisi, jabatan atau kategori"
+                  className="pl-10 w-80 md:w-96"
                   value={searchTerm}
                   onChange={(e) => {
                     setSearchTerm(e.target.value);
@@ -456,7 +456,7 @@ export const DataKaryawanPage = () => {
           <div className="overflow-auto rounded border border-gray-300">
             <Table className="w-full border border-gray-300 border-collapse">
               <TableHeader>
-                <TableRow className="bg-[#2794eb] hover:bg-[#2794eb] text-white">
+                <TableRow className="bg-gradient-to-r from-[#1E3A8A] to-[#1E40AF] hover:bg-gradient-to-r hover:from-[#1E3A8A] hover:to-[#1E40AF] text-white">
                   <TableHead className="text-white border border-gray-200">
                     <input
                       type="checkbox"
@@ -664,40 +664,40 @@ export const DataKaryawanPage = () => {
                   Kolom <strong>Username</strong> harus diisi dengan 3–20 karakter tanpa spasi, hanya huruf, angka, titik (<code>.</code>) atau underscore (<code>_</code>), dan tidak boleh diawali dengan simbol.
                 </li>
                 <li>
-                  Password akun karyawan yang baru ditambahkan akan menggunakan password otomatis dari sistem: <strong>“1234”</strong>.
+                  Password akun karyawan yang baru ditambahkan akan menggunakan password otomatis dari sistem: <strong>"1234"</strong>.
                 </li>
                 <li>
                   Kolom <strong>Email</strong> harus diisi dengan format <code>nama@domain.com</code> tanpa spasi dan menggunakan domain yang valid.
                 </li>
                 <li>
-                  Kolom <strong>Role</strong> hanya dapat diisi dengan salah satu pilihan berikut: “Karyawan”, “Atasan”, “HRD”, “Direktur”, atau “Finance”.
+                  Kolom <strong>Role</strong> hanya dapat diisi dengan salah satu pilihan berikut: "Karyawan", "Atasan", "HRD", "Direktur", atau "Finance".
                 </li>
                 <li>
                   Pengisian <strong>Tanggal</strong> harus berformat <strong>DD/MM/YYYY</strong>. Contoh: <code>25/05/2025</code>.
                 </li>
                 <li>
-                  Kolom <strong>Jenis Kelamin</strong> hanya dapat diisi dengan “L” (Laki-laki) atau “P” (Perempuan).
+                  Kolom <strong>Jenis Kelamin</strong> hanya dapat diisi dengan "L" (Laki-laki) atau "P" (Perempuan).
                 </li>
                 <li>
-                  Kolom <strong>Pendidikan</strong> hanya dapat diisi dengan salah satu pilihan berikut: “SD”, “SMP”, “SMA”, “SMK”, “MA”, “D1”, “D2”, “D3”, “D4”, “S1”, “S2”, atau “S3”.
+                  Kolom <strong>Pendidikan</strong> hanya dapat diisi dengan salah satu pilihan berikut: "SD", "SMP", "SMA", "SMK", "MA", "D1", "D2", "D3", "D4", "S1", "S2", atau "S3".
                 </li>
                 <li>
-                  Kolom <strong>Agama</strong> hanya dapat diisi dengan salah satu dari pilihan berikut: “Islam”, “Kristen”, “Katolik”, “Hindu”, “Buddha”, “Konghucu”, atau “Atheis”. Pengisian di luar opsi ini akan dianggap tidak valid.
+                  Kolom <strong>Agama</strong> hanya dapat diisi dengan salah satu dari pilihan berikut: "Islam", "Kristen", "Katolik", "Hindu", "Buddha", "Konghucu", atau "Atheis". Pengisian di luar opsi ini akan dianggap tidak valid.
                 </li>
                 <li>
                   Sebelum mengisi kolom <strong>Divisi</strong>, <strong>Jabatan</strong>, <strong>Bagian</strong>, dan <strong>Lokasi Kerja</strong>, pastikan bahwa data tersebut sudah terdaftar dalam aplikasi yang digunakan serta penulisannya harus sama persis antara data yang tersedia di sistem dengan data yang diisi di Excel.
                 </li>
                 <li>
-                  Kolom <strong>Kategori Karyawan</strong> hanya dapat diisi dengan salah satu pilihan berikut: “Magang”, “PKWT”, “PKWTT”, “KHL”, “Harian”, atau “Borongan”.
+                  Kolom <strong>Kategori Karyawan</strong> hanya dapat diisi dengan salah satu pilihan berikut: "Magang", "PKWT", "PKWTT", "KHL", "Harian", atau "Borongan".
                 </li>
                 <li>
-                  Kolom <strong>Status Marital</strong> hanya dapat diisi dengan salah satu pilihan berikut: “TK/0”, “TK/1”, “TK/2”, “TK/3”, “K/0”, “K/1”, “K/2”, atau “K/3”.
+                  Kolom <strong>Status Marital</strong> hanya dapat diisi dengan salah satu pilihan berikut: "TK/0", "TK/1", "TK/2", "TK/3", "K/0", "K/1", "K/2", atau "K/3".
                 </li>
                 <li>
                   Kolom <strong>Nomor KTP, KK, NPWP, KPJ, JKN, SIM</strong>, dan <strong>STNK</strong> harus diisi sesuai format resmi yang berlaku.
                 </li>
                 <li>
-                  Kolom <strong>Hubungan</strong> hanya dapat diisi dengan salah satu pilihan berikut: “Orang Tua (Ayah)”, “Orang Tua (Ibu)”, “Suami”, “Istri”, “Saudara Kandung”, “Saudara Sepupu”, “Teman”, atau “Lainnya”.
+                  Kolom <strong>Hubungan</strong> hanya dapat diisi dengan salah satu pilihan berikut: "Orang Tua (Ayah)", "Orang Tua (Ibu)", "Suami", "Istri", "Saudara Kandung", "Saudara Sepupu", "Teman", atau "Lainnya".
                 </li>
               </ul>
             </div>

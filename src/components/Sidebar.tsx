@@ -24,8 +24,8 @@ import {
   MapPinCheck,
   Menu,
   ArrowLeft,
+  FileSignature,
 } from 'lucide-react';
-import { useLogout } from '@/api/auth/auth.query';
 
 interface SidebarProps {
   onLogout: () => void;
@@ -98,7 +98,7 @@ const menuItems = [
     icon: Calendar,
     submenu: [
       { id: 'shift', label: 'Shift' },
-      { id: 'group', label: 'Group' },
+      { id: 'grup', label: 'Grup' },
       { id: 'atur-shift', label: 'Atur Shift' },
       { id: 'rekap-jadwal', label: 'Rekap Jadwal' },
     ],
@@ -110,6 +110,7 @@ const menuItems = [
   { id: 'surat-peringatan', label: 'Surat Peringatan', icon: AlertTriangle },
   { id: 'pengunduran-diri', label: 'Surat Pengunduran Diri', icon: Mail },
   { id: 'keterangan-bekerja', label: 'Surat Keterangan Bekerja', icon: Mail },
+  { id: 'penawaran-kerja', label: 'Surat Penawaran Kerja', icon: FileSignature },
   { id: 'po', label: 'PO', icon: ShoppingCart },
   { id: 'kpi', label: 'KPI', icon: BarChart3 },
   { id: 'pengaturan', label: 'Pengaturan Akun', icon: Settings },
@@ -119,11 +120,6 @@ export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({});
   const [isOpen, setIsOpen] = useState(true);
   const navigate = useNavigate();
-  const logoutMutation = useLogout();
-
-  const handleLogout = () => {
-    logoutMutation.mutate(); // Panggil API logout
-  };
 
   const handleNavigate = (path: string) => {
     navigate(`/${path}`);
@@ -144,7 +140,7 @@ export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
           <Button
             variant="ghost"
             className={cn(
-              'w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-white hover:bg-blue-800'
+              'w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-white hover:bg-white/10 transition-all duration-200'
             )}
             onClick={() => toggleDropdown(item.id)}
           >
@@ -162,16 +158,16 @@ export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
                 isOpenDropdown ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'
               )}
             >
-              <div className="ml-6 bg-white rounded-xl py-2 px-3 space-y-1 shadow-md">
+              <div className="ml-6 bg-white/10 backdrop-blur-sm rounded-xl py-2 px-3 space-y-1 border border-white/20">
                 {item.submenu.map((sub) => (
                   <button
                     key={sub.id}
                     onClick={() => handleNavigate(sub.id)}
                     className={cn(
-                      'block w-full text-left px-3 py-1.5 rounded-md text-sm transition-all',
+                      'block w-full text-left px-3 py-1.5 rounded-md text-sm transition-all text-white/90 hover:bg-white/20',
                       currentPath === sub.id
-                        ? 'bg-white text-blue-900 font-semibold'
-                        : 'text-gray-800 hover:bg-gray-100'
+                        ? 'bg-white/30 text-white font-semibold'
+                        : ''
                     )}
                   >
                     {sub.label}
@@ -191,7 +187,9 @@ export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
         title={!isOpen ? item.label : undefined}
         className={cn(
           'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 justify-start',
-          isActive ? 'bg-white text-blue-900' : 'text-white hover:bg-blue-800'
+          isActive
+            ? 'bg-white/30 text-white font-semibold'
+            : 'text-white/90 hover:bg-white/10 hover:text-white'
         )}
         onClick={() => handleNavigate(item.id)}
       >
@@ -204,17 +202,17 @@ export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
   return (
     <div
       className={cn(
-        'bg-[#2794eb] text-white h-screen flex flex-col shadow-lg transition-all duration-300 fixed md:static top-0 left-0 z-40',
+        'bg-gradient-to-b from-[#1E3A8A] to-[#1E40AF] text-white h-screen flex flex-col shadow-lg transition-all duration-300 fixed md:static top-0 left-0 z-40',
         isOpen ? 'w-64' : 'w-16',
       )}
     >
       {/* Header dengan 1 tombol kontrol */}
-      <div className="p-4 border-b border-blue-800 flex items-center justify-between">
+      <div className="p-4 border-b border-white/20 flex items-center justify-between">
         {isOpen && <h1 className="text-xl font-bold">SMART HRM</h1>}
         <Button
           variant="ghost"
           size="icon"
-          className="text-white hover:bg-blue-700"
+          className="text-white hover:bg-white/10"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <ArrowLeft className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -227,15 +225,14 @@ export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
       </div>
 
       {/* Logout */}
-      <div className="p-4 border-t border-blue-800">
+      <div className="p-4 border-t border-white/20">
         <Button
           variant="ghost"
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-white hover:bg-blue-800 transition-all duration-150 justify-start"
-          onClick={handleLogout}
-          disabled={logoutMutation.isPending}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-white/90 hover:bg-white/10 hover:text-white transition-all duration-150 justify-start"
+          onClick={onLogout}
         >
           <LogOut className="h-5 w-5" />
-          {isOpen && (logoutMutation.isPending ? "Logging out..." : "Log out")}
+          {isOpen && 'Log out'}
         </Button>
       </div>
     </div>
