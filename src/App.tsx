@@ -8,7 +8,7 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { HRISApp } from "@/layouts/HRISApp";
 import NotFound from "./pages/NotFound";
 
-// Import semua halaman
+// Pages
 import { DashboardPage } from "./pages/main/DashboardPage";
 // import { ShiftPage } from "./components/jadwalshift/ShiftPage";
 // import { GroupPage } from "./components/jadwalshift/GroupPage";
@@ -35,15 +35,19 @@ import { DivisiPage } from "./pages/KelolaKaryawan/DivisiPage";
 import { JabatanPage } from "./pages/KelolaKaryawan/JabatanPage";
 import { BagianPage } from "./pages/KelolaKaryawan/BagianPage";
 import { KontrakKerjaPage } from "./components/KontrakKerjaPage";
+// import SuratPenawaranKerjaPage from "./components/SuratPenawaranKerjaPage";
 
 // Auth
-import { PrivateRoute } from "@/components/PrivateRoute";
+// import { PrivateRoute } from "@/components/PrivateRoute";
 import { LoginPage } from "./pages/auth/LoginPage";
 import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
 import TambahKaryawanPage from "./pages/KelolaKaryawan/TambahKaryawanPage";
 import { DataKehadiranPage } from "./pages/Kehadiran/DataKehadiranPage";
 import { RekapKehadiranPage } from "./pages/Kehadiran/RekapKehadiranPage";
 import DetailKaryawanPage from "./pages/KelolaKaryawan/DetailKaryawanPage";
+import { AuthProvider } from "@/contexts/AuthContext";
+import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { RoleRoute } from "@/components/RoleRoute";
 
 const queryClient = new QueryClient();
 
@@ -53,46 +57,76 @@ const App = () => (
       <TooltipProvider>
         <Toaster />
         <Sonner />
-        <BrowserRouter>
-          <Routes>
+        <AuthProvider>
+          <BrowserRouter>
+            <Routes>
 
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/login" element={<LoginPage />} />
-            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/" element={<PrivateRoute />}>
-              <Route path="" element={<HRISApp />}>
-                <Route path="dashboard" element={< DashboardPage />} />
-                {/* <Route path="kehadiran-page" element={<KehadiranPage />} /> */}
-                <Route path="data-kehadiran" element={<DataKehadiranPage />} />
-                <Route path="rekap-kehadiran" element={<RekapKehadiranPage />} />
-                <Route path="kelola-karyawan" element={<KelolaKaryawanPage />} />
-                <Route path="tambah-karyawan" element={<TambahKaryawanPage />} />
-                <Route path="data-karyawan" element={<DataKaryawanPage />} />
-                <Route path="detail-karyawan/:id" element={<DetailKaryawanPage />} />
-                <Route path="request-absen" element={<RequestAbsenPage />} />
-                <Route path="divisi" element={<DivisiPage />} />
-                <Route path="jabatan" element={<JabatanPage />} />
-                <Route path="bagian" element={<BagianPage />} />
-                <Route path="data-cuti" element={<DataCutiPage />} />
-                <Route path="data-izin" element={<DataIzinPage />} />
-                <Route path="data-lembur" element={<DataLemburPage />} />
-                {/* <Route path="shift" element={<ShiftPage />} />
-                  <Route path="group" element={<GroupPage />} />
+              {/* PUBLIC ROUTES */}
+              <Route path="/register" element={<RegisterPage />} />
+              <Route path="/login" element={<LoginPage />} />
+              <Route path="/forgot-password" element={<ForgotPasswordPage />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+
+              {/* PROTECTED */}
+              <Route element={<ProtectedRoute />}>
+                <Route path="/" element={<HRISApp />}>
+
+                  {/* SEMUA ROLE */}
+                  <Route path="dashboard" element={<DashboardPage />} />
+                  {/* <Route path="shift" element={<ShiftPage />} />
+                  <Route path="grup" element={<GrupPage />} />
                   <Route path="jadwal-shift" element={<JadwalShiftPage />} /> */}
-                <Route path="pinjaman" element={<PinjamanPage />} />
-                <Route path="reimbursement" element={<ReimbursementPage />} />
-                <Route path="po" element={<POPage />} />
-                <Route path="pengunduran-diri" element={<PengunduranDiriPage />} />
-                <Route path="keterangan-bekerja" element={<KeteranganBekerjaPage />} />
-                <Route path="paklaring" element={<PaklaringPage />} />
-                <Route path="kontrak-kerja" element={<KontrakKerjaPage />} />
-                <Route path="surat-peringatan" element={<SuratPeringatanPage />} />
-                <Route path="*" element={<NotFound />} />
+
+                  {/* HR ONLY */}
+                  <Route element={<RoleRoute allowedRoles={["HR"]} />}>
+                    <Route path="kelola-karyawan" element={<KelolaKaryawanPage />} />
+                    <Route path="data-karyawan" element={<DataKaryawanPage />} />
+                    <Route path="tambah-karyawan" element={<TambahKaryawanPage />} />
+                    <Route path="divisi" element={<DivisiPage />} />
+                    <Route path="jabatan" element={<JabatanPage />} />
+                    <Route path="bagian" element={<BagianPage />} />
+                    <Route path="kontrak-kerja" element={<KontrakKerjaPage />} />
+                    <Route path="surat-peringatan" element={<SuratPeringatanPage />} />
+                    {/* <Route path="penawaran-kerja" element={<SuratPenawaranKerjaPage />} /> */}
+                    <Route path="po" element={<POPage />} />
+                  </Route>
+
+                  {/* HR + KARYAWAN */}
+                  <Route element={<RoleRoute allowedRoles={["HR", "KARYAWAN"]} />}>
+                    {/* <Route path="kehadiran-page" element={<KehadiranPage />} /> */}
+                    <Route path="data-kehadiran" element={<DataKehadiranPage />} />
+                    <Route path="rekap-kehadiran" element={<RekapKehadiranPage />} />
+                    <Route path="data-cuti" element={<DataCutiPage />} />
+                    <Route path="data-izin" element={<DataIzinPage />} />
+                    <Route path="pinjaman" element={<PinjamanPage />} />
+                    <Route path="reimbursement" element={<ReimbursementPage />} />
+                  </Route>
+
+                  {/* KARYAWAN ONLY */}
+                  <Route element={<RoleRoute allowedRoles={["KARYAWAN"]} />}>
+                    <Route path="request-absen" element={<RequestAbsenPage />} />
+                    <Route path="pengunduran-diri" element={<PengunduranDiriPage />} />
+                  </Route>
+
+                  {/* HR + ATASAN */}
+                  <Route element={<RoleRoute allowedRoles={["HR", "ATASAN"]} />}>
+                    <Route path="data-lembur" element={<DataLemburPage />} />
+                  </Route>
+
+                  {/* SEMUA ROLE (LANJUTAN) */}
+                  <Route path="keterangan-bekerja" element={<KeteranganBekerjaPage />} />
+                  <Route path="paklaring" element={<PaklaringPage />} />
+                  <Route path="/detail-karyawan/:id" element={<DetailKaryawanPage />} />
+
+                  {/* NOT FOUND */}
+                  <Route path="*" element={<NotFound />} />
+
+                </Route>
               </Route>
-            </Route>
-          </Routes>
-        </BrowserRouter>
+
+            </Routes>
+          </BrowserRouter>
+        </AuthProvider>
       </TooltipProvider>
     </QueryClientProvider>
   </ThemeProvider>

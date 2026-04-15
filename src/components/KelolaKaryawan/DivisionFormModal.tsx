@@ -8,9 +8,9 @@ import { Input } from "@/components/ui/input";
 type DivisionFormModalProps = {
     open: boolean;
     onClose: (open: boolean) => void;
-    onSubmit: (payload: { id?: number; department_name: string }) => void;
+    onSubmit: (payload: { id?: number; name: string }) => void;
     loading?: boolean;
-    initialData?: { id: number; department_name: string } | null;
+    initialData?: { id: number; name: string } | null;
 };
 
 export const DivisionFormModal = ({
@@ -24,7 +24,7 @@ export const DivisionFormModal = ({
 
     useEffect(() => {
         if (initialData) {
-            setDepartmentName(initialData.department_name);
+            setDepartmentName(initialData.name);
         } else {
             setDepartmentName("");
         }
@@ -33,17 +33,15 @@ export const DivisionFormModal = ({
     const handleSubmit = () => {
         onSubmit({
             id: initialData?.id,
-            department_name: departmentName.trim(),
+            name: departmentName.trim(),
         });
     };
 
     return (
         <Dialog.Root open={open} onOpenChange={onClose}>
             <Dialog.Portal>
-                {/* Overlay */}
                 <Dialog.Overlay className="fixed inset-0 bg-black/50 z-[9998]" />
 
-                {/* Content */}
                 <Dialog.Content
                     className="
             fixed z-[9999]
@@ -51,7 +49,6 @@ export const DivisionFormModal = ({
             bg-white w-96 rounded-lg shadow-lg p-5
           "
                 >
-                    {/* Header */}
                     <div className="flex justify-between items-center mb-4">
                         <Dialog.Title className="text-lg font-semibold">
                             {initialData ? "Edit Divisi" : "Tambah Divisi"}
@@ -64,7 +61,6 @@ export const DivisionFormModal = ({
                         </Dialog.Close>
                     </div>
 
-                    {/* Body */}
                     <div className="space-y-4">
                         <div>
                             <label className="text-sm font-medium">Nama Divisi</label>
@@ -76,7 +72,6 @@ export const DivisionFormModal = ({
                         </div>
                     </div>
 
-                    {/* Footer */}
                     <div className="flex justify-end gap-3 mt-6">
                         <Button
                             variant="outline"

@@ -8,9 +8,9 @@ import { Input } from "@/components/ui/input";
 type PositionFormModalProps = {
     open: boolean;
     onClose: (open: boolean) => void;
-    onSubmit: (payload: { id?: number; position_name: string }) => void;
+    onSubmit: (payload: { id?: number; name: string }) => void;
     loading?: boolean;
-    initialData?: { id: number; position_name: string } | null;
+    initialData?: { id: number; name: string } | null;
 };
 
 export const PositionFormModal = ({
@@ -24,7 +24,7 @@ export const PositionFormModal = ({
 
     useEffect(() => {
         if (initialData) {
-            setPositionName(initialData.position_name);
+            setPositionName(initialData.name);
         } else {
             setPositionName("");
         }
@@ -33,7 +33,7 @@ export const PositionFormModal = ({
     const handleSubmit = () => {
         onSubmit({
             id: initialData?.id,
-            position_name: positionName.trim(),
+            name: positionName.trim(),
         });
     };
 

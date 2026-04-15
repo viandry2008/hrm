@@ -51,23 +51,23 @@ export const JabatanPage = () => {
     setModalOpen(false);
   });
 
-  const handleSubmit = (payload: { id?: number; position_name: string }) => {
+  const handleSubmit = (payload: { id?: number; name: string }) => {
     if (payload.id) {
       updateMutation.mutate({
         id: payload.id,
-        payload: { position_name: payload.position_name },
+        payload: { name: payload.name },
       });
     } else {
       createMutation.mutate({
-        position_name: payload.position_name,
+        name: payload.name,
       });
     }
   };
 
   const deleteMutation = useDeletePosition(() => refetch());
 
-  const items = data?.data.items ?? [];
-  const pagination = data?.data.pagination;
+  const items = data?.data ?? [];
+  const pagination = data?.meta;
 
   return (
     <div className="p-6 space-y-6">
@@ -168,7 +168,7 @@ export const JabatanPage = () => {
                       </TableCell>
 
                       <TableCell className="border border-gray-200">
-                        {item.position_name}
+                        {item.name}
                       </TableCell>
 
                       <TableCell className="border border-gray-200">

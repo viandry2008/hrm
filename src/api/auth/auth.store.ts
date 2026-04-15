@@ -19,11 +19,18 @@ export const useAuthStore = create<AuthState>()(
 
             setAuth: (data) => {
                 const token = data?.data?.token;
+                const user = data?.data;
 
-                if (token) localStorage.setItem("token", token);
+                if (token) {
+                    localStorage.setItem("token", token);
+                    localStorage.setItem("user_id", String(user?.id));
+                    localStorage.setItem("username", user?.username || "");
+                    localStorage.setItem("user_name", user?.name || "");
+                    localStorage.setItem("user_role", user?.role?.slug_role || "");
+                }
 
                 set({
-                    user: data.data,
+                    user,
                     token,
                     isAuthenticated: true,
                 });
@@ -31,6 +38,10 @@ export const useAuthStore = create<AuthState>()(
 
             logout: () => {
                 localStorage.removeItem("token");
+                localStorage.removeItem("user_id");
+                localStorage.removeItem("username");
+                localStorage.removeItem("user_name");
+                localStorage.removeItem("user_role");
 
                 set({
                     user: null,

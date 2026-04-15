@@ -118,8 +118,8 @@ export const DataKaryawanPage = () => {
     refetch();
   });
 
-  const items = data?.data.items ?? [];
-  const pagination = data?.data.pagination;
+  const items = data?.data ?? [];
+  const pagination = data?.meta;
 
   const toggleSelectAll = () => {
     if (selectAll) {
@@ -514,15 +514,15 @@ export const DataKaryawanPage = () => {
                     </TableCell >
                     <TableCell className="border border-gray-200">{k.employee_code}</TableCell>
                     <TableCell className="border border-gray-200">{k.full_name}</TableCell>
-                    <TableCell className="border border-gray-200">{k.department.department_name}</TableCell>
-                    <TableCell className="border border-gray-200">{k.position.position_name}</TableCell>
+                    <TableCell className="border border-gray-200">{k.department.name}</TableCell>
+                    <TableCell className="border border-gray-200">{k.position.name}</TableCell>
                     <TableCell className="border border-gray-200">{formatTanggal(k.join_date)}</TableCell>
                     <TableCell className="border border-gray-200">{k.employee_type}</TableCell>
                     <TableCell className="border border-gray-200">
-                      {formatTanggal(k.latest_contract.start_date)}
+                      {k.latest_contract ? formatTanggal(k.latest_contract.start_date) : "-"}
                     </TableCell>
                     <TableCell className="border border-gray-200">
-                      {formatTanggal(k.latest_contract.end_date)}
+                      {k.latest_contract ? formatTanggal(k.latest_contract.end_date) : "-"}
                     </TableCell>
                     <TableCell className="border border-gray-200">
                       <StatusLabel status={k.employment_status} />

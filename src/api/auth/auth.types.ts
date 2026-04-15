@@ -16,11 +16,20 @@ export interface LoginResponse {
         avatar: string | null;
         email_verified_at: string | null;
         last_login_at: string | null;
-        role: string;
+        role_id: number;
         status: string;
         remember_token: string | null;
         created_at: string;
         updated_at: string;
+        deleted_at: string | null;
+        role: {
+            id: number;
+            name_role: string;
+            slug_role: string;
+            created_at: string;
+            updated_at: string;
+            deleted_at: string | null;
+        };
         token_type: string;
         token: string;
     } | null;

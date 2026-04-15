@@ -6,7 +6,12 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Card, CardContent } from '@/components/ui/card';
-import { Info, Upload, X } from 'lucide-react';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Calendar } from '@/components/ui/calendar';
+import { Info, Upload, X, Calendar as CalendarIcon } from 'lucide-react';
+import { cn } from '@/lib/utils';
+import { format } from 'date-fns';
+import { id } from 'date-fns/locale';
 
 interface PinjamanModalProps {
   isOpen: boolean;
@@ -19,17 +24,41 @@ export const PinjamanModal = ({ isOpen, onClose, onSave }: PinjamanModalProps) =
   const [tujuanPinjaman, setTujuanPinjaman] = useState('');
   const [termin, setTermin] = useState('');
   const [skemaPembayaran, setSkemaPembayaran] = useState<'gajian' | 'luar_gajian'>('gajian');
-  const [tanggalPotong, setTanggalPotong] = useState('');
+  const [tanggalPotong, setTanggalPotong] = useState<Date>();
   const [ulangSetiapBulanGajian, setUlangSetiapBulanGajian] = useState(true);
   const [ulangSetiapBulan, setUlangSetiapBulan] = useState(true);
+  const [namaRekening, setNamaRekening] = useState('');
+  const [nomorRekening, setNomorRekening] = useState('');
+  const [bank, setBank] = useState('');
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
 
-  // Data karyawan (nanti bisa diambil dari props atau context)
+  // Data karyawan 
   const karyawanData = {
     id: 'EMP001',
     nama: 'Ahmad Rizki',
     divisi: 'IT',
     jabatan: 'Developer'
+  };
+
+  const formatAngka = (angka: string) => {
+    const angkaBersih = angka.replace(/\./g, '');
+
+    // Hanya izinkan angka
+    if (!/^\d*$/.test(angkaBersih)) {
+      return jumlahPinjaman;
+    }
+
+    // Format dengan titik sebagai pemisah ribuan
+    if (angkaBersih === '') return '';
+
+    const angkaNumber = parseInt(angkaBersih, 10);
+    return angkaNumber.toLocaleString('id-ID');
+  };
+
+  const handleJumlahPinjamanChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    const formatted = formatAngka(value);
+    setJumlahPinjaman(formatted);
   };
 
   // Hitung simulasi cicilan
@@ -50,6 +79,12 @@ export const PinjamanModal = ({ isOpen, onClose, onSave }: PinjamanModalProps) =
     setUploadedFile(null);
   };
 
+  const handleDateSelect = (date: Date | undefined) => {
+    if (date) {
+      setTanggalPotong(date);
+    }
+  };
+
   const handleAjukan = () => {
     const data = {
       karyawan: karyawanData,
@@ -57,8 +92,11 @@ export const PinjamanModal = ({ isOpen, onClose, onSave }: PinjamanModalProps) =
       tujuanPinjaman,
       termin,
       skemaPembayaran,
-      tanggalPotong: skemaPembayaran === 'gajian' ? '25' : tanggalPotong,
+      tanggalPotong: skemaPembayaran === 'gajian' ? '25' : tanggalPotong ? format(tanggalPotong, 'yyyy-MM-dd') : '',
       ulangSetiapBulan: skemaPembayaran === 'gajian' ? ulangSetiapBulanGajian : ulangSetiapBulan,
+      namaRekening,
+      nomorRekening,
+      bank,
       cicilan: hitungCicilan(),
       file: uploadedFile
     };
@@ -70,8 +108,8 @@ export const PinjamanModal = ({ isOpen, onClose, onSave }: PinjamanModalProps) =
     <Dialog.Root open={isOpen} onOpenChange={onClose}>
       <Dialog.Portal>
         <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50 z-[9998]" />
-        
-        {/* Modal Content dengan struktur yang lebih baik */}
+
+        {/* Modal Content */}
         <Dialog.Content className="fixed z-[9999] top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white w-full max-w-3xl rounded-lg shadow-lg focus:outline-none max-h-[85vh] flex flex-col">
           {/* Header - Fixed */}
           <div className="flex justify-between items-center p-6 border-b border-gray-200 flex-shrink-0">
@@ -135,7 +173,7 @@ export const PinjamanModal = ({ isOpen, onClose, onSave }: PinjamanModalProps) =
                     <Input
                       placeholder="5.000.000"
                       value={jumlahPinjaman}
-                      onChange={(e) => setJumlahPinjaman(e.target.value)}
+                      onChange={handleJumlahPinjamanChange}
                       className="pl-12 bg-white border-gray-300"
                     />
                   </div>
@@ -180,7 +218,7 @@ export const PinjamanModal = ({ isOpen, onClose, onSave }: PinjamanModalProps) =
                         onChange={() => setSkemaPembayaran('gajian')}
                         className="mt-1 h-4 w-4 text-blue-600"
                       />
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <span className="text-sm font-medium text-gray-900">Potong saat Gajian</span>
                         <p className="text-xs text-gray-500 mt-1 mb-3">
                           Dipotong setiap tanggal 25<br />
@@ -192,14 +230,12 @@ export const PinjamanModal = ({ isOpen, onClose, onSave }: PinjamanModalProps) =
                             <button
                               type="button"
                               onClick={() => setUlangSetiapBulanGajian(!ulangSetiapBulanGajian)}
-                              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                                ulangSetiapBulanGajian ? 'bg-blue-600' : 'bg-gray-300'
-                              }`}
+                              className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${ulangSetiapBulanGajian ? 'bg-blue-600' : 'bg-gray-300'
+                                }`}
                             >
                               <span
-                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                                  ulangSetiapBulanGajian ? 'translate-x-5' : 'translate-x-0.5'
-                                }`}
+                                className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${ulangSetiapBulanGajian ? 'translate-x-5' : 'translate-x-0.5'
+                                  }`}
                               />
                             </button>
                           </div>
@@ -216,40 +252,105 @@ export const PinjamanModal = ({ isOpen, onClose, onSave }: PinjamanModalProps) =
                         onChange={() => setSkemaPembayaran('luar_gajian')}
                         className="mt-1 h-4 w-4 text-blue-600"
                       />
-                      <div className="flex-1">
+                      <div className="flex-1 min-w-0">
                         <span className="text-sm font-medium text-gray-900">Potong di Luar Gajian</span>
                         {skemaPembayaran === 'luar_gajian' && (
-                          <div className="mt-3 space-y-2">
-                            <div className="flex items-center justify-between gap-3">
-                              <div className="flex-1">
-                                <Input
-                                  type="date"
-                                  value={tanggalPotong}
-                                  onChange={(e) => setTanggalPotong(e.target.value)}
-                                  className="h-8 text-xs bg-white border-gray-300"
-                                />
-                              </div>
-                              <div className="flex items-center gap-2 shrink-0">
-                                <span className="text-xs text-gray-600 whitespace-nowrap">Ulang setiap bulan</span>
-                                <button
-                                  type="button"
-                                  onClick={() => setUlangSetiapBulan(!ulangSetiapBulan)}
-                                  className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${
-                                    ulangSetiapBulan ? 'bg-blue-600' : 'bg-gray-300'
-                                  }`}
+                          <div className="mt-3 space-y-3">
+                            <div>
+                              <Popover>
+                                <PopoverTrigger asChild>
+                                  <button
+                                    type="button"
+                                    className={cn(
+                                      "w-full flex items-center justify-between px-3 py-2 h-9 bg-white border border-gray-300 rounded-md text-sm font-normal hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500",
+                                      !tanggalPotong && "text-muted-foreground"
+                                    )}
+                                  >
+                                    <span className="truncate">
+                                      {tanggalPotong ? format(tanggalPotong, "dd MMMM yyyy", { locale: id }) : "Pilih tanggal"}
+                                    </span>
+                                    <CalendarIcon className="h-4 w-4 text-gray-400 flex-shrink-0 ml-2" />
+                                  </button>
+                                </PopoverTrigger>
+                                <PopoverContent
+                                  className="w-auto p-0 z-[10002]"
+                                  align="start"
+                                  sideOffset={5}
+                                  avoidCollisions={true}
                                 >
-                                  <span
-                                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                                      ulangSetiapBulan ? 'translate-x-5' : 'translate-x-0.5'
-                                    }`}
+                                  <Calendar
+                                    mode="single"
+                                    selected={tanggalPotong}
+                                    onSelect={handleDateSelect}
+                                    initialFocus
+                                    className="rounded-md border pointer-events-auto"
                                   />
-                                </button>
-                              </div>
+                                </PopoverContent>
+                              </Popover>
+                            </div>
+                            <div className="flex items-center justify-between pt-2 border-t border-gray-200">
+                              <span className="text-xs text-gray-600">Ulang setiap bulan</span>
+                              <button
+                                type="button"
+                                onClick={() => setUlangSetiapBulan(!ulangSetiapBulan)}
+                                className={`relative inline-flex h-5 w-9 items-center rounded-full transition-colors ${ulangSetiapBulan ? 'bg-blue-600' : 'bg-gray-300'
+                                  }`}
+                              >
+                                <span
+                                  className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${ulangSetiapBulan ? 'translate-x-5' : 'translate-x-0.5'
+                                    }`}
+                                />
+                              </button>
                             </div>
                           </div>
                         )}
                       </div>
                     </label>
+                  </div>
+                </div>
+              </div>
+
+              {/* Tujuan No. Rekening */}
+              <div className="pt-4 border-t border-gray-200">
+                <Label className="text-sm font-medium text-gray-700 mb-3 block">Informasi Rekening</Label>
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-medium text-gray-700 mb-2 block">Nama Rekening</Label>
+                    <Input
+                      placeholder="Masukan nama rekening penerima"
+                      value={namaRekening}
+                      onChange={(e) => setNamaRekening(e.target.value)}
+                      className="bg-white border-gray-300"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700 mb-2 block">Nomor Rekening</Label>
+                      <Input
+                        placeholder="Masukan nomor rekening penerima"
+                        value={nomorRekening}
+                        onChange={(e) => setNomorRekening(e.target.value)}
+                        className="bg-white border-gray-300"
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-gray-700 mb-2 block">Bank</Label>
+                      <Select value={bank} onValueChange={setBank}>
+                        <SelectTrigger className="bg-white border-gray-300">
+                          <SelectValue placeholder="Pilih Bank" />
+                        </SelectTrigger>
+                        <SelectContent className="z-[10000]">
+                          <SelectItem value="bca">BCA</SelectItem>
+                          <SelectItem value="mandiri">Mandiri</SelectItem>
+                          <SelectItem value="bni">BNI</SelectItem>
+                          <SelectItem value="bri">BRI</SelectItem>
+                          <SelectItem value="danamon">Danamon</SelectItem>
+                          <SelectItem value="permata">Permata</SelectItem>
+                          <SelectItem value="cimb">CIMB Niaga</SelectItem>
+                          <SelectItem value="btn">BTN</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -267,7 +368,7 @@ export const PinjamanModal = ({ isOpen, onClose, onSave }: PinjamanModalProps) =
                             <span className="font-semibold">Cicilan:</span> {hitungCicilan()} / bulan
                           </p>
                           <p className="text-sm text-blue-800">
-                            <span className="font-semibold">Potong:</span> tiap tanggal {skemaPembayaran === 'gajian' ? '25' : tanggalPotong}
+                            <span className="font-semibold">Potong:</span> tiap tanggal {skemaPembayaran === 'gajian' ? '25' : tanggalPotong ? format(tanggalPotong, 'd') : '-'}
                           </p>
                           <p className="text-sm text-blue-800">
                             <span className="font-semibold">Mulai:</span> {new Date().toLocaleString('id-ID', { month: 'long', year: 'numeric' })}

@@ -1,7 +1,7 @@
 //========= read
 export interface PositionItem {
     id: number;
-    position_name: string;
+    name: string;
     allowance_position: string | null;
     description: string | null;
     created_at: string | null;
@@ -10,7 +10,7 @@ export interface PositionItem {
 
 export interface DepartmentItem {
     id: number;
-    department_name: string;
+    name: string;
     description: string | null;
     created_at: string | null;
     updated_at: string | null;
@@ -69,15 +69,14 @@ export interface EmployeeListResponse {
     success: boolean;
     code: number;
     message: string;
-    data: {
-        items: EmployeeItem[];
-        pagination: {
-            current_page: number;
-            per_page: number;
-            total: number;
-            last_page: number;
-        };
+    data: EmployeeItem[],
+    meta: {
+        current_page: number;
+        per_page: number;
+        total: number;
+        last_page: number;
     };
+
 }
 
 

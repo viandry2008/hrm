@@ -16,18 +16,6 @@ import {
 import { SectionItem } from '@/api/section/section.types';
 import { useGetDepartments } from '@/api/division/division.query';
 
-const dummyBagian = [
-    { id: 1, nama: 'IT Support', divisi: 'Divisi IT' },
-    { id: 2, nama: 'IT Helpdesk', divisi: 'Divisi IT' },
-    { id: 3, nama: 'System Analyst', divisi: 'Divisi IT' },
-];
-
-const listDivisi = [
-    { id: 1, nama: "Divisi IT" },
-    { id: 2, nama: "Divisi HR" },
-    { id: 3, nama: "Divisi Finance" },
-];
-
 export const BagianPage = () => {
     const [search, setSearch] = useState("");
     const [showEntries, setShowEntries] = useState("10");
@@ -41,7 +29,7 @@ export const BagianPage = () => {
 
     useEffect(() => {
         if (editData) {
-            setSectionName(editData.section_name);
+            setSectionName(editData.name);
             setDepartmentId(editData.department_id);
         } else {
             setSectionName("");
@@ -65,7 +53,7 @@ export const BagianPage = () => {
             limit: 1000, // ambil semua untuk select
         });
 
-    const departments = departmentData?.data.items ?? [];
+    const departments = departmentData?.data ?? [];
 
     /**
      * CREATE
@@ -88,20 +76,20 @@ export const BagianPage = () => {
      */
     const handleSubmit = (payload: {
         id?: number;
-        section_name: string;
+        name: string;
         department_id: number;
     }) => {
         if (payload.id) {
             updateMutation.mutate({
                 id: payload.id,
                 payload: {
-                    section_name: payload.section_name,
+                    name: payload.name,
                     department_id: payload.department_id,
                 },
             });
         } else {
             createMutation.mutate({
-                section_name: payload.section_name,
+                name: payload.name,
                 department_id: payload.department_id,
             });
         }
@@ -112,8 +100,8 @@ export const BagianPage = () => {
      */
     const deleteMutation = useDeleteSection(() => refetch());
 
-    const items: SectionItem[] = data?.data.items ?? [];
-    const pagination = data?.data.pagination;
+    const items: SectionItem[] = data?.data ?? [];
+    const pagination = data?.meta;
 
     return (
         <div className="p-6 space-y-6">
@@ -206,10 +194,10 @@ export const BagianPage = () => {
                                                 {(currentPage - 1) * Number(showEntries) + idx + 1}
                                             </TableCell>
                                             <TableCell className="border">
-                                                {item.section_name}
+                                                {item.name}
                                             </TableCell>
                                             <TableCell className="border">
-                                                {item.department?.department_name}
+                                                {item.department?.name}
                                             </TableCell>
                                             <TableCell className="border">
                                                 <div className="flex space-x-2">
@@ -344,7 +332,7 @@ export const BagianPage = () => {
                                     <SelectContent className="z-[10000]">
                                         {departments.map((dept) => (
                                             <SelectItem key={dept.id} value={String(dept.id)}>
-                                                {dept.department_name}
+                                                {dept.name}
                                             </SelectItem>
                                         ))}
                                     </SelectContent>
@@ -362,7 +350,7 @@ export const BagianPage = () => {
                                 onClick={() =>
                                     handleSubmit({
                                         id: editData?.id,
-                                        section_name: sectionName,
+                                        name: sectionName,
                                         department_id: departmentId!,
                                     })
                                 }

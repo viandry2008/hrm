@@ -53,23 +53,23 @@ export const DivisiPage = () => {
     setModalOpen(false);
   });
 
-  const handleSubmit = (payload: { id?: number; department_name: string }) => {
+  const handleSubmit = (payload: { id?: number; name: string }) => {
     if (payload.id) {
       updateMutation.mutate({
         id: payload.id,
-        payload: { department_name: payload.department_name },
+        payload: { name: payload.name },
       });
     } else {
       createMutation.mutate({
-        department_name: payload.department_name,
+        name: payload.name,
       });
     }
   };
 
   const deleteMutation = useDeleteDepartment(() => refetch());
 
-  const items: DepartmentItem[] = data?.data.items ?? [];
-  const pagination = data?.data.pagination;
+  const items: DepartmentItem[] = data?.data ?? [];
+  const pagination = data?.meta;
 
   return (
     <div className="p-6 space-y-6">
@@ -167,7 +167,7 @@ export const DivisiPage = () => {
                         {(currentPage - 1) * Number(showEntries) + idx + 1}
                       </TableCell>
 
-                      <TableCell className="border border-gray-200">{item.department_name}</TableCell>
+                      <TableCell className="border border-gray-200">{item.name}</TableCell>
 
                       <TableCell className="border border-gray-200">
                         <div className="flex space-x-2">
@@ -262,7 +262,7 @@ export const DivisiPage = () => {
       <DivisionFormModal
         open={modalOpen}
         onClose={setModalOpen}
-        initialData={editData}
+        initialData={editData ? { id: editData.id, name: editData.name } : null}
         loading={createMutation.isPending || updateMutation.isPending}
         onSubmit={handleSubmit}
       />
