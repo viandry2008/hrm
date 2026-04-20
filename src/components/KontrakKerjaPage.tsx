@@ -332,10 +332,10 @@ export const KontrakKerjaPage = () => {
               <FileText className="w-4 h-4 mr-2" /> Buat Kontrak
             </Button>
           </div>
-          <div className="overflow-x-auto border rounded-lg">
+          <div className="overflow-auto rounded border border-gray-300">
             <Table className="w-full border border-gray-300 border-collapse">
               <TableHeader>
-                <TableRow className="bg-blue-600 hover:bg-blue-600 text-white">
+                <TableRow className="bg-brand text-white hover:bg-brand">
                    <TableHead className="border text-white whitespace-nowrap">No.</TableHead>
                    <TableHead className="border text-white whitespace-nowrap">Nomor Surat</TableHead>
                    <TableHead className="border text-white whitespace-nowrap">ID Karyawan</TableHead>

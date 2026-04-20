@@ -206,10 +206,10 @@ export const DataIzinPage = () => {
             </Button>
           </div>
 
-          <div className="overflow-x-auto border rounded-lg">
-            <Table>
+          <div className="overflow-auto rounded border border-gray-300">
+            <Table className="w-full border border-gray-300 border-collapse">
             <TableHeader>
-           <TableRow className="bg-[#2794EB] [&>th]:text-white hover:bg-[#2794EB] pointer-events-none">
+           <TableRow className="bg-brand text-white hover:bg-brand">
               <TableHead className="text-white border border-gray-200 whitespace-nowrap">No</TableHead>
               <TableHead className="text-white border border-gray-200 whitespace-nowrap">ID</TableHead>
               <TableHead className="text-white border border-gray-200 whitespace-nowrap">Nama</TableHead>

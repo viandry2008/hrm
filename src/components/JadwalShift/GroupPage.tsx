@@ -100,10 +100,10 @@ export const GroupPage = () => {
           </div>
 
           {/* Table */}
-          <div className="border rounded-lg overflow-hidden">
-            <Table className="w-full border border-gray-300">
+          <div className="overflow-auto rounded border border-gray-300">
+            <Table className="w-full border border-gray-300 border-collapse">
               <TableHeader>
-                <TableRow className="bg-blue-600 text-white">
+                <TableRow className="bg-brand text-white hover:bg-brand">
                   <TableHead className="border border-gray-300 text-white font-semibold">No.</TableHead>
                   <TableHead className="border border-gray-300 text-white font-semibold">Keterangan</TableHead>
                   <TableHead className="border border-gray-300 text-white font-semibold">Aksi</TableHead>

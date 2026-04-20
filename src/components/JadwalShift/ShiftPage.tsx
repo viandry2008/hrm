@@ -100,10 +100,10 @@ export const ShiftPage = () => {
           </div>
 
           {/* Table */}
-          <div className="border rounded-lg overflow-hidden">
-            <Table className="w-full border border-gray-300">
+          <div className="overflow-auto rounded border border-gray-300">
+            <Table className="w-full border border-gray-300 border-collapse">
               <TableHeader>
-                <TableRow className="bg-blue-600 hover:bg-blue-600 text-white">
+                <TableRow className="bg-brand text-white hover:bg-brand">
                   <TableHead className="border text-white whitespace-nowrap">No.</TableHead>
                   <TableHead className="border text-white whitespace-nowrap">Keterangan Shift</TableHead>
                   <TableHead className="border text-white whitespace-nowrap">Jam</TableHead>

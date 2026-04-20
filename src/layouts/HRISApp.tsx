@@ -39,8 +39,8 @@ export const HRISApp = () => {
       <div className="flex-1 flex flex-col overflow-hidden">
         <header className="sticky top-0 z-30 bg-white px-4 py-3 shadow flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Building2 size={28} color="#2794eb" />
-            <h1 className="font-extrabold text-2xl text-[#2794eb]">
+            <Building2 size={28} color="#0F2A4D" />
+            <h1 className="font-extrabold text-2xl text-[#0F2A4D]">
               {APP_CONFIG.companyName}
             </h1>
           </div>
@@ -48,7 +48,7 @@ export const HRISApp = () => {
           <div className="flex items-center gap-4">
             <Button
               className="text-white text-sm rounded-md px-3 py-1.5 hover:opacity-90"
-              style={{ backgroundColor: "#2794eb" }}
+              style={{ backgroundColor: "#0F2A4D" }}
             >
               Jadwalkan Demo
             </Button>

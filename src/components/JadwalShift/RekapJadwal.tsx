@@ -168,10 +168,10 @@ export const JadwalShiftPage = () => {
         </div>
       </div>
 
-      <div className="border rounded-lg overflow-hidden">
-        <Table>
+      <div className="overflow-auto rounded border border-gray-300">
+        <Table className="w-full border border-gray-300 border-collapse">
           <TableHeader>
-            <TableRow className="bg-blue-600 hover:bg-blue-600">
+            <TableRow className="bg-brand text-white hover:bg-brand">
               {columns.map((col: string, idx: number) => (
                 <TableHead key={idx} className="text-white font-semibold">{col}</TableHead>
               ))}

@@ -144,7 +144,7 @@ const SidebarProvider = React.forwardRef<
 SidebarProvider.displayName = "SidebarProvider"
 
 const sidebarVariants = cva(
-  "h-full bg-[#2794eb] text-white backdrop-blur-sm border-r border-border/40 shadow-sm",
+  "h-full bg-[#0F2A4D] text-white backdrop-blur-sm border-r border-border/40 shadow-sm",
   {
     variants: {
       size: {
@@ -235,8 +235,8 @@ const SidebarNavItem = React.forwardRef<
     ref={ref}
     className={cn(
       "flex items-center px-3 py-2 rounded-md text-sm transition-colors cursor-pointer",
-      active && "bg-[#2794eb] text-white font-medium",
-      !active && "text-white/80 hover:text-white hover:bg-[#1e7cc7]",
+      active && "bg-[#0F2A4D] text-white font-medium",
+      !active && "text-white/80 hover:text-white hover:bg-[#0d2240]",
       className
     )}
     {...props}
@@ -347,9 +347,9 @@ const sidebarMenuButtonVariants = cva(
     variants: {
       variant: {
         default:
-          "text-white/80 hover:text-white hover:bg-[#1e7cc7] data-[active=true]:bg-[#2794eb] data-[active=true]:text-white data-[active=true]:font-medium",
+          "text-white/80 hover:text-white hover:bg-[#0d2240] data-[active=true]:bg-[#0F2A4D] data-[active=true]:text-white data-[active=true]:font-medium",
         outline:
-          "bg-[#2794eb] text-white shadow-md hover:bg-[#1e7cc7] hover:text-white",
+          "bg-[#0F2A4D] text-white shadow-md hover:bg-[#0d2240] hover:text-white",
       },
       size: {
         default: "h-9 text-sm",

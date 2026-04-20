@@ -9,8 +9,8 @@ const KendaraanSection = ({ updateForm, formData }: any) => {
 
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-      {/* Header Biru #2794EB */}
-      <div className="flex items-center space-x-2 p-3 bg-[#2794EB] text-white rounded-t-lg">
+      {/* Header Biru #0F2A4D */}
+      <div className="flex items-center space-x-2 p-3 bg-brand text-white rounded-t-lg">
         <Car className="w-5 h-5" />
         <h3 className="font-semibold">Identitas Kendaraan</h3>
       </div>

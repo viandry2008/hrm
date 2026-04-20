@@ -286,23 +286,23 @@ const TabRiwayatPinjaman = ({ data }: any) => {
           <h3 className="text-base font-semibold text-gray-900 mb-4">
             Riwayat Potongan Pinjaman
           </h3>
-          <div className="rounded-md border border-gray-200">
-            <Table>
+          <div className="overflow-auto rounded border border-gray-300">
+            <Table className="w-full border border-gray-300 border-collapse">
               <TableHeader>
-                <TableRow className="bg-gradient-to-r from-[#1E3A8A] to-[#1E40AF] hover:bg-gradient-to-r hover:from-[#1E3A8A] hover:to-[#1E40AF]">
-                  <TableHead className="text-white font-semibold border-r border-white/30">
+                <TableRow className="bg-brand text-white hover:bg-brand">
+                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">
                     Bulan
                   </TableHead>
-                  <TableHead className="text-white font-semibold border-r border-white/30">
+                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">
                     Total Pinjaman
                   </TableHead>
-                  <TableHead className="text-white font-semibold border-r border-white/30">
+                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">
                     Potongan Pinjaman
                   </TableHead>
-                  <TableHead className="text-white font-semibold border-r border-white/30">
+                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">
                     Tanggal Potong
                   </TableHead>
-                  <TableHead className="text-white font-semibold">
+                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">
                     Status
                   </TableHead>
                 </TableRow>

@@ -49,11 +49,11 @@ export const ResetPassword = () => {
     Swal.fire({
       title: "<span style='color:white'>Kata sandi berhasil diubah!</span>",
       icon: "success",
-      background: "#2794eb",
+      background: "#0F2A4D",
       color: "white",
       confirmButtonColor: "#ffffff",
       confirmButtonText:
-        "<span style='color:#2794eb;font-weight:bold;'>OK</span>",
+        "<span style='color:#0F2A4D;font-weight:bold;'>OK</span>",
     }).then(() => {
       navigate("/login");
     });

@@ -54,16 +54,37 @@ const formatTanggal = (tanggal: string): string => {
   return `${day}-${month}-${year}`;
 };
 
-const ReminderLabel = ({ text }: { text: string }) => {
-  const isReminder = text?.toLowerCase().includes("kontrak akan habis");
+const ReminderLabel = ({ text, endDate }: { text?: string; endDate?: string }) => {
+  const today = new Date("2026-04-20");
 
-  if (!text || text.trim() === '' || text === '-' || !isReminder) {
-    return <span className="text-gray-400 text-sm whitespace-nowrap max-w-full truncate">{text}</span>;
+  let displayText = text;
+  if (endDate && text?.toLowerCase().includes("kontrak")) {
+    const end = new Date(endDate);
+    const diffTime = end.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays > 0 && diffDays <= 90) {
+      displayText = `Kontrak akan habis dalam ${diffDays} hari`;
+    } else if (diffDays <= 0) {
+      displayText = "Kontrak telah habis";
+    } else {
+      displayText = undefined;
+    }
+  }
+
+  if (!displayText || displayText.trim() === '' || displayText === '-') {
+    return <span className="text-gray-400 text-sm whitespace-nowrap max-w-full truncate">-</span>;
+  }
+
+  const isReminder = displayText?.toLowerCase().includes("kontrak akan habis") || displayText?.toLowerCase().includes("kontrak telah habis");
+
+  if (!isReminder) {
+    return <span className="text-gray-400 text-sm whitespace-nowrap max-w-full truncate">{displayText}</span>;
   }
 
   return (
     <span className="inline-block bg-orange-300 text-black text-xs font-semibold px-2 py-1 rounded-full whitespace-nowrap max-w-full truncate">
-      {text}
+      {displayText}
     </span>
   );
 };
@@ -456,7 +477,7 @@ export const DataKaryawanPage = () => {
           <div className="overflow-auto rounded border border-gray-300">
             <Table className="w-full border border-gray-300 border-collapse">
               <TableHeader>
-                <TableRow className="bg-gradient-to-r from-[#1E3A8A] to-[#1E40AF] hover:bg-gradient-to-r hover:from-[#1E3A8A] hover:to-[#1E40AF] text-white">
+                <TableRow className="bg-brand text-white hover:bg-brand ">
                   <TableHead className="text-white border border-gray-200">
                     <input
                       type="checkbox"
@@ -531,7 +552,7 @@ export const DataKaryawanPage = () => {
                       <StatusLabel status={k.employment_status} />
                     </TableCell>
                     <TableCell className="border border-gray-200">
-                      <ReminderLabel text={"Kontrak akan habis dalam 365 hari"} />
+                      {k.latest_contract ? <ReminderLabel text="Kontrak akan habis" endDate={k.latest_contract?.end_date} /> : "-"}
                     </TableCell>
 
                     <TableCell>

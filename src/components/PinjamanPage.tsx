@@ -371,10 +371,10 @@ export const PinjamanPage = () => {
             </Button>
           </div>
 
-          <div className="overflow-x-auto border rounded-lg">
-            <Table>
+          <div className="overflow-auto rounded border border-gray-300">
+            <Table className="w-full border border-gray-300 border-collapse">
               <TableHeader>
-                <TableRow className="bg-gradient-to-r from-[#1E3A8A] to-[#1E40AF] hover:bg-gradient-to-r hover:from-[#1E3A8A] hover:to-[#1E40AF]">
+                <TableRow className="bg-brand text-white hover:bg-brand">
                   <TableHead className="text-white border border-gray-200 whitespace-nowrap">No.</TableHead>
                   <TableHead className="text-white border border-gray-200 whitespace-nowrap">ID Karyawan</TableHead>
                   <TableHead className="text-white border border-gray-200 whitespace-nowrap">Nama Karyawan</TableHead>

@@ -41,11 +41,11 @@ export const LoginPage = () => {
         title: '<span style="color: white">Berhasil Masuk!</span>',
         text: "Selamat Datang di SMART HRM",
         icon: "success",
-        background: "#2794eb",
+        background: "#0F2A4D",
         color: "white",
         confirmButtonColor: "#ffffff",
         confirmButtonText:
-          '<span style="color: #2794eb; font-weight: bold;">OK</span>',
+          '<span style="color: #0F2A4D; font-weight: bold;">OK</span>',
         customClass: {
           popup: "rounded-xl",
           title: "text-xl",
@@ -99,7 +99,7 @@ export const LoginPage = () => {
                         type="button"
                         onClick={() => setRole("management")}
                         className={`px-2 sm:px-3 py-1 sm:py-1.5 font-medium rounded-full flex items-center gap-1 transition ${role === "management"
-                          ? "bg-[#2794eb] text-white shadow"
+                          ? "bg-[#0F2A4D] text-white shadow"
                           : "text-gray-500 hover:text-blue-600"
                           }`}
                       >
@@ -115,7 +115,7 @@ export const LoginPage = () => {
                         type="button"
                         onClick={() => setRole("employee")}
                         className={`px-2 sm:px-3 py-1 sm:py-1.5 font-medium rounded-full flex items-center gap-1 transition ${role === "employee"
-                          ? "bg-[#2794eb] text-white shadow"
+                          ? "bg-[#0F2A4D] text-white shadow"
                           : "text-gray-500 hover:text-blue-600"
                           }`}
                       >

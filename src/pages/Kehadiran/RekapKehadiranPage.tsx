@@ -127,9 +127,9 @@ export const RekapKehadiranPage = () => {
                     </div>
 
                     <div className="overflow-auto rounded border border-gray-300">
-                        <Table className="w-full border-collapse">
+                        <Table className="w-full border border-gray-300 border-collapse">
                             <TableHeader>
-                                <TableRow className="bg-blue-600 hover:bg-blue-600 text-white">
+                                <TableRow className="bg-brand text-white hover:bg-brand">
                                     <TableHead className="text-white border border-gray-200">No</TableHead>
                                     <TableHead className="text-white border border-gray-200">Periode Absen</TableHead>
                                     <TableHead className="text-white border border-gray-200">Jumlah Karyawan</TableHead>

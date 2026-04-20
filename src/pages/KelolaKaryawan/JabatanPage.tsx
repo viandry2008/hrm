@@ -70,10 +70,10 @@ export const JabatanPage = () => {
   const pagination = data?.meta;
 
   return (
-    <div className="p-6 space-y-6">
-      <Card>
+    <div className="p-6 space-y-6 bg-[#F8FAFC] min-h-screen">
+      <Card className="border border-[#E2E8F0] shadow-sm">
         <CardHeader>
-          <CardTitle className="flex items-center">
+          <CardTitle className="flex items-center text-[#0F2A4D] font-semibold">
             <Briefcase className="h-5 w-5 mr-2" />
             Data Jabatan
           </CardTitle>
@@ -92,7 +92,7 @@ export const JabatanPage = () => {
                   setCurrentPage(1);
                 }}
               >
-                <SelectTrigger className="w-20">
+                <SelectTrigger className="w-20 border-[#E2E8F0]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -107,7 +107,7 @@ export const JabatanPage = () => {
 
             <div className="flex items-center space-x-2">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
                   placeholder="Cari jabatan..."
                   value={searchTerm}
@@ -115,15 +115,17 @@ export const JabatanPage = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="pl-10 w-64"
+                  className="pl-10 w-64 border-[#E2E8F0] focus:border-[#1E4F85]"
                 />
               </div>
 
-              <Button className="bg-blue-600 hover:bg-blue-700 text-white"
+              <Button
+                className="bg-[#1E4F85] hover:bg-[#163E6B] text-white shadow-sm"
                 onClick={() => {
                   setEditData(null);
                   setModalOpen(true);
-                }}>
+                }}
+              >
                 <Plus className="h-4 w-4 mr-2" />
                 Tambah Jabatan
               </Button>
@@ -131,19 +133,13 @@ export const JabatanPage = () => {
           </div>
 
           {/* Table */}
-          <div className="border rounded-lg overflow-hidden">
+          <div className="overflow-auto rounded border border-gray-300">
             <Table className="w-full border border-gray-300 border-collapse">
               <TableHeader>
-                <TableRow className="bg-blue-600 hover:bg-blue-600 text-white">
-                  <TableHead className="text-white border border-gray-200">
-                    No.
-                  </TableHead>
-                  <TableHead className="text-white border border-gray-200">
-                    Nama Jabatan
-                  </TableHead>
-                  <TableHead className="text-white border border-gray-200">
-                    Aksi
-                  </TableHead>
+                <TableRow className="bg-brand text-white hover:bg-brand">
+                  <TableHead className="text-white border border-gray-200">No.</TableHead>
+                  <TableHead className="text-white border border-gray-200">Nama Jabatan</TableHead>
+                  <TableHead className="text-white border border-gray-200">Aksi</TableHead>
                 </TableRow>
               </TableHeader>
 
@@ -162,21 +158,18 @@ export const JabatanPage = () => {
                   </TableRow>
                 ) : (
                   items.map((item, idx) => (
-                    <TableRow key={item.id} className="hover:bg-gray-50">
-                      <TableCell className="border border-gray-200">
+                    <TableRow key={item.id} className="hover:bg-[#F5F9FF] transition">
+                      <TableCell className="border border-[#E2E8F0]">
                         {(currentPage - 1) * Number(showEntries) + idx + 1}
                       </TableCell>
 
-                      <TableCell className="border border-gray-200">
-                        {item.name}
-                      </TableCell>
+                      <TableCell className="border border-[#E2E8F0]">{item.name}</TableCell>
 
-                      <TableCell className="border border-gray-200">
-                        <div className="flex space-x-2">
+                      <TableCell className="border border-[#E2E8F0]">
+                        <div className="flex gap-2">
                           <Button
                             size="sm"
-                            variant="ghost"
-                            className="bg-blue-400 text-white hover:bg-blue-500"
+                            className="bg-[#1E4F85] text-white hover:bg-[#163E6B] shadow-sm"
                             onClick={() => {
                               setEditData(item);
                               setModalOpen(true);
@@ -187,9 +180,8 @@ export const JabatanPage = () => {
 
                           <Button
                             size="sm"
-                            variant="ghost"
+                            className="bg-red-600 text-white hover:bg-red-700 shadow-sm"
                             onClick={() => deleteMutation.mutate(item.id)}
-                            className="bg-red-600 text-white hover:bg-red-700"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -204,7 +196,6 @@ export const JabatanPage = () => {
 
           {/* Pagination */}
           <div className="flex justify-between items-center mt-4">
-            {/* Info */}
             <div className="text-sm text-gray-500">
               Menampilkan{" "}
               <strong>
@@ -222,14 +213,13 @@ export const JabatanPage = () => {
               dari <strong>{pagination?.total ?? 0}</strong> data
             </div>
 
-            {/* Navigation */}
             <div className="flex gap-2">
               <Button
                 disabled={pagination?.current_page === 1}
                 onClick={() => setCurrentPage((p) => p - 1)}
-                className="bg-blue-500 text-white hover:bg-blue-600"
+                className="bg-[#1E4F85] text-white hover:bg-[#163E6B]"
               >
-                Sebelumnya
+                Prev
               </Button>
 
               {[...Array(pagination?.last_page || 1)].map((_, i) => (
@@ -239,8 +229,8 @@ export const JabatanPage = () => {
                   onClick={() => setCurrentPage(i + 1)}
                   className={
                     pagination?.current_page === i + 1
-                      ? "bg-blue-500 text-white"
-                      : "bg-white text-blue-600 border border-blue-600 hover:bg-blue-50"
+                      ? "bg-[#1E4F85] text-white"
+                      : "bg-white text-[#1E4F85] border border-[#1E4F85]/30 hover:bg-[#EAF2FB]"
                   }
                 >
                   {i + 1}
@@ -250,15 +240,15 @@ export const JabatanPage = () => {
               <Button
                 disabled={pagination?.current_page === pagination?.last_page}
                 onClick={() => setCurrentPage((p) => p + 1)}
-                className="bg-blue-500 text-white hover:bg-blue-600"
+                className="bg-[#1E4F85] text-white hover:bg-[#163E6B]"
               >
-                Selanjutnya
+                Next
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
-      {/* Modal */}
+
       <PositionFormModal
         open={modalOpen}
         onClose={setModalOpen}

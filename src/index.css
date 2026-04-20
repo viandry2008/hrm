@@ -6,6 +6,19 @@
 
 @layer base {
   :root {
+    /* ============================================
+        PRIMARY BRAND COLOR - GANTI DISINI
+        ============================================
+        Default: #0F2A4D (H:216 S:80% L:18%)
+        Untuk dark mode: sesuaikan lightness (%)
+        
+        Cara换算 hex ke HSL:
+        - Buka https://www.rapidtables.com/convert/color/hex-to-hsl.html
+        - Masukkan hex code (tanpa #)
+        - Copy nilai H S L ke format "H S% L%"
+    */
+    --brand-color: 216 80% 18%;
+    
     --background: 210 40% 98%;
     --foreground: 222.2 84% 4.9%;
 
@@ -15,7 +28,7 @@
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
 
-    --primary: 221 83% 53%;
+    --primary: var(--brand-color);
     --primary-foreground: 210 40% 98%;
 
     --secondary: 210 40% 96.1%;
@@ -32,21 +45,24 @@
 
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 221 83% 53%;
+    --ring: var(--brand-color);
 
     --radius: 0.5rem;
 
     --sidebar-background: 220 23% 95%;
     --sidebar-foreground: 215 25% 27%;
-    --sidebar-primary: 221 83% 53%;
+    --sidebar-primary: var(--brand-color);
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 220 14% 90%;
     --sidebar-accent-foreground: 215 25% 27%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 221 83% 53%;
+    --sidebar-ring: var(--brand-color);
   }
 
   .dark {
+    /* Dark mode brand color - versi lebih terang (lightness 40-50%) */
+    --brand-color: 216 60% 45%;
+    
     --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
 
@@ -56,7 +72,7 @@
     --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 217.2 91.2% 59.8%;
+    --primary: var(--brand-color);
     --primary-foreground: 222.2 47.4% 11.2%;
 
     --secondary: 217.2 32.6% 17.5%;
@@ -73,16 +89,16 @@
 
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --ring: var(--brand-color);
 
     --sidebar-background: 215 28% 17%;
     --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 217.2 91.2% 59.8%;
+    --sidebar-primary: var(--brand-color);
     --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 215 25% 27%;
     --sidebar-accent-foreground: 210 40% 98%;
     --sidebar-border: 215 25% 27%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-ring: var(--brand-color);
   }
 }
 

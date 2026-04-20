@@ -50,26 +50,26 @@ const TabRiwayatKontrakKerja = ({ data }: any) => {
   return (
     <Card className="bg-white">
       <CardContent className="p-6 bg-white">
-        <div className="rounded-md border border-gray-200">
-          <Table>
+        <div className="overflow-auto rounded border border-gray-300">
+          <Table className="w-full border border-gray-300 border-collapse">
             <TableHeader>
-              <TableRow className="bg-gradient-to-r from-[#1E3A8A] to-[#1E40AF] hover:bg-gradient-to-r hover:from-[#1E3A8A] hover:to-[#1E40AF]">
-                <TableHead className="w-16 text-center text-white font-semibold border-r border-white/30">
+              <TableRow className="bg-brand text-white hover:bg-brand">
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">
                   No.
                 </TableHead>
-                <TableHead className="text-white font-semibold border-r border-white/30">
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">
                   Tanggal Kontrak Kerja
                 </TableHead>
-                <TableHead className="text-white font-semibold border-r border-white/30">
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">
                   Selesai Kontrak Kerja
                 </TableHead>
-                <TableHead className="text-white font-semibold border-r border-white/30">
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">
                   Durasi Kontrak
                 </TableHead>
-                <TableHead className="text-white font-semibold border-r border-white/30">
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">
                   Terakhir Diperbaharui
                 </TableHead>
-                <TableHead className="text-center text-white font-semibold">
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">
                   Status
                 </TableHead>
               </TableRow>

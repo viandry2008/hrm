@@ -21,7 +21,6 @@ export interface DepartmentListResponse {
 }
 
 //========= create & update
-
 export interface DepartmentPostRequest {
     name: string;
     description?: string | null;

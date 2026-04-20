@@ -83,7 +83,7 @@ export const RegisterPage = () => {
       <Label className="text-sm mb-1 block">{label}</Label>
       <div className="flex items-center border rounded-md overflow-hidden bg-white">
         {/* ICON */}
-        <div className="w-10 h-10 flex items-center justify-center bg-[#2794eb]">
+        <div className="w-10 h-10 flex items-center justify-center bg-[#0F2A4D]">
           {icon}
         </div>
 
@@ -109,7 +109,7 @@ export const RegisterPage = () => {
         <Card className="shadow-2xl rounded-2xl">
           <CardContent className="p-8 max-h-[90vh] overflow-y-auto">
             <h1 className="text-2xl font-bold text-center mb-1">
-              Daftar <span className="text-[#2794eb]">SMART HRM</span> Sekarang
+              Daftar <span className="text-[#0F2A4D]">SMART HRM</span> Sekarang
             </h1>
             <p className="text-center text-sm text-gray-600 mb-6">
               Dapatkan <b>FREE TRIAL Akun 90 Hari!</b>
@@ -178,7 +178,7 @@ export const RegisterPage = () => {
               <div>
                 <Label className="text-sm mb-1 block">Pesan</Label>
                 <textarea
-                  className="w-full border rounded-md p-3 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#2794eb]"
+                  className="w-full border rounded-md p-3 text-sm bg-white focus:outline-none focus:ring-1 focus:ring-[#0F2A4D]"
                   rows={4}
                   placeholder="Tuliskan kebutuhan atau ketertarikan Anda terkait meeting..."
                   value={form.message}

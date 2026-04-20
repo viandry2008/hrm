@@ -63,7 +63,11 @@ export default {
           'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
           border: 'hsl(var(--sidebar-border))',
           ring: 'hsl(var(--sidebar-ring))'
-        }
+        },
+        brand: {
+          DEFAULT: '#0F2A4D',
+          light: '#4A6FA5',
+        } as any,
       },
       fontFamily: {
         mono: ['JetBrains Mono', 'monospace'],

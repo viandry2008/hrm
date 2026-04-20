@@ -40,7 +40,7 @@ const InputRp = ({ value, onChange, placeholder }: any) => (
 const InformasiGajiSection: React.FC<InformasiGajiSectionProps> = ({ formData, updateForm }) => {
     return (
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-            <div className="flex items-center space-x-2 p-3 bg-[#2794EB] text-white rounded-t-lg">
+            <div className="flex items-center space-x-2 p-3 bg-brand text-white rounded-t-lg">
                 <Wallet className="w-5 h-5" />
                 <h3 className="font-semibold">Informasi Gaji</h3>
             </div>

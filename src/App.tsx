@@ -8,43 +8,55 @@ import { ThemeProvider } from "@/components/theme-provider";
 import { HRISApp } from "@/layouts/HRISApp";
 import NotFound from "./pages/NotFound";
 
-// Pages
+// Pages - Dashboard & Jadwal Shift
 import { DashboardPage } from "./pages/main/DashboardPage";
-// import { ShiftPage } from "./components/jadwalshift/ShiftPage";
-// import { GroupPage } from "./components/jadwalshift/GroupPage";
-// import { JadwalShiftPage } from "./components/jadwalshift/JadwalShiftPage";
-// import { KehadiranPage } from "./components/kehadiran/KehadiranPage";
-// import { DataKehadiranPage } from "./components/kehadiran/DataKehadiranPage";
-// import { RekapKehadiranPage } from "./components/kehadiran/RekapKehadiranPage";
+// import { ShiftPage } from "./components/JadwalShift/ShiftPage";
+// import { GrupPage } from "./components/JadwalShift/GrupPage";
+// import { JadwalShiftPage } from "./components/JadwalShift/JadwalShiftPage";
+
+// Pages - Kehadiran & Request Absen
+// import { KehadiranPage } from "./components/Kehadiran/KehadiranPage";
+import { DataKehadiranPage } from "./pages/Kehadiran/DataKehadiranPage";
+import { RekapKehadiranPage } from "./pages/Kehadiran/RekapKehadiranPage";
 import { RequestAbsenPage } from "./components/RequestAbsenPage";
+
+// Pages - Cuti, Izin, Lembur
 import { DataCutiPage } from "./components/Cuti/DataCutiPage";
+import { DataIzinPage } from "./components/Izin/DataIzinPage";
+import { DataLemburPage } from "./components/Lembur/DataLemburPage";
+
+// Pages - Keuangan & Lainnya
 import { PinjamanPage } from "./components/PinjamanPage";
 import { ReimbursementPage } from "./components/ReimbursementPage";
-import { DataLemburPage } from "./components/Lembur/DataLemburPage";
-import { DataIzinPage } from "./components/Izin/DataIzinPage";
 import { POPage } from "./components/POPage";
+
+// Pages - Surat-menyurat
 import { PengunduranDiriPage } from './components/PengunduranDiriPage';
 import { KeteranganBekerjaPage } from './components/KeteranganBekerjaPage';
 import { PaklaringPage } from './components/PaklaringPage';
-import { RegisterPage } from "./pages/trial/RegisterPage";
-import { ResetPassword } from "./components/ResetPassword";
 import { SuratPeringatanPage } from "./components/SuratPeringatanPage";
-import { KelolaKaryawanPage } from "./pages/KelolaKaryawan/KelolaKaryawanPage";
-import { DataKaryawanPage } from "./pages/KelolaKaryawan/DataKaryawanPage";
-import { DivisiPage } from "./pages/KelolaKaryawan/DivisiPage";
-import { JabatanPage } from "./pages/KelolaKaryawan/JabatanPage";
-import { BagianPage } from "./pages/KelolaKaryawan/BagianPage";
 import { KontrakKerjaPage } from "./components/KontrakKerjaPage";
 // import SuratPenawaranKerjaPage from "./components/SuratPenawaranKerjaPage";
 
-// Auth
-// import { PrivateRoute } from "@/components/PrivateRoute";
+// Pages - Kelola Karyawan
+import { KelolaKaryawanPage } from "./pages/KelolaKaryawan/KelolaKaryawanPage";
+
+import { DivisiPage } from "./pages/KelolaKaryawan/DivisiPage";
+import { JabatanPage } from "./pages/KelolaKaryawan/JabatanPage";
+import { BagianPage } from "./pages/KelolaKaryawan/BagianPage";
+
+// Pages - Data Karyawan (Detail View)
+import { DataKaryawanPage } from "./pages/KelolaKaryawan/DataKaryawanPage";
+import TambahKaryawanPage from "./pages/KelolaKaryawan/TambahKaryawanPage";
+import DetailKaryawanPage from "./pages/KelolaKaryawan/DetailKaryawanPage";
+
+// Auth & Login
+import { RegisterPage } from "./pages/trial/RegisterPage";
 import { LoginPage } from "./pages/auth/LoginPage";
 import { ForgotPasswordPage } from "./pages/auth/ForgotPasswordPage";
-import TambahKaryawanPage from "./pages/KelolaKaryawan/TambahKaryawanPage";
-import { DataKehadiranPage } from "./pages/Kehadiran/DataKehadiranPage";
-import { RekapKehadiranPage } from "./pages/Kehadiran/RekapKehadiranPage";
-import DetailKaryawanPage from "./pages/KelolaKaryawan/DetailKaryawanPage";
+import { ResetPassword } from "./components/ResetPassword";
+
+// Auth Context & Guards
 import { AuthProvider } from "@/contexts/AuthContext";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { RoleRoute } from "@/components/RoleRoute";
@@ -61,21 +73,24 @@ const App = () => (
           <BrowserRouter>
             <Routes>
 
-              {/* PUBLIC ROUTES */}
+              {/* ================= PUBLIC ROUTES ================= */}
               <Route path="/register" element={<RegisterPage />} />
               <Route path="/login" element={<LoginPage />} />
               <Route path="/forgot-password" element={<ForgotPasswordPage />} />
               <Route path="/reset-password" element={<ResetPassword />} />
 
-              {/* PROTECTED */}
+              {/* ================= PROTECTED ROUTES ================= */}
               <Route element={<ProtectedRoute />}>
                 <Route path="/" element={<HRISApp />}>
 
-                  {/* SEMUA ROLE */}
+                  {/*  SEMUA ROLE (HR, KARYAWAN, ATASAN) */}
                   <Route path="dashboard" element={<DashboardPage />} />
                   {/* <Route path="shift" element={<ShiftPage />} />
                   <Route path="grup" element={<GrupPage />} />
                   <Route path="jadwal-shift" element={<JadwalShiftPage />} /> */}
+                  <Route path="keterangan-bekerja" element={<KeteranganBekerjaPage />} />
+                  <Route path="paklaring" element={<PaklaringPage />} />
+                  <Route path="/detail-karyawan/:id" element={<DetailKaryawanPage />} />
 
                   {/* HR ONLY */}
                   <Route element={<RoleRoute allowedRoles={["HR"]} />}>
@@ -89,9 +104,10 @@ const App = () => (
                     <Route path="surat-peringatan" element={<SuratPeringatanPage />} />
                     {/* <Route path="penawaran-kerja" element={<SuratPenawaranKerjaPage />} /> */}
                     <Route path="po" element={<POPage />} />
+                    <Route path="kpi" element={<DataCutiPage />} />
                   </Route>
 
-                  {/* HR + KARYAWAN */}
+                  {/*  HR + KARYAWAN */}
                   <Route element={<RoleRoute allowedRoles={["HR", "KARYAWAN"]} />}>
                     {/* <Route path="kehadiran-page" element={<KehadiranPage />} /> */}
                     <Route path="data-kehadiran" element={<DataKehadiranPage />} />
@@ -102,23 +118,22 @@ const App = () => (
                     <Route path="reimbursement" element={<ReimbursementPage />} />
                   </Route>
 
-                  {/* KARYAWAN ONLY */}
+                  {/*  KARYAWAN ONLY */}
                   <Route element={<RoleRoute allowedRoles={["KARYAWAN"]} />}>
                     <Route path="request-absen" element={<RequestAbsenPage />} />
                     <Route path="pengunduran-diri" element={<PengunduranDiriPage />} />
                   </Route>
 
-                  {/* HR + ATASAN */}
+                  {/* 🔐 HR + ATASAN */}
                   <Route element={<RoleRoute allowedRoles={["HR", "ATASAN"]} />}>
                     <Route path="data-lembur" element={<DataLemburPage />} />
+                    <Route path="data-cuti" element={<DataCutiPage />} />
+                    <Route path="data-izin" element={<DataIzinPage />} />
+                    {/* <Route path="jadwal-shift" element={<JadwalShiftPage />} /> */}
+                    <Route path="reimbursement" element={<ReimbursementPage />} />
                   </Route>
 
-                  {/* SEMUA ROLE (LANJUTAN) */}
-                  <Route path="keterangan-bekerja" element={<KeteranganBekerjaPage />} />
-                  <Route path="paklaring" element={<PaklaringPage />} />
-                  <Route path="/detail-karyawan/:id" element={<DetailKaryawanPage />} />
-
-                  {/* NOT FOUND */}
+                  {/* ❌ NOT FOUND */}
                   <Route path="*" element={<NotFound />} />
 
                 </Route>

@@ -169,9 +169,7 @@ export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
         <div key={item.id}>
           <Button
             variant="ghost"
-            className={cn(
-              'w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-white hover:bg-white/10 transition-all duration-200'
-            )}
+            className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-white/80 hover:text-white hover:bg-[#1E4F85]/40 transition-all duration-200"
             onClick={() => toggleDropdown(item.id)}
           >
             <div className="flex items-center gap-3">
@@ -189,20 +187,20 @@ export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
           {isOpen && (
             <div
               className={cn(
-                'transition-all duration-300 ease-in-out overflow-hidden',
+                'transition-all duration-300 overflow-hidden',
                 isOpenDropdown ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'
               )}
             >
-              <div className="ml-6 bg-white/10 backdrop-blur-sm rounded-xl py-2 px-3 space-y-1 border border-white/20">
+              <div className="ml-6 bg-[#0F2A4D]/80 backdrop-blur-md rounded-xl py-2 px-3 space-y-1 border border-[#1E4F85]/40">
                 {item.submenu.map((sub) => (
                   <button
                     key={sub.id}
                     onClick={() => handleNavigate(sub.id)}
                     className={cn(
-                      'block w-full text-left px-3 py-1.5 rounded-md text-sm transition-all text-white/90 hover:bg-white/20',
+                      'block w-full text-left px-3 py-1.5 rounded-md text-sm text-white/80 hover:text-white transition-all',
                       currentPath === sub.id
-                        ? 'bg-white/30 text-white font-semibold'
-                        : ''
+                        ? 'bg-[#3FA7FF]/20 text-white font-semibold border border-[#3FA7FF]/30'
+                        : 'hover:bg-[#3FA7FF]/20'
                     )}
                   >
                     {sub.label}
@@ -223,8 +221,8 @@ export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
         className={cn(
           'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 justify-start',
           isActive
-            ? 'bg-white/30 text-white font-semibold'
-            : 'text-white/90 hover:bg-white/10 hover:text-white'
+            ? 'bg-[#3FA7FF]/20 text-white font-semibold border border-[#3FA7FF]/30'
+            : 'text-white/80 hover:text-white hover:bg-[#1E4F85]/40'
         )}
         onClick={() => handleNavigate(item.id)}
       >
@@ -237,17 +235,17 @@ export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
   return (
     <div
       className={cn(
-        'bg-gradient-to-b from-[#1E3A8A] to-[#1E40AF] text-white h-screen flex flex-col shadow-lg transition-all duration-300 fixed md:static top-0 left-0 z-40',
+        'bg-gradient-to-b from-[#0B1F3A] via-[#0F2A4D] to-[#133A63] text-white h-screen flex flex-col shadow-[0_0_40px_rgba(0,0,0,0.6)] transition-all duration-300 fixed md:static top-0 left-0 z-40',
         isOpen ? 'w-64' : 'w-16'
       )}
     >
       {/* Header */}
-      <div className="p-4 border-b border-white/20 flex items-center justify-between">
-        {isOpen && <h1 className="text-xl font-bold">SMART HRM</h1>}
+      <div className="p-4 border-b border-white/10 flex items-center justify-between">
+        {isOpen && <h1 className="text-xl font-bold tracking-wide">SMART HRM</h1>}
         <Button
           variant="ghost"
           size="icon"
-          className="text-white hover:bg-white/10"
+          className="text-white hover:bg-[#1E4F85]/40"
           onClick={() => setIsOpen(!isOpen)}
         >
           {isOpen ? <ArrowLeft className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -262,10 +260,10 @@ export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
       </div>
 
       {/* Logout */}
-      <div className="p-4 border-t border-white/20">
+      <div className="p-4 border-t border-white/10">
         <Button
           variant="ghost"
-          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-white/90 hover:bg-white/10 hover:text-white transition-all duration-150 justify-start"
+          className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-white/80 hover:text-white hover:bg-[#1E4F85]/40 transition-all duration-150 justify-start"
           onClick={onLogout}
         >
           <LogOut className="h-5 w-5" />

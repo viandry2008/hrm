@@ -104,10 +104,10 @@ export const BagianPage = () => {
     const pagination = data?.meta;
 
     return (
-        <div className="p-6 space-y-6">
-            <Card>
+        <div className="p-6 space-y-6 bg-[#F8FAFC] min-h-screen">
+            <Card className="border border-[#E2E8F0] shadow-sm">
                 <CardHeader>
-                    <CardTitle className="flex items-center">
+                    <CardTitle className="flex items-center text-[#0F2A4D] font-semibold">
                         <Users className="h-5 w-5 mr-2" />
                         Data Bagian
                     </CardTitle>
@@ -125,7 +125,7 @@ export const BagianPage = () => {
                                     setCurrentPage(1);
                                 }}
                             >
-                                <SelectTrigger className="w-20">
+                                <SelectTrigger className="w-20 border-[#E2E8F0]">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -139,7 +139,7 @@ export const BagianPage = () => {
 
                         <div className="flex items-center space-x-2">
                             <div className="relative">
-                                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
                                 <Input
                                     placeholder="Cari bagian..."
                                     value={search}
@@ -147,11 +147,11 @@ export const BagianPage = () => {
                                         setSearch(e.target.value);
                                         setCurrentPage(1);
                                     }}
-                                    className="pl-10 w-64"
+                                    className="pl-10 w-64 border-[#E2E8F0] focus:border-[#1E4F85]"
                                 />
                             </div>
                             <Button
-                                className="bg-blue-600 hover:bg-blue-700 text-white"
+                                className="bg-[#1E4F85] hover:bg-[#163E6B] text-white shadow-sm"
                                 onClick={() => {
                                     setEditData(null);
                                     setModalOpen(true);
@@ -164,10 +164,10 @@ export const BagianPage = () => {
                     </div>
 
                     {/* Table */}
-                    <div className="border rounded-lg overflow-hidden">
+                    <div className="overflow-auto rounded border border-gray-300">
                         <Table className="w-full border border-gray-300 border-collapse">
                             <TableHeader>
-                                <TableRow className="bg-blue-600 hover:bg-blue-600 text-white">
+                                <TableRow className="bg-brand text-white hover:bg-brand">
                                     <TableHead className="text-white border border-gray-200">No.</TableHead>
                                     <TableHead className="text-white border border-gray-200">Nama Bagian</TableHead>
                                     <TableHead className="text-white border border-gray-200">Divisi</TableHead>
@@ -189,21 +189,21 @@ export const BagianPage = () => {
                                     </TableRow>
                                 ) : (
                                     items.map((item, idx) => (
-                                        <TableRow key={item.id} className="hover:bg-gray-50">
-                                            <TableCell className="border">
+                                        <TableRow key={item.id} className="hover:bg-[#F5F9FF] transition">
+                                            <TableCell className="border border-[#E2E8F0]">
                                                 {(currentPage - 1) * Number(showEntries) + idx + 1}
                                             </TableCell>
-                                            <TableCell className="border">
+                                            <TableCell className="border border-[#E2E8F0]">
                                                 {item.name}
                                             </TableCell>
-                                            <TableCell className="border">
-                                                {item.department?.name}
+                                            <TableCell className="border border-[#E2E8F0]">
+                                                {item.department?.name || '-'}
                                             </TableCell>
-                                            <TableCell className="border">
-                                                <div className="flex space-x-2">
+                                            <TableCell className="border border-[#E2E8F0]">
+                                                <div className="flex gap-2">
                                                     <Button
                                                         size="sm"
-                                                        className="bg-blue-500 text-white hover:bg-blue-600"
+                                                        className="bg-[#1E4F85] text-white hover:bg-[#163E6B] shadow-sm"
                                                         onClick={() => {
                                                             setEditData(item);
                                                             setModalOpen(true);
@@ -214,7 +214,7 @@ export const BagianPage = () => {
 
                                                     <Button
                                                         size="sm"
-                                                        className="bg-red-600 text-white hover:bg-red-700"
+                                                        className="bg-red-600 text-white hover:bg-red-700 shadow-sm"
                                                         onClick={() => deleteMutation.mutate(item.id)}
                                                     >
                                                         <Trash2 className="h-4 w-4" />
@@ -252,9 +252,9 @@ export const BagianPage = () => {
                             <Button
                                 disabled={pagination?.current_page === 1}
                                 onClick={() => setCurrentPage((p) => p - 1)}
-                                className="bg-blue-500 text-white"
+                                className="bg-[#1E4F85] text-white hover:bg-[#163E6B]"
                             >
-                                Sebelumnya
+                                Prev
                             </Button>
 
                             {[...Array(pagination?.last_page || 1)].map((_, i) => (
@@ -264,8 +264,8 @@ export const BagianPage = () => {
                                     onClick={() => setCurrentPage(i + 1)}
                                     className={
                                         pagination?.current_page === i + 1
-                                            ? "bg-blue-500 text-white"
-                                            : "bg-white text-blue-600 border border-blue-600"
+                                            ? 'bg-[#1E4F85] text-white'
+                                            : 'bg-white text-[#1E4F85] border border-[#1E4F85]/30 hover:bg-[#EAF2FB]'
                                     }
                                 >
                                     {i + 1}
@@ -277,9 +277,9 @@ export const BagianPage = () => {
                                     pagination?.current_page === pagination?.last_page
                                 }
                                 onClick={() => setCurrentPage((p) => p + 1)}
-                                className="bg-blue-500 text-white"
+                                className="bg-[#1E4F85] text-white hover:bg-[#163E6B]"
                             >
-                                Selanjutnya
+                                Next
                             </Button>
                         </div>
                     </div>
@@ -287,66 +287,59 @@ export const BagianPage = () => {
             </Card>
 
             <Dialog.Root open={modalOpen} onOpenChange={setModalOpen}>
-
                 <Dialog.Portal>
-                    <Dialog.Overlay className="fixed inset-0 bg-black bg-opacity-50 z-[9998]" />
+                    <Dialog.Overlay className="fixed inset-0 bg-black/50 z-50" />
 
-                    {/* Modal Content*/}
-                    <Dialog.Content className="fixed z-[9999] top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white w-96 rounded-lg shadow-lg p-5">
+                    <Dialog.Content className="fixed z-50 top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-white w-96 rounded-xl shadow-xl p-6">
                         <div className="flex justify-between items-center mb-4">
-                            <Dialog.Title className="text-lg font-semibold">
+                            <Dialog.Title className="text-lg font-semibold text-[#0F2A4D]">
                                 {editData ? "Edit Bagian" : "Tambah Bagian"}
                             </Dialog.Title>
 
                             <Dialog.Close asChild>
-                                <Button variant="ghost" size="sm">
+                                <Button variant="ghost" size="sm" className="hover:bg-gray-100">
                                     <Cross2Icon />
                                 </Button>
                             </Dialog.Close>
                         </div>
 
-                        <div className="space-y-4">
-                            <div>
-                                <label className="text-sm font-medium">Nama Bagian</label>
-                                <Input
-                                    value={sectionName}
-                                    onChange={(e) => setSectionName(e.target.value)}
-                                    placeholder="Masukkan nama bagian"
-                                />
-                            </div>
+                        <div className="space-y-3">
+                            <Input
+                                value={sectionName}
+                                onChange={(e) => setSectionName(e.target.value)}
+                                placeholder="Nama bagian"
+                                className="focus:border-[#1E4F85]"
+                            />
 
-                            <div>
-                                <label className="text-sm font-medium">Relasi Divisi</label>
-                                <Select
-                                    value={departmentId?.toString()}
-                                    onValueChange={(v) => setDepartmentId(Number(v))}
-                                >
-                                    <SelectTrigger>
-                                        <SelectValue
-                                            placeholder={
-                                                isLoadingDepartment ? "Loading divisi..." : "Pilih divisi"
-                                            }
-                                        />
-                                    </SelectTrigger>
+                            <Select
+                                value={departmentId?.toString()}
+                                onValueChange={(v) => setDepartmentId(Number(v))}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue
+                                        placeholder={
+                                            isLoadingDepartment ? "Loading divisi..." : "Pilih divisi"
+                                        }
+                                    />
+                                </SelectTrigger>
 
-                                    <SelectContent className="z-[10000]">
-                                        {departments.map((dept) => (
-                                            <SelectItem key={dept.id} value={String(dept.id)}>
-                                                {dept.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
-                            </div>
+                                <SelectContent className="z-[10000]">
+                                    {departments.map((dept) => (
+                                        <SelectItem key={dept.id} value={String(dept.id)}>
+                                            {dept.name}
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
                         </div>
 
-                        <div className="flex justify-end gap-3 mt-6">
+                        <div className="flex justify-end gap-3 mt-5">
                             <Button variant="outline" onClick={() => setModalOpen(false)}>
                                 Batal
                             </Button>
 
                             <Button
-                                className="bg-blue-600 text-white"
+                                className="bg-[#1E4F85] text-white hover:bg-[#163E6B]"
                                 onClick={() =>
                                     handleSubmit({
                                         id: editData?.id,
