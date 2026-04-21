@@ -31,6 +31,8 @@ import {
 interface SidebarProps {
   onLogout: () => void;
   currentPath: string;
+  isOpen: boolean;
+  onToggle: () => void;
 }
 
 const menuItems = [
@@ -140,9 +142,8 @@ const menuItems = [
   { id: 'pengaturan', label: 'Pengaturan Akun', icon: Settings, roles: ['HR', 'KARYAWAN', 'ATASAN'] },
 ];
 
-export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
+export const Sidebar = ({ onLogout, currentPath, isOpen, onToggle }: SidebarProps) => {
   const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({});
-  const [isOpen, setIsOpen] = useState(true);
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const userRole = user?.role?.slug_role || "";
@@ -246,7 +247,7 @@ export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
           variant="ghost"
           size="icon"
           className="text-white hover:bg-[#1E4F85]/40"
-          onClick={() => setIsOpen(!isOpen)}
+          onClick={onToggle}
         >
           {isOpen ? <ArrowLeft className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
         </Button>
@@ -263,6 +264,7 @@ export const Sidebar = ({ onLogout, currentPath }: SidebarProps) => {
       <div className="p-4 border-t border-white/10">
         <Button
           variant="ghost"
+          size="icon"
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-white/80 hover:text-white hover:bg-[#1E4F85]/40 transition-all duration-150 justify-start"
           onClick={onLogout}
         >

@@ -105,7 +105,7 @@ export const DivisiPage = () => {
             </div>
 
             <Button
-              className="bg-brand text-white hover:bg-brand/90"
+              className="bg-[#1E4F85] text-white hover:bg-[#1E4F85]"
               onClick={() => { setEditData(null); setModalOpen(true); }}
             >
               <Plus className="h-4 w-4 mr-2" />
@@ -124,117 +124,117 @@ export const DivisiPage = () => {
                 <TableHead className="text-white border border-gray-200">Nama Divisi</TableHead>
                 <TableHead className="text-white border border-gray-200">Aksi</TableHead>
               </TableRow>
-              </TableHeader>
+            </TableHeader>
 
-              <TableBody>
-                {isLoading ? (
-                  <TableRow>
-                    <TableCell colSpan={3} className="text-center py-6">
-                      Loading...
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center py-6">
+                    Loading...
+                  </TableCell>
+                </TableRow>
+              ) : items.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center py-6">
+                    Tidak ada data
+                  </TableCell>
+                </TableRow>
+              ) : (
+                items.map((item, idx) => (
+                  <TableRow key={item.id} className="hover:bg-transparent">
+
+                    <TableCell className="border border-gray-300 bg-white text-center">
+                      {(currentPage - 1) * Number(showEntries) + idx + 1}
                     </TableCell>
-                  </TableRow>
-                ) : items.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={3} className="text-center py-6">
-                      Tidak ada data
+
+                    <TableCell className="border border-gray-300 bg-white">
+                      {item.name}
                     </TableCell>
+
+                    <TableCell className="border border-gray-300 bg-white">
+                      <div className="flex gap-2 justify-center">
+
+                        <Button
+                          size="sm"
+                          className="bg-brand text-white hover:bg-brand/90"
+                          onClick={() => { setEditData(item); setModalOpen(true); }}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
+
+                        <Button
+                          size="sm"
+                          className="bg-red-600 text-white hover:bg-red-600"
+                          onClick={() => deleteMutation.mutate(item.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
+                        </Button>
+
+                      </div>
+                    </TableCell>
+
                   </TableRow>
-                ) : (
-                  items.map((item, idx) => (
-                    <TableRow key={item.id} className="hover:bg-transparent">
+                ))
+              )}
+            </TableBody>
 
-                      <TableCell className="border border-gray-300 bg-white text-center">
-                        {(currentPage - 1) * Number(showEntries) + idx + 1}
-                      </TableCell>
+          </Table>
+        </div>
 
-                      <TableCell className="border border-gray-300 bg-white">
-                        {item.name}
-                      </TableCell>
+        <div className="flex justify-between items-center mt-4">
 
-                      <TableCell className="border border-gray-300 bg-white">
-                        <div className="flex gap-2 justify-center">
-
-                          <Button
-                            size="sm"
-                            className="bg-brand text-white hover:bg-brand/90"
-                            onClick={() => { setEditData(item); setModalOpen(true); }}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Button>
-
-                          <Button
-                            size="sm"
-                            className="bg-red-600 text-white hover:bg-red-600"
-                            onClick={() => deleteMutation.mutate(item.id)}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-
-                        </div>
-                      </TableCell>
-
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-
-            </Table>
+          <div className="text-sm text-gray-500">
+            Menampilkan{" "}
+            <strong>
+              {items.length > 0
+                ? (pagination?.current_page - 1) * pagination?.per_page + 1
+                : 0}
+            </strong>{" "}
+            sampai{" "}
+            <strong>
+              {items.length > 0
+                ? (pagination?.current_page - 1) * pagination?.per_page +
+                items.length
+                : 0}
+            </strong>{" "}
+            dari <strong>{pagination?.total ?? 0}</strong>
           </div>
 
-          <div className="flex justify-between items-center mt-4">
+          <div className="flex gap-2">
 
-            <div className="text-sm text-gray-500">
-              Menampilkan{" "}
-              <strong>
-                {items.length > 0
-                  ? (pagination?.current_page - 1) * pagination?.per_page + 1
-                  : 0}
-              </strong>{" "}
-              sampai{" "}
-              <strong>
-                {items.length > 0
-                  ? (pagination?.current_page - 1) * pagination?.per_page +
-                  items.length
-                  : 0}
-              </strong>{" "}
-              dari <strong>{pagination?.total ?? 0}</strong>
-            </div>
+            <Button
+              disabled={pagination?.current_page === 1}
+              onClick={() => setCurrentPage((p) => p - 1)}
+              className="bg-brand text-white hover:bg-brand/90"
+            >
+              Prev
+            </Button>
 
-            <div className="flex gap-2">
-
+            {[...Array(pagination?.last_page || 1)].map((_, i) => (
               <Button
-                disabled={pagination?.current_page === 1}
-                onClick={() => setCurrentPage((p) => p - 1)}
-                className="bg-brand text-white hover:bg-brand/90"
+                key={i}
+                size="sm"
+                onClick={() => setCurrentPage(i + 1)}
+                className={
+                  pagination?.current_page === i + 1
+                    ? 'bg-brand text-white'
+                    : 'bg-white text-brand border border-brand'
+                }
               >
-                Prev
+                {i + 1}
               </Button>
+            ))}
 
-              {[...Array(pagination?.last_page || 1)].map((_, i) => (
-                <Button
-                  key={i}
-                  size="sm"
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={
-                    pagination?.current_page === i + 1
-                      ? 'bg-brand text-white'
-                      : 'bg-white text-brand border border-brand'
-                  }
-                >
-                  {i + 1}
-                </Button>
-              ))}
+            <Button
+              disabled={pagination?.current_page === pagination?.last_page}
+              onClick={() => setCurrentPage((p) => p + 1)}
+              className="bg-brand text-white hover:bg-brand/90"
+            >
+              Next
+            </Button>
 
-              <Button
-                disabled={pagination?.current_page === pagination?.last_page}
-                onClick={() => setCurrentPage((p) => p + 1)}
-                className="bg-brand text-white hover:bg-brand/90"
-              >
-                Next
-              </Button>
-
-            </div>
           </div>
+        </div>
 
       </TableCard>
 

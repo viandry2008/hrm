@@ -16,7 +16,7 @@ import { useLogout } from "@/api/auth/auth.query";
 export const HRISApp = () => {
   const { isAuthenticated, user } = useAuthStore();
   const logoutMutation = useLogout();
-  const [isMobileMenuOpen, setIsMobileMenuMenuOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
 
   if (!isAuthenticated) return null;
@@ -25,18 +25,19 @@ export const HRISApp = () => {
     <div className="flex h-screen overflow-hidden bg-gray-50">
       {/* SIDEBAR */}
       <div
-        className={`${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
-          } lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 transition-transform duration-300 ease-in-out w-64 bg-white shadow-md`}
+        className={`lg:translate-x-0 fixed lg:static inset-y-0 left-0 z-40 transition-all duration-300 ease-in-out ${isSidebarOpen ? 'w-64' : 'w-16'} bg-white shadow-md`}
       >
         <Sidebar
           currentPath={location.pathname.split("/").pop() || ""}
           onLogout={() => logoutMutation.mutate()}
+          isOpen={isSidebarOpen}
+          onToggle={() => setIsSidebarOpen(!isSidebarOpen)}
         // onCloseMobileMenu={() => setIsMobileMenuMenuOpen(false)}
         />
       </div>
 
       {/* MAIN CONTENT */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className={`flex-1 flex flex-col overflow-hidden transition-all duration-300 `}>
         <header className="sticky top-0 z-30 bg-white px-4 py-3 shadow flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Building2 size={28} color="#0F2A4D" />
