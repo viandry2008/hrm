@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
@@ -143,7 +143,7 @@ const menuItems = [
 ];
 
 export const Sidebar = ({ onLogout, currentPath, isOpen, onToggle }: SidebarProps) => {
-  const [openDropdowns, setOpenDropdowns] = useState<Record<string, boolean>>({});
+  const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
   const userRole = user?.role?.slug_role || "";
@@ -152,18 +152,43 @@ export const Sidebar = ({ onLogout, currentPath, isOpen, onToggle }: SidebarProp
     item.roles.includes(userRole)
   );
 
+  useEffect(() => {
+    const parentId = filteredMenuItems.find(
+      (item) => item.submenu?.some((sub) => sub.id === currentPath)
+    )?.id;
+
+    if (parentId && openDropdown !== parentId) {
+      setOpenDropdown(parentId);
+    }
+  }, [currentPath]);
+
+  const findParentId = (path: string): string | undefined => {
+    return filteredMenuItems.find(
+      (item) => item.submenu?.some((sub) => sub.id === path)
+    )?.id;
+  };
+
   const handleNavigate = (path: string) => {
+    const parentId = findParentId(path);
+    if (parentId) {
+      setOpenDropdown(parentId);
+    } else {
+      setOpenDropdown(null);
+    }
     navigate(`/${path}`);
   };
 
   const toggleDropdown = (id: string) => {
-    setOpenDropdowns((prev) => ({ ...prev, [id]: !prev[id] }));
+    setOpenDropdown((prev) => (prev === id ? null : id));
   };
 
   const renderMenuItem = (item: typeof menuItems[number]) => {
     const Icon = item.icon;
-    const isActive = currentPath === item.id;
-    const isOpenDropdown = openDropdowns[item.id] ?? false;
+    const isActive = !item.submenu && currentPath === item.id;
+    const isParentActive = item.submenu?.some(
+      (sub) => sub.id === currentPath
+    );
+    const isOpenDropdown = openDropdown === item.id;
 
     if (item.submenu) {
       return (
@@ -171,7 +196,10 @@ export const Sidebar = ({ onLogout, currentPath, isOpen, onToggle }: SidebarProp
           <Button
             variant="ghost"
             className="w-full flex items-center justify-between px-3 py-2 rounded-lg text-sm font-medium text-white/80 hover:text-white hover:bg-[#1E4F85]/40 transition-all duration-200"
-            onClick={() => toggleDropdown(item.id)}
+            onClick={(e) => {
+              e.stopPropagation();
+              toggleDropdown(item.id);
+            }}
           >
             <div className="flex items-center gap-3">
               <Icon className="h-5 w-5" />
@@ -188,15 +216,21 @@ export const Sidebar = ({ onLogout, currentPath, isOpen, onToggle }: SidebarProp
           {isOpen && (
             <div
               className={cn(
-                'transition-all duration-300 overflow-hidden',
-                isOpenDropdown ? 'max-h-96 opacity-100 mt-2' : 'max-h-0 opacity-0'
+                'transition-all duration-500 ease-in-out overflow-hidden',
+                isOpenDropdown
+                  ? 'max-h-96 opacity-100 mt-2 scale-100'
+                  : 'max-h-0 opacity-0 scale-95'
               )}
             >
               <div className="ml-6 bg-[#0F2A4D]/80 backdrop-blur-md rounded-xl py-2 px-3 space-y-1 border border-[#1E4F85]/40">
                 {item.submenu.map((sub) => (
                   <button
                     key={sub.id}
-                    onClick={() => handleNavigate(sub.id)}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      handleNavigate(sub.id);
+                    }}
                     className={cn(
                       'block w-full text-left px-3 py-1.5 rounded-md text-sm text-white/80 hover:text-white transition-all',
                       currentPath === sub.id
@@ -209,8 +243,9 @@ export const Sidebar = ({ onLogout, currentPath, isOpen, onToggle }: SidebarProp
                 ))}
               </div>
             </div>
-          )}
-        </div>
+          )
+          }
+        </div >
       );
     }
 
@@ -221,7 +256,7 @@ export const Sidebar = ({ onLogout, currentPath, isOpen, onToggle }: SidebarProp
         title={!isOpen ? item.label : undefined}
         className={cn(
           'w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all duration-150 justify-start',
-          isActive
+          (isActive || isParentActive)
             ? 'bg-[#3FA7FF]/20 text-white font-semibold border border-[#3FA7FF]/30'
             : 'text-white/80 hover:text-white hover:bg-[#1E4F85]/40'
         )}
@@ -246,10 +281,10 @@ export const Sidebar = ({ onLogout, currentPath, isOpen, onToggle }: SidebarProp
         <Button
           variant="ghost"
           size="icon"
-          className="text-white hover:bg-[#1E4F85]/40"
+          className="rounded-lg text-sm font-medium text-white/80 hover:text-white hover:bg-[#1E4F85]/40 transition-all duration-200"
           onClick={onToggle}
         >
-          {isOpen ? <ArrowLeft className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
+          {isOpen ? <ArrowLeft className="h-5 w-5 " /> : <Menu className="h-5 w-5" />}
         </Button>
       </div>
 
@@ -264,12 +299,11 @@ export const Sidebar = ({ onLogout, currentPath, isOpen, onToggle }: SidebarProp
       <div className="p-4 border-t border-white/10">
         <Button
           variant="ghost"
-          size="icon"
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-white/80 hover:text-white hover:bg-[#1E4F85]/40 transition-all duration-150 justify-start"
           onClick={onLogout}
         >
           <LogOut className="h-5 w-5" />
-          {isOpen && 'Log out'}
+          {isOpen && <span>Log out</span>}
         </Button>
       </div>
     </div>
