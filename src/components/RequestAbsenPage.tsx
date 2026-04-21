@@ -3,12 +3,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
   Table,
   TableBody,
   TableCell,
@@ -23,11 +17,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { TableCard } from "@/components/ui/table-card";
 import {
   Search,
   Eye,
   CheckCircle,
   XCircle,
+  Clock,
 } from "lucide-react";
 
 // Interface data
@@ -124,11 +120,7 @@ export const RequestAbsenPage = () => {
       <h1 className="text-3xl font-bold text-gray-900">Request Absen</h1>
       
 
-      <Card>
-        <CardHeader className="bg-blue-50 border-b">
-          <CardTitle className="text-blue-800">Data Request Absen</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
+      <TableCard icon={Clock} title="Data Request Absen">
           {/* Header Controls */}
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center space-x-4">
@@ -264,8 +256,8 @@ export const RequestAbsenPage = () => {
               </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+
+      </TableCard>
 
       {/* Modal Google Maps */}
       {isModalOpen && (

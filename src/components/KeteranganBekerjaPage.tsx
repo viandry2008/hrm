@@ -76,13 +76,10 @@ export const KeteranganBekerjaPage = () => {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Surat Keterangan Bekerja</h1>
-      </div>
 
       <Card>
         <CardHeader className="bg-blue-50 border-b">
-          <CardTitle className="text-blue-800">Data Surat</CardTitle>
+          <CardTitle className="text-blue-800">Data Surat Keterangan Bekerja</CardTitle>
         </CardHeader>
 
         <CardContent className="p-6">
@@ -128,18 +125,18 @@ export const KeteranganBekerjaPage = () => {
           {/* Tabel */}
           <div className="overflow-auto rounded border border-gray-300">
             <Table className="w-full border border-gray-300 border-collapse">
-            <TableHeader>
-            <TableRow className="bg-brand text-white hover:bg-brand">
-              <TableHead className="border text-white whitespace-nowrap">No.</TableHead>
-              <TableHead className="border text-white whitespace-nowrap">ID Karyawan</TableHead>
-              <TableHead className="border text-white whitespace-nowrap">Nama Karyawan</TableHead>
-              <TableHead className="border text-white whitespace-nowrap">Divisi</TableHead>
-              <TableHead className="border text-white whitespace-nowrap">Jabatan</TableHead>
-              <TableHead className="border text-white whitespace-nowrap">Keperluan</TableHead>
-              <TableHead className="border text-white whitespace-nowrap">Dibuat Tanggal</TableHead>
-              <TableHead className="border text-white whitespace-nowrap">Aksi</TableHead>
-            </TableRow>
-          </TableHeader>
+              <TableHeader>
+                <TableRow className="bg-brand text-white hover:bg-brand">
+                  <TableHead className="border text-white whitespace-nowrap">No.</TableHead>
+                  <TableHead className="border text-white whitespace-nowrap">ID Karyawan</TableHead>
+                  <TableHead className="border text-white whitespace-nowrap">Nama Karyawan</TableHead>
+                  <TableHead className="border text-white whitespace-nowrap">Divisi</TableHead>
+                  <TableHead className="border text-white whitespace-nowrap">Jabatan</TableHead>
+                  <TableHead className="border text-white whitespace-nowrap">Keperluan</TableHead>
+                  <TableHead className="border text-white whitespace-nowrap">Dibuat Tanggal</TableHead>
+                  <TableHead className="border text-white whitespace-nowrap">Aksi</TableHead>
+                </TableRow>
+              </TableHeader>
               <TableBody>
                 {paginatedData.map((item) => (
                   <TableRow key={item.no} className="hover:bg-gray-50">
@@ -153,21 +150,21 @@ export const KeteranganBekerjaPage = () => {
                     <TableCell className="border border-gray-300">
                       <div className="flex space-x-2">
                         <Button
-                        variant="ghost"
-                        size="sm"
-                        className="bg-blue-600 text-white hover:bg-blue-700"
-                        title="Lihat Detail"
+                          variant="ghost"
+                          size="sm"
+                          className="bg-blue-600 text-white hover:bg-blue-700"
+                          title="Lihat Detail"
                         >
-                        <Eye className="w-4 h-4" />
+                          <Eye className="w-4 h-4" />
                         </Button>
                         <Button
-                        variant="ghost"
-                        size="sm"
-                        className="bg-red-600 text-white hover:bg-red-700"
-                        title="Hapus Data"
-                        onClick={() => handleDeleteSingle(k.id)}
+                          variant="ghost"
+                          size="sm"
+                          className="bg-red-600 text-white hover:bg-red-700"
+                          title="Hapus Data"
+                        // onClick={() => handleDeleteSingle(k.id)}
                         >
-                        <Trash2 className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4" />
                         </Button>
                       </div>
                     </TableCell>
@@ -178,45 +175,45 @@ export const KeteranganBekerjaPage = () => {
           </div>
 
           <div className="flex justify-between items-center mt-4">
-              <div className="text-sm text-gray-500">
-                Menampilkan{' '}
-                <strong>
-                  {Math.max((currentPage - 1) * itemsPerPage + 1, 1)} sampai{' '}
-                  {Math.min(currentPage * itemsPerPage, filteredData.length)}
-                </strong>{' '}
-                dari <strong>{filteredData.length}</strong> data
-              </div>
-              <div className="flex gap-2">
-                <Button
-                  disabled={currentPage === 1}
-                  onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                  className="bg-blue-500 text-white hover:bg-blue-600"
-                >
-                  Sebelumnya
-                </Button>
-                {[...Array(totalPages)].map((_, i) => (
-                  <Button
-                    key={i}
-                    size="sm"
-                    onClick={() => setCurrentPage(i + 1)}
-                    className={
-                      currentPage === i + 1
-                        ? 'bg-blue-500 text-white'
-                        : 'bg-white text-blue-600 border border-blue-600 hover:bg-blue-50'
-                    }
-                  >
-                    {i + 1}
-                  </Button>
-                ))}
-                <Button
-                  disabled={currentPage === totalPages}
-                  onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                  className="bg-blue-500 text-white hover:bg-blue-600"
-                >
-                  Selanjutnya
-                </Button>
-              </div>
+            <div className="text-sm text-gray-500">
+              Menampilkan{' '}
+              <strong>
+                {Math.max((currentPage - 1) * itemsPerPage + 1, 1)} sampai{' '}
+                {Math.min(currentPage * itemsPerPage, filteredData.length)}
+              </strong>{' '}
+              dari <strong>{filteredData.length}</strong> data
             </div>
+            <div className="flex gap-2">
+              <Button
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                className="bg-blue-500 text-white hover:bg-blue-600"
+              >
+                Sebelumnya
+              </Button>
+              {[...Array(totalPages)].map((_, i) => (
+                <Button
+                  key={i}
+                  size="sm"
+                  onClick={() => setCurrentPage(i + 1)}
+                  className={
+                    currentPage === i + 1
+                      ? 'bg-blue-500 text-white'
+                      : 'bg-white text-blue-600 border border-blue-600 hover:bg-blue-50'
+                  }
+                >
+                  {i + 1}
+                </Button>
+              ))}
+              <Button
+                disabled={currentPage === totalPages}
+                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                className="bg-blue-500 text-white hover:bg-blue-600"
+              >
+                Selanjutnya
+              </Button>
+            </div>
+          </div>
         </CardContent>
       </Card>
     </div>

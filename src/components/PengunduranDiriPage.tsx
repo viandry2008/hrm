@@ -225,39 +225,39 @@ export const PengunduranDiriPage = () => {
           </div>
 
           <div className="flex flex-col sm:flex-row items-center justify-between mt-4 gap-3">
-          <div className="text-sm text-gray-600">
-              Menampilkan {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredData.length)} of {filteredData.length} data
-            </div>
-            <div className="flex items-center space-x-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-                disabled={currentPage === 1}
-              >
-                Sebelumnya
-              </Button>
-              {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+              <div className="text-sm text-gray-600">
+                Menampilkan {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredData.length)} of {filteredData.length} data
+              </div>
+              <div className="flex items-center space-x-2">
                 <Button
-                  key={page}
-                  variant={currentPage === page ? 'default' : 'outline'}
+                  variant="outline"
                   size="sm"
-                  onClick={() => setCurrentPage(page)}
+                  onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+                  disabled={currentPage === 1}
                 >
-                  {page}
+                  Sebelumnya
                 </Button>
-              ))}
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                  <Button
+                    key={page}
+                    variant={currentPage === page ? 'default' : 'outline'}
+                    size="sm"
+                    onClick={() => setCurrentPage(page)}
+                  >
+                    {page}
+                  </Button>
+                ))}
 
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-                disabled={currentPage === totalPages}
-              >
-                Selanjutnya
-              </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+                  disabled={currentPage === totalPages}
+                >
+                  Selanjutnya
+                </Button>
+              </div>
             </div>
-          </div>
         </CardContent>
       </Card>
     </div>

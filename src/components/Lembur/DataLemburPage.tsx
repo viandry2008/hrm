@@ -2,11 +2,11 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Search, Plus, Eye, Trash2, Clock, CheckCircle, XCircle, FileText } from 'lucide-react';
+import { TableCard } from "@/components/ui/table-card";
 
 interface LemburData {
   no: number;
@@ -125,11 +125,7 @@ export const DataLemburPage = () => {
     <div className="p-6 space-y-6">
       {/* ... bagian card summary tetap sama ... */}
 
-      <Card>
-        <CardHeader className="bg-blue-50 border-b">
-          <CardTitle className="text-blue-800">Data Pengajuan</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
+      <TableCard icon={Clock} title="Data Pengajuan Lembur">
           {/* ... bagian filter/search tetap sama ... */}
 
           <div className="overflow-auto rounded border border-gray-300">
@@ -194,8 +190,7 @@ export const DataLemburPage = () => {
           </div>
 
           {/* ... bagian pagination tetap sama ... */}
-        </CardContent>
-      </Card>
+      </TableCard>
 
       {/* Modal konfirmasi hapus */}
       <Dialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>

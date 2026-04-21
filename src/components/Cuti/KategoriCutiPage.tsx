@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Plus, Eye, Trash2, ChevronLeft, ChevronRight, Clock, CheckCircle, XCircle, FileText } from 'lucide-react';
+import { TableCard } from "@/components/ui/table-card";
 
 // Interface Cuti
 interface CutiData {
@@ -303,11 +303,7 @@ export const DataCutiPage = () => {
         </Card>
       </div>
 
-      <Card>
-        <CardHeader className="bg-blue-50 border-b">
-          <CardTitle className="text-blue-800">Data Pengajuan</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
+      <TableCard icon={FileText} title="Data Pengajuan Cuti">
           <div className="flex justify-between items-center mb-6">
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-2">
@@ -442,8 +438,8 @@ export const DataCutiPage = () => {
               </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+
+      </TableCard>
     </div>
   );
 };

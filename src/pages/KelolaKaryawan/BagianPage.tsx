@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -7,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { Edit, Trash2, Plus, Search, Users } from 'lucide-react';
+import { TableCard } from '@/components/ui/table-card';
 import {
     useCreateSection,
     useDeleteSection,
@@ -105,16 +105,8 @@ export const BagianPage = () => {
 
     return (
         <div className="p-6 space-y-6 bg-[#F8FAFC] min-h-screen">
-            <Card className="border border-[#E2E8F0] shadow-sm">
-                <CardHeader>
-                    <CardTitle className="flex items-center text-[#0F2A4D] font-semibold">
-                        <Users className="h-5 w-5 mr-2" />
-                        Data Bagian
-                    </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+            <TableCard icon={Users} title="Data Bagian">
 
-                    {/* Controls */}
                     <div className="flex justify-between items-center flex-wrap gap-4">
                         <div className="flex items-center space-x-2">
                             <span className="text-sm text-gray-600">Show</span>
@@ -125,7 +117,7 @@ export const BagianPage = () => {
                                     setCurrentPage(1);
                                 }}
                             >
-                                <SelectTrigger className="w-20 border-[#E2E8F0]">
+                                <SelectTrigger className="w-20 border-gray-300">
                                     <SelectValue />
                                 </SelectTrigger>
                                 <SelectContent>
@@ -147,11 +139,11 @@ export const BagianPage = () => {
                                         setSearch(e.target.value);
                                         setCurrentPage(1);
                                     }}
-                                    className="pl-10 w-64 border-[#E2E8F0] focus:border-[#1E4F85]"
+                                    className="pl-10 w-64 border-gray-300 focus:border-[#1E4F85]"
                                 />
                             </div>
                             <Button
-                                className="bg-[#1E4F85] hover:bg-[#163E6B] text-white shadow-sm"
+                                className="bg-brand hover:bg-brand/90 text-white shadow-sm"
                                 onClick={() => {
                                     setEditData(null);
                                     setModalOpen(true);
@@ -189,21 +181,21 @@ export const BagianPage = () => {
                                     </TableRow>
                                 ) : (
                                     items.map((item, idx) => (
-                                        <TableRow key={item.id} className="hover:bg-[#F5F9FF] transition">
-                                            <TableCell className="border border-[#E2E8F0]">
+                                        <TableRow key={item.id} className="hover:bg-gray-50 transition">
+                                            <TableCell className="border border-gray-300">
                                                 {(currentPage - 1) * Number(showEntries) + idx + 1}
                                             </TableCell>
-                                            <TableCell className="border border-[#E2E8F0]">
+                                            <TableCell className="border border-gray-300">
                                                 {item.name}
                                             </TableCell>
-                                            <TableCell className="border border-[#E2E8F0]">
+                                            <TableCell className="border border-gray-300">
                                                 {item.department?.name || '-'}
                                             </TableCell>
-                                            <TableCell className="border border-[#E2E8F0]">
+                                            <TableCell className="border border-gray-300">
                                                 <div className="flex gap-2">
                                                     <Button
                                                         size="sm"
-                                                        className="bg-[#1E4F85] text-white hover:bg-[#163E6B] shadow-sm"
+                                                        className="bg-brand text-white hover:bg-brand/90 shadow-sm"
                                                         onClick={() => {
                                                             setEditData(item);
                                                             setModalOpen(true);
@@ -252,7 +244,7 @@ export const BagianPage = () => {
                             <Button
                                 disabled={pagination?.current_page === 1}
                                 onClick={() => setCurrentPage((p) => p - 1)}
-                                className="bg-[#1E4F85] text-white hover:bg-[#163E6B]"
+                                className="bg-brand text-white hover:bg-brand/90"
                             >
                                 Prev
                             </Button>
@@ -264,7 +256,7 @@ export const BagianPage = () => {
                                     onClick={() => setCurrentPage(i + 1)}
                                     className={
                                         pagination?.current_page === i + 1
-                                            ? 'bg-[#1E4F85] text-white'
+                                            ? 'bg-brand text-white'
                                             : 'bg-white text-[#1E4F85] border border-[#1E4F85]/30 hover:bg-[#EAF2FB]'
                                     }
                                 >
@@ -277,14 +269,14 @@ export const BagianPage = () => {
                                     pagination?.current_page === pagination?.last_page
                                 }
                                 onClick={() => setCurrentPage((p) => p + 1)}
-                                className="bg-[#1E4F85] text-white hover:bg-[#163E6B]"
+                                className="bg-brand text-white hover:bg-brand/90"
                             >
                                 Next
                             </Button>
                         </div>
                     </div>
-                </CardContent>
-            </Card>
+
+            </TableCard>
 
             <Dialog.Root open={modalOpen} onOpenChange={setModalOpen}>
                 <Dialog.Portal>
@@ -339,7 +331,7 @@ export const BagianPage = () => {
                             </Button>
 
                             <Button
-                                className="bg-[#1E4F85] text-white hover:bg-[#163E6B]"
+                                className="bg-brand text-white hover:bg-brand/90"
                                 onClick={() =>
                                     handleSubmit({
                                         id: editData?.id,

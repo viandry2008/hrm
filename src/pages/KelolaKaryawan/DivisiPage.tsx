@@ -1,10 +1,4 @@
 import React, { useState } from "react";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -23,6 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Edit, Trash2, Plus, Search, Users } from "lucide-react";
+import { TableCard } from "@/components/ui/table-card";
 
 import {
   useCreateDepartment,
@@ -32,7 +27,7 @@ import {
 } from "@/api/division/division.query";
 
 import { DivisionFormModal } from "@/components/KelolaKaryawan/DivisionFormModal";
-import { DepartmentPostRequest, DepartmentItem } from "@/api/division/division.types";
+import { DepartmentItem } from "@/api/division/division.types";
 
 export const DivisiPage = () => {
   const [searchTerm, setSearchTerm] = useState("");
@@ -78,66 +73,57 @@ export const DivisiPage = () => {
 
   return (
     <div className="p-6 space-y-6 bg-[#F8FAFC] min-h-screen">
-      <Card className="border border-[#D1D5DB] shadow-sm bg-white">
+      <TableCard icon={Users} title="Data Divisi">
 
-        <CardHeader>
-          <CardTitle className="flex items-center text-[#0F2A4D] font-semibold">
-            <Users className="h-5 w-5 mr-2" />
-            Data Divisi
-          </CardTitle>
-        </CardHeader>
+        <div className="flex justify-between items-center flex-wrap gap-4">
 
-        <CardContent className="space-y-4">
-
-          <div className="flex justify-between items-center flex-wrap gap-4">
-
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600">Show</span>
-              <Select value={showEntries} onValueChange={(v) => { setShowEntries(v); setCurrentPage(1); }}>
-                <SelectTrigger className="w-20 border-[#D1D5DB]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="25">25</SelectItem>
-                  <SelectItem value="50">50</SelectItem>
-                </SelectContent>
-              </Select>
-              <span className="text-sm text-gray-600">entries</span>
-            </div>
-
-            <div className="flex items-center space-x-2">
-
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Cari divisi..."
-                  value={searchTerm}
-                  onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                  className="pl-10 w-64 border-[#D1D5DB]"
-                />
-              </div>
-
-              <Button
-                className="bg-[#1E4F85] text-white hover:bg-[#1E4F85]"
-                onClick={() => { setEditData(null); setModalOpen(true); }}
-              >
-                <Plus className="h-4 w-4 mr-2" />
-                Tambah Divisi
-              </Button>
-
-            </div>
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-600">Show</span>
+            <Select value={showEntries} onValueChange={(v) => { setShowEntries(v); setCurrentPage(1); }}>
+              <SelectTrigger className="w-20 border-gray-300">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
+                <SelectItem value="50">50</SelectItem>
+              </SelectContent>
+            </Select>
+            <span className="text-sm text-gray-600">entries</span>
           </div>
 
-          <div className="overflow-auto rounded border border-gray-300">
-            <Table className="w-full border border-gray-300 border-collapse">
+          <div className="flex items-center space-x-2">
 
-              <TableHeader>
-                <TableRow className="bg-brand text-white hover:bg-brand">
-                  <TableHead className="text-white border border-gray-200">No.</TableHead>
-                  <TableHead className="text-white border border-gray-200">Nama Divisi</TableHead>
-                  <TableHead className="text-white border border-gray-200">Aksi</TableHead>
-                </TableRow>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                placeholder="Cari divisi..."
+                value={searchTerm}
+                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                className="pl-10 w-64 border-gray-300"
+              />
+            </div>
+
+            <Button
+              className="bg-brand text-white hover:bg-brand/90"
+              onClick={() => { setEditData(null); setModalOpen(true); }}
+            >
+              <Plus className="h-4 w-4 mr-2" />
+              Tambah Divisi
+            </Button>
+
+          </div>
+        </div>
+
+        <div className="overflow-auto rounded border border-gray-300">
+          <Table className="w-full border border-gray-300 border-collapse">
+
+            <TableHeader>
+              <TableRow className="bg-brand text-white hover:bg-brand">
+                <TableHead className="text-white border border-gray-200">No.</TableHead>
+                <TableHead className="text-white border border-gray-200">Nama Divisi</TableHead>
+                <TableHead className="text-white border border-gray-200">Aksi</TableHead>
+              </TableRow>
               </TableHeader>
 
               <TableBody>
@@ -170,7 +156,7 @@ export const DivisiPage = () => {
 
                           <Button
                             size="sm"
-                            className="bg-[#1E4F85] text-white hover:bg-[#1E4F85]"
+                            className="bg-brand text-white hover:bg-brand/90"
                             onClick={() => { setEditData(item); setModalOpen(true); }}
                           >
                             <Edit className="h-4 w-4" />
@@ -219,7 +205,7 @@ export const DivisiPage = () => {
               <Button
                 disabled={pagination?.current_page === 1}
                 onClick={() => setCurrentPage((p) => p - 1)}
-                className="bg-[#1E4F85] text-white hover:bg-[#1E4F85]"
+                className="bg-brand text-white hover:bg-brand/90"
               >
                 Prev
               </Button>
@@ -231,8 +217,8 @@ export const DivisiPage = () => {
                   onClick={() => setCurrentPage(i + 1)}
                   className={
                     pagination?.current_page === i + 1
-                      ? 'bg-[#1E4F85] text-white'
-                      : 'bg-white text-[#1E4F85] border border-[#1E4F85]'
+                      ? 'bg-brand text-white'
+                      : 'bg-white text-brand border border-brand'
                   }
                 >
                   {i + 1}
@@ -242,7 +228,7 @@ export const DivisiPage = () => {
               <Button
                 disabled={pagination?.current_page === pagination?.last_page}
                 onClick={() => setCurrentPage((p) => p + 1)}
-                className="bg-[#1E4F85] text-white hover:bg-[#1E4F85]"
+                className="bg-brand text-white hover:bg-brand/90"
               >
                 Next
               </Button>
@@ -250,8 +236,7 @@ export const DivisiPage = () => {
             </div>
           </div>
 
-        </CardContent>
-      </Card>
+      </TableCard>
 
       <DivisionFormModal
         open={modalOpen}

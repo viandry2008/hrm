@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -18,6 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Edit, Trash2, Plus, Search, Briefcase } from "lucide-react";
+import { TableCard } from "@/components/ui/table-card";
 import {
   useCreatePosition,
   useDeletePosition,
@@ -71,33 +71,25 @@ export const JabatanPage = () => {
 
   return (
     <div className="p-6 space-y-6 bg-[#F8FAFC] min-h-screen">
-      <Card className="border border-[#E2E8F0] shadow-sm">
-        <CardHeader>
-          <CardTitle className="flex items-center text-[#0F2A4D] font-semibold">
-            <Briefcase className="h-5 w-5 mr-2" />
-            Data Jabatan
-          </CardTitle>
-        </CardHeader>
+      <TableCard icon={Briefcase} title="Data Jabatan">
 
-        <CardContent className="space-y-4">
-          {/* Controls */}
-          <div className="flex justify-between items-center flex-wrap gap-4">
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600">Show</span>
+        <div className="flex justify-between items-center flex-wrap gap-4">
+          <div className="flex items-center space-x-2">
+            <span className="text-sm text-gray-600">Show</span>
 
-              <Select
-                value={showEntries}
-                onValueChange={(v) => {
-                  setShowEntries(v);
-                  setCurrentPage(1);
-                }}
-              >
-                <SelectTrigger className="w-20 border-[#E2E8F0]">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="25">25</SelectItem>
+            <Select
+              value={showEntries}
+              onValueChange={(v) => {
+                setShowEntries(v);
+                setCurrentPage(1);
+              }}
+            >
+              <SelectTrigger className="w-20 border-gray-300">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="10">10</SelectItem>
+                <SelectItem value="25">25</SelectItem>
                   <SelectItem value="50">50</SelectItem>
                 </SelectContent>
               </Select>
@@ -115,12 +107,12 @@ export const JabatanPage = () => {
                     setSearchTerm(e.target.value);
                     setCurrentPage(1);
                   }}
-                  className="pl-10 w-64 border-[#E2E8F0] focus:border-[#1E4F85]"
+                  className="pl-10 w-64 border-gray-300 focus:border-[#1E4F85]"
                 />
               </div>
 
               <Button
-                className="bg-[#1E4F85] hover:bg-[#163E6B] text-white shadow-sm"
+                className="bg-brand hover:bg-brand/90 text-white shadow-sm"
                 onClick={() => {
                   setEditData(null);
                   setModalOpen(true);
@@ -159,17 +151,17 @@ export const JabatanPage = () => {
                 ) : (
                   items.map((item, idx) => (
                     <TableRow key={item.id} className="hover:bg-[#F5F9FF] transition">
-                      <TableCell className="border border-[#E2E8F0]">
+                      <TableCell className="border border-gray-300">
                         {(currentPage - 1) * Number(showEntries) + idx + 1}
                       </TableCell>
 
-                      <TableCell className="border border-[#E2E8F0]">{item.name}</TableCell>
+                      <TableCell className="border border-gray-300">{item.name}</TableCell>
 
-                      <TableCell className="border border-[#E2E8F0]">
+                      <TableCell className="border border-gray-300">
                         <div className="flex gap-2">
                           <Button
                             size="sm"
-                            className="bg-[#1E4F85] text-white hover:bg-[#163E6B] shadow-sm"
+                            className="bg-brand text-white hover:bg-brand/90 shadow-sm"
                             onClick={() => {
                               setEditData(item);
                               setModalOpen(true);
@@ -217,7 +209,7 @@ export const JabatanPage = () => {
               <Button
                 disabled={pagination?.current_page === 1}
                 onClick={() => setCurrentPage((p) => p - 1)}
-                className="bg-[#1E4F85] text-white hover:bg-[#163E6B]"
+                className="bg-brand text-white hover:bg-brand/90"
               >
                 Prev
               </Button>
@@ -229,7 +221,7 @@ export const JabatanPage = () => {
                   onClick={() => setCurrentPage(i + 1)}
                   className={
                     pagination?.current_page === i + 1
-                      ? "bg-[#1E4F85] text-white"
+                      ? "bg-brand text-white"
                       : "bg-white text-[#1E4F85] border border-[#1E4F85]/30 hover:bg-[#EAF2FB]"
                   }
                 >
@@ -240,14 +232,14 @@ export const JabatanPage = () => {
               <Button
                 disabled={pagination?.current_page === pagination?.last_page}
                 onClick={() => setCurrentPage((p) => p + 1)}
-                className="bg-[#1E4F85] text-white hover:bg-[#163E6B]"
+                className="bg-brand text-white hover:bg-brand/90"
               >
                 Next
               </Button>
             </div>
           </div>
-        </CardContent>
-      </Card>
+
+      </TableCard>
 
       <PositionFormModal
         open={modalOpen}

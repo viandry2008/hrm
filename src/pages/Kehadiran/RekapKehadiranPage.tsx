@@ -7,12 +7,12 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import Swal from 'sweetalert2';
-import { Trash2, Download } from 'lucide-react';
+import { Trash2, Download, Calendar } from 'lucide-react';
+import { TableCard } from "@/components/ui/table-card";
 
 interface RekapKehadiran {
     id: string;
@@ -89,122 +89,116 @@ export const RekapKehadiranPage = () => {
 
     return (
         <div className="p-6 space-y-6">
-            <div className="flex justify-between items-center">
-                <h1 className="text-3xl font-bold text-gray-900">Kehadiran Karyawan</h1>
-            </div>
-            <Card>
-                <CardHeader className="bg-blue-50 border-b mb-4">
-                    <CardTitle className="text-blue-800">Data Rekap Kehadiran</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                    <div className="flex flex-wrap justify-between items-center gap-4">
-                        {/* Kiri: Show entries */}
-                        <div className="flex items-center gap-4">
-                            <span className="text-sm text-muted-foreground">Show</span>
-                            <Select value={show} onValueChange={setShow}>
-                                <SelectTrigger className="w-20">
-                                    <SelectValue placeholder="10" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectItem value="10">10</SelectItem>
-                                    <SelectItem value="25">25</SelectItem>
-                                    <SelectItem value="50">50</SelectItem>
-                                </SelectContent>
-                            </Select>
-                            <span className="text-sm text-muted-foreground">entries</span>
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <Input
-                                placeholder="Cari Periode"
-                                className="w-64"
-                                value={search}
-                                onChange={(e) => setSearch(e.target.value)}
-                            />
-                            <Button className="bg-blue-600 text-white hover:bg-blue-700">
-                                + Rekap Kehadiran
-                            </Button>
-                        </div>
-                    </div>
 
-                    <div className="overflow-auto rounded border border-gray-300">
-                        <Table className="w-full border border-gray-300 border-collapse">
-                            <TableHeader>
-                                <TableRow className="bg-brand text-white hover:bg-brand">
-                                    <TableHead className="text-white border border-gray-200">No</TableHead>
-                                    <TableHead className="text-white border border-gray-200">Periode Absen</TableHead>
-                                    <TableHead className="text-white border border-gray-200">Jumlah Karyawan</TableHead>
-                                    <TableHead className="text-white border border-gray-200">Aksi</TableHead>
+            <TableCard icon={Calendar} title="Data Rekap Kehadiran">
+                <div className="flex flex-wrap justify-between items-center gap-4">
+                    {/* Kiri: Show entries */}
+                    <div className="flex items-center gap-4">
+                        <span className="text-sm text-muted-foreground">Show</span>
+                        <Select value={show} onValueChange={setShow}>
+                            <SelectTrigger className="w-20">
+                                <SelectValue placeholder="10" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem value="10">10</SelectItem>
+                                <SelectItem value="25">25</SelectItem>
+                                <SelectItem value="50">50</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <span className="text-sm text-muted-foreground">entries</span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                        <Input
+                            placeholder="Cari Periode"
+                            className="w-64"
+                            value={search}
+                            onChange={(e) => setSearch(e.target.value)}
+                        />
+                        <Button className="bg-blue-600 text-white hover:bg-blue-700">
+                            + Rekap Kehadiran
+                        </Button>
+                    </div>
+                </div>
+
+                <div className="overflow-auto rounded border border-gray-300">
+                    <Table className="w-full border border-gray-300 border-collapse">
+                        <TableHeader>
+                            <TableRow className="bg-brand text-white hover:bg-brand">
+                                <TableHead className="text-white border border-gray-200">No</TableHead>
+                                <TableHead className="text-white border border-gray-200">Periode Absen</TableHead>
+                                <TableHead className="text-white border border-gray-200">Jumlah Karyawan</TableHead>
+                                <TableHead className="text-white border border-gray-200">Aksi</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {paginatedData.map((r, idx) => (
+                                <TableRow key={r.id}>
+                                    <TableCell className="border border-gray-200">
+                                        {(currentPage - 1) * entriesPerPage + idx + 1}
+                                    </TableCell>
+                                    <TableCell className="border border-gray-200">{r.periode}</TableCell>
+                                    <TableCell className="border border-gray-200">{r.jumlahKaryawan}</TableCell>
+                                    <TableCell className="border border-gray-200 flex space-x-2">
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="bg-green-600 text-white hover:bg-green-700"
+                                            title="Download"
+                                            onClick={() => handleDownload(r.periode)}
+                                        >
+                                            <Download className="w-4 h-4" />
+                                        </Button>
+                                        <Button
+                                            variant="ghost"
+                                            size="sm"
+                                            className="bg-red-600 text-white hover:bg-red-700"
+                                            title="Hapus"
+                                            onClick={() => handleDeleteSingle(r.id)}
+                                        >
+                                            <Trash2 className="w-4 h-4" />
+                                        </Button>
+                                    </TableCell>
                                 </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {paginatedData.map((r, idx) => (
-                                    <TableRow key={r.id}>
-                                        <TableCell className="border border-gray-200">
-                                            {(currentPage - 1) * entriesPerPage + idx + 1}
-                                        </TableCell>
-                                        <TableCell className="border border-gray-200">{r.periode}</TableCell>
-                                        <TableCell className="border border-gray-200">{r.jumlahKaryawan}</TableCell>
-                                        <TableCell className="border border-gray-200 flex space-x-2">
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="bg-green-600 text-white hover:bg-green-700"
-                                                title="Download"
-                                                onClick={() => handleDownload(r.periode)}
-                                            >
-                                                <Download className="w-4 h-4" />
-                                            </Button>
-                                            <Button
-                                                variant="ghost"
-                                                size="sm"
-                                                className="bg-red-600 text-white hover:bg-red-700"
-                                                title="Hapus"
-                                                onClick={() => handleDeleteSingle(r.id)}
-                                            >
-                                                <Trash2 className="w-4 h-4" />
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
-
-                    <div className="flex justify-between items-center mt-4">
-                        <div className="text-sm text-gray-500">
-                            Menampilkan{' '}
-                            <strong>
-                                {Math.max((currentPage - 1) * entriesPerPage + 1, 1)} to{' '}
-                                {Math.min(currentPage * entriesPerPage, filteredData.length)}
-                            </strong>{' '}
-                            of <strong>{filteredData.length}</strong> data
-                        </div>
-                        <div className="flex gap-2">
-                            <Button
-                                disabled={currentPage === 1}
-                                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                            >
-                                Sebelumnya
-                            </Button>
-                            {[...Array(totalPages)].map((_, i) => (
-                                <Button
-                                    key={i}
-                                    variant={currentPage === i + 1 ? 'default' : 'outline'}
-                                    onClick={() => setCurrentPage(i + 1)}
-                                >
-                                    {i + 1}
-                                </Button>
                             ))}
-                            <Button
-                                disabled={currentPage === totalPages}
-                                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                            >
-                                Selanjutnya
-                            </Button>
-                        </div>
+                        </TableBody>
+                    </Table>
+                </div>
+
+                <div className="flex justify-between items-center mt-4">
+                    <div className="text-sm text-gray-500">
+                        Menampilkan{' '}
+                        <strong>
+                            {Math.max((currentPage - 1) * entriesPerPage + 1, 1)} to{' '}
+                            {Math.min(currentPage * entriesPerPage, filteredData.length)}
+                        </strong>{' '}
+                        of <strong>{filteredData.length}</strong> data
                     </div>
-                </CardContent>
-            </Card>
+                    <div className="flex gap-2">
+                        <Button
+                            disabled={currentPage === 1}
+                            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+                        >
+                            Sebelumnya
+                        </Button>
+                        {[...Array(totalPages)].map((_, i) => (
+                            <Button
+                                key={i}
+                                variant={currentPage === i + 1 ? 'default' : 'outline'}
+                                onClick={() => setCurrentPage(i + 1)}
+                            >
+                                {i + 1}
+                            </Button>
+                        ))}
+                        <Button
+                            disabled={currentPage === totalPages}
+                            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+                        >
+                            Selanjutnya
+                        </Button>
+                    </div>
+                </div>
+
+            </TableCard>
         </div>
     );
 };
