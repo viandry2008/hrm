@@ -5,6 +5,10 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { TableCard } from '@/components/ui/table-card';
+import { TableToolbar } from '@/components/ui/table-toolbar';
+import { TablePagination } from '@/components/ui/table-pagination';
+import { StatCard, StatCardGrid } from '@/components/ui/stat-card';
 import { Search, Plus, Eye, Trash2, ChevronLeft, ChevronRight, Clock, CheckCircle, XCircle, FileText, Calendar } from 'lucide-react';
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -173,7 +177,7 @@ const getStatusBadge = (item: CutiData) => {
   if (item.status === 'Disetujui') {
     return (
       <div className="flex flex-col">
-        <Badge 
+        <Badge
           className="inline-block bg-green-600 text-white hover:bg-green-600 hover:text-white transition-none py-1 px-2 rounded font-medium max-w-fit"
           style={{ display: 'inline-block', maxWidth: 'max-content' }}
         >
@@ -187,7 +191,7 @@ const getStatusBadge = (item: CutiData) => {
   } else if (item.status === 'Ditolak') {
     return (
       <div className="flex flex-col">
-        <Badge 
+        <Badge
           className="inline-block bg-red-600 text-white hover:bg-red-600 hover:text-white transition-none py-1 px-2 rounded font-medium max-w-fit"
           style={{ display: 'inline-block', maxWidth: 'max-content' }}
         >
@@ -205,7 +209,7 @@ const getStatusBadge = (item: CutiData) => {
 
   return (
     <div className="flex flex-col">
-      <Badge 
+      <Badge
         className="inline-block bg-yellow-300 text-black hover:bg-yellow-300 hover:text-black transition-none py-1 px-2 rounded max-w-fit"
         style={{ display: 'inline-block', maxWidth: 'max-content' }}
       >
@@ -303,234 +307,137 @@ export const DataCutiPage = () => {
         <h1 className="text-3xl font-bold text-gray-900">Cuti</h1>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
-        {/* Menunggu Disetujui */}
-        <Card className="bg-yellow-500 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">
-              Menunggu Disetujui
-            </CardTitle>
-            <Clock className="h-4 w-4 text-white" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">
-              {data.filter(d => d.status === 'Menunggu Disetujui').length}
-            </div>
-            <p className="text-xs text-white">Pengajuan</p>
-          </CardContent>
-        </Card>
+      <StatCardGrid>
+        <StatCard
+          title="Menunggu Disetujui"
+          value={data.filter(d => d.status === 'Menunggu Disetujui').length}
+          subtitle="Pengajuan"
+          icon={Clock}
+          borderColor="yellow"
+        />
+        <StatCard
+          title="Total Disetujui"
+          value={data.filter(d => d.status === 'Disetujui').length}
+          subtitle="Pengajuan"
+          icon={CheckCircle}
+          borderColor="green"
+        />
+        <StatCard
+          title="Total Ditolak"
+          value={data.filter(d => d.status === 'Ditolak').length}
+          subtitle="Pengajuan"
+          icon={XCircle}
+          borderColor="red"
+        />
+        <StatCard
+          title="Total Pengajuan"
+          value={data.length}
+          subtitle="Pengajuan"
+          icon={FileText}
+          borderColor="blue"
+        />
+      </StatCardGrid>
 
-        {/* Disetujui */}
-        <Card className="bg-green-700 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">
-              Total Pengajuan Disetujui
-            </CardTitle>
-            <CheckCircle className="h-4 w-4 text-white" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">
-              {data.filter(d => d.status === 'Disetujui').length}
-            </div>
-            <p className="text-xs text-white">Pengajuan</p>
-          </CardContent>
-        </Card>
+      <TableCard icon={FileText} title="Data Pengajuan Cuti">
+        <TableToolbar
+          searchValue={searchTerm}
+          onSearchChange={setSearchTerm}
+          searchPlaceholder="Cari ID, nama, divisi, jabatan..."
+          showEntriesValue={itemsPerPage.toString()}
+          onShowEntriesChange={(v) => setItemsPerPage(Number(v))}
+          onAddClick={() => setIsModalOpen(true)}
+          addButtonLabel="Ajukan Cuti"
+        />
 
-        {/* Ditolak */}
-        <Card className="bg-red-600 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">
-              Total Pengajuan Ditolak
-            </CardTitle>
-            <XCircle className="h-4 w-4 text-white" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">
-              {data.filter(d => d.status === 'Ditolak').length}
-            </div>
-            <p className="text-xs text-white">Pengajuan</p>
-          </CardContent>
-        </Card>
-
-        {/* Total Pengajuan */}
-        <Card className="bg-blue-600 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">
-              Total Pengajuan Cuti
-            </CardTitle>
-            <FileText className="h-4 w-4 text-white" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">{data.length}</div>
-            <p className="text-xs text-white">Pengajuan</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader className="bg-blue-50 border-b">
-          <CardTitle className="text-blue-800">Data Pengajuan</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">Show</span>
-                <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(Number(value))}>
-                  <SelectTrigger className="w-20">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="25">25</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                  </SelectContent>
-                </Select>
-                <span className="text-sm text-gray-600">entries</span>
-              </div>
-              <div className="relative w-80">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Cari ID, nama, divisi, jabatan, atau kategori..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <Button 
-              className="bg-blue-600 hover:bg-blue-700" 
-              onClick={() => setIsModalOpen(true)}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Ajukan Cuti
-            </Button>
-          </div>
-
-          <div className="overflow-auto rounded border border-gray-300">
-            <Table className="w-full border border-gray-300 border-collapse">
-              <TableHeader>
-                <TableRow className="bg-brand text-white hover:bg-brand">
-                  <TableHead className="border text-white whitespace-nowrap">No.</TableHead>
-                  <TableHead className="border text-white whitespace-nowrap">ID</TableHead>
-                  <TableHead className="border text-white whitespace-nowrap">Nama</TableHead>
-                  <TableHead className="border text-white whitespace-nowrap">Divisi</TableHead>
-                  <TableHead className="border text-white whitespace-nowrap">Jabatan</TableHead>
-                  <TableHead className="border text-white whitespace-nowrap">Kategori</TableHead>
-                  <TableHead className="border text-white whitespace-nowrap">Mulai Tanggal</TableHead>
-                  <TableHead className="border text-white whitespace-nowrap">Sampai Tanggal</TableHead>
-                  <TableHead className="border text-white whitespace-nowrap">Periode Cuti</TableHead>
-                  <TableHead className="border text-white whitespace-nowrap">Alasan</TableHead>
-                  <TableHead className="border text-white whitespace-nowrap">Sisa Cuti</TableHead>
-                  <TableHead className="border text-white whitespace-nowrap">Tanggal Pengajuan</TableHead>
-                  <TableHead className="border text-white whitespace-nowrap">Status</TableHead>
-                  <TableHead className="border text-white whitespace-nowrap">Diketahui Oleh</TableHead>
-                  <TableHead className="border text-white whitespace-nowrap">Aksi</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paginatedData.map((item) => (
-                  <TableRow key={item.no} className="border">
-                    <TableCell className="border whitespace-nowrap">{item.no}</TableCell>
-                    <TableCell className="border whitespace-nowrap">{item.idKaryawan}</TableCell>
-                    <TableCell className="border whitespace-nowrap">{item.nama}</TableCell>
-                    <TableCell className="border whitespace-nowrap">{item.divisi}</TableCell>
-                    <TableCell className="border whitespace-nowrap">{item.jabatan}</TableCell>
-                    <TableCell className="border whitespace-nowrap">{item.jenisCuti}</TableCell>
-                    <TableCell className="border whitespace-nowrap">{formatDate(item.tanggalMulai)}</TableCell>
-                    <TableCell className="border whitespace-nowrap">{formatDate(item.tanggalSelesai)}</TableCell>
-                    <TableCell className="border whitespace-nowrap">{item.periodeCuti}</TableCell>
-                    <TableCell className="border whitespace-nowrap">{item.alasan}</TableCell>
-                    <TableCell className="border whitespace-nowrap">{item.sisaCuti}</TableCell>
-                    <TableCell className="border whitespace-nowrap">{formatDateTime(item.tanggalPengajuan)}</TableCell>
-                    <TableCell className="border whitespace-nowrap">{getStatusBadge(item)}</TableCell>
-                    <TableCell className="border whitespace-nowrap">
-                      {item.status === 'Menunggu Disetujui' ? (
-                        <span className="text-sm text-gray-400">-</span>
-                      ) : (
-                        <div className="flex flex-col">
-                          <div className="flex items-center space-x-1">
-                            <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                            </svg>
-                            <span className="text-sm text-gray-700">HRD Personalia</span>
-                          </div>
-                          <span className="text-xs text-gray-500 mt-1">
-                            {formatDateTime(item.tanggalDisetujui || item.tanggalDitolak)}
-                          </span>
+        <div className="overflow-auto rounded border border-gray-300">
+          <Table className="w-full border border-gray-300 border-collapse">
+            <TableHeader>
+              <TableRow className="bg-brand text-white hover:bg-brand">
+                <TableHead className="border text-white whitespace-nowrap">No.</TableHead>
+                <TableHead className="border text-white whitespace-nowrap">ID</TableHead>
+                <TableHead className="border text-white whitespace-nowrap">Nama</TableHead>
+                <TableHead className="border text-white whitespace-nowrap">Divisi</TableHead>
+                <TableHead className="border text-white whitespace-nowrap">Jabatan</TableHead>
+                <TableHead className="border text-white whitespace-nowrap">Kategori</TableHead>
+                <TableHead className="border text-white whitespace-nowrap">Mulai Tanggal</TableHead>
+                <TableHead className="border text-white whitespace-nowrap">Sampai Tanggal</TableHead>
+                <TableHead className="border text-white whitespace-nowrap">Periode Cuti</TableHead>
+                <TableHead className="border text-white whitespace-nowrap">Alasan</TableHead>
+                <TableHead className="border text-white whitespace-nowrap">Sisa Cuti</TableHead>
+                <TableHead className="border text-white whitespace-nowrap">Tanggal Pengajuan</TableHead>
+                <TableHead className="border text-white whitespace-nowrap">Status</TableHead>
+                <TableHead className="border text-white whitespace-nowrap">Diketahui Oleh</TableHead>
+                <TableHead className="border text-white whitespace-nowrap">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedData.map((item) => (
+                <TableRow key={item.no} className="border">
+                  <TableCell className="border whitespace-nowrap">{item.no}</TableCell>
+                  <TableCell className="border whitespace-nowrap">{item.idKaryawan}</TableCell>
+                  <TableCell className="border whitespace-nowrap">{item.nama}</TableCell>
+                  <TableCell className="border whitespace-nowrap">{item.divisi}</TableCell>
+                  <TableCell className="border whitespace-nowrap">{item.jabatan}</TableCell>
+                  <TableCell className="border whitespace-nowrap">{item.jenisCuti}</TableCell>
+                  <TableCell className="border whitespace-nowrap">{formatDate(item.tanggalMulai)}</TableCell>
+                  <TableCell className="border whitespace-nowrap">{formatDate(item.tanggalSelesai)}</TableCell>
+                  <TableCell className="border whitespace-nowrap">{item.periodeCuti}</TableCell>
+                  <TableCell className="border whitespace-nowrap">{item.alasan}</TableCell>
+                  <TableCell className="border whitespace-nowrap">{item.sisaCuti}</TableCell>
+                  <TableCell className="border whitespace-nowrap">{formatDateTime(item.tanggalPengajuan)}</TableCell>
+                  <TableCell className="border whitespace-nowrap">{getStatusBadge(item)}</TableCell>
+                  <TableCell className="border whitespace-nowrap">
+                    {item.status === 'Menunggu Disetujui' ? (
+                      <span className="text-sm text-gray-400">-</span>
+                    ) : (
+                      <div className="flex flex-col">
+                        <div className="flex items-center space-x-1">
+                          <svg xmlns="http://www.w3.org/2000/svg" className="w-3 h-3 text-blue-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                          </svg>
+                          <span className="text-sm text-gray-700">HRD Personalia</span>
                         </div>
-                      )}
-                    </TableCell>
-                    <TableCell className="border whitespace-nowrap">
-                      <div className="flex space-x-2">
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="bg-blue-600 text-white hover:bg-blue-700"
-                          title="Lihat Detail"
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="bg-red-600 text-white hover:bg-red-700"
-                          title="Hapus Data"
-                          onClick={() => handleDeleteSingle(item.idKaryawan)}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
+                        <span className="text-xs text-gray-500 mt-1">
+                          {formatDateTime(item.tanggalDisetujui || item.tanggalDitolak)}
+                        </span>
                       </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-
-          <div className="flex justify-between items-center mt-4">
-            <div className="text-sm text-gray-500">
-              Menampilkan{' '}
-              <strong>
-                {Math.max((currentPage - 1) * itemsPerPage + 1, 1)} sampai{' '}
-                {Math.min(currentPage * itemsPerPage, filteredData.length)}
-              </strong>{' '}
-              dari <strong>{filteredData.length}</strong> data
-            </div>
-            <div className="flex gap-2">
-              <Button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                className="bg-blue-500 text-white hover:bg-blue-600"
-              >
-                Sebelumnya
-              </Button>
-              {[...Array(totalPages)].map((_, i) => (
-                <Button
-                  key={i}
-                  size="sm"
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={
-                    currentPage === i + 1
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-white text-blue-600 border border-blue-600 hover:bg-blue-50'
-                  }
-                >
-                  {i + 1}
-                </Button>
+                    )}
+                  </TableCell>
+                  <TableCell className="border whitespace-nowrap">
+                    <div className="flex space-x-2">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="bg-blue-600 text-white hover:bg-blue-700"
+                        title="Lihat Detail"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="bg-red-600 text-white hover:bg-red-700"
+                        title="Hapus Data"
+                        onClick={() => handleDeleteSingle(item.idKaryawan)}
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
               ))}
-              <Button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                className="bg-blue-500 text-white hover:bg-blue-600"
-              >
-                Selanjutnya
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            </TableBody>
+          </Table>
+        </div>
+
+        <TablePagination
+          pagination={{ current_page: currentPage, last_page: totalPages, per_page: itemsPerPage, total: filteredData.length }}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          items={paginatedData}
+        />
+
+      </TableCard>
 
       {/* Modal dengan Framer Motion */}
       <AnimatePresence mode="wait">
@@ -558,7 +465,7 @@ export const DataCutiPage = () => {
               {/* Header Modal */}
               <div className="flex justify-between items-center p-5 border-b">
                 <h2 className="text-xl font-semibold text-gray-800">Buat Cuti</h2>
-                <button 
+                <button
                   onClick={() => setIsModalOpen(false)}
                   className="text-gray-500 hover:text-gray-700 focus:outline-none"
                 >
@@ -685,8 +592,8 @@ export const DataCutiPage = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Alasan Cuti *
                   </label>
-                  <textarea 
-                    rows={4} 
+                  <textarea
+                    rows={4}
                     className="w-full border border-gray-300 rounded-md px-3 py-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Tulis alasan cuti Anda..."
                     required
@@ -698,11 +605,11 @@ export const DataCutiPage = () => {
                   <label className="block text-sm font-medium text-gray-700 mb-1">
                     Total Pengajuan *
                   </label>
-                  <Input 
-                    type="number" 
-                    value={totalPengajuan} 
-                    readOnly 
-                    className="bg-gray-100 cursor-not-allowed font-semibold" 
+                  <Input
+                    type="number"
+                    value={totalPengajuan}
+                    readOnly
+                    className="bg-gray-100 cursor-not-allowed font-semibold"
                   />
                   <p className="text-xs text-gray-500 mt-1">
                     Jumlah hari cuti akan dihitung otomatis (termasuk hari terakhir).
@@ -722,16 +629,16 @@ export const DataCutiPage = () => {
 
                 {/* Footer Buttons */}
                 <div className="flex justify-end space-x-3 pt-4 border-t">
-                  <Button 
-                    type="button" 
-                    variant="outline" 
+                  <Button
+                    type="button"
+                    variant="outline"
                     onClick={() => setIsModalOpen(false)}
                     className="text-gray-700 border-gray-300 hover:bg-gray-50"
                   >
                     Batal
                   </Button>
-                  <Button 
-                    type="submit" 
+                  <Button
+                    type="submit"
                     className="bg-green-600 text-white hover:bg-green-700"
                   >
                     Simpan
