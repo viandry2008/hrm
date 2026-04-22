@@ -14,6 +14,7 @@ import Swal from 'sweetalert2';
 import { Trash2, Download, Calendar } from 'lucide-react';
 import { TableCard } from "@/components/ui/table-card";
 import { TableToolbar } from '@/components/ui/table-toolbar';
+import { TablePagination } from '@/components/ui/table-pagination';
 
 interface RekapKehadiran {
     id: string;
@@ -146,39 +147,17 @@ export const RekapKehadiranPage = () => {
                     </Table>
                 </div>
 
-                <div className="flex justify-between items-center mt-4">
-                    <div className="text-sm text-gray-500">
-                        Menampilkan{' '}
-                        <strong>
-                            {Math.max((currentPage - 1) * entriesPerPage + 1, 1)} to{' '}
-                            {Math.min(currentPage * entriesPerPage, filteredData.length)}
-                        </strong>{' '}
-                        of <strong>{filteredData.length}</strong> data
-                    </div>
-                    <div className="flex gap-2">
-                        <Button
-                            disabled={currentPage === 1}
-                            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                        >
-                            Sebelumnya
-                        </Button>
-                        {[...Array(totalPages)].map((_, i) => (
-                            <Button
-                                key={i}
-                                variant={currentPage === i + 1 ? 'default' : 'outline'}
-                                onClick={() => setCurrentPage(i + 1)}
-                            >
-                                {i + 1}
-                            </Button>
-                        ))}
-                        <Button
-                            disabled={currentPage === totalPages}
-                            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                        >
-                            Selanjutnya
-                        </Button>
-                    </div>
-                </div>
+                <TablePagination
+                    pagination={{
+                        current_page: currentPage,
+                        per_page: totalPages,
+                        total: filteredData.length,
+                        last_page: totalPages,
+                    }}
+                    currentPage={currentPage}
+                    onPageChange={setCurrentPage}
+                    items={filteredData}
+                />
 
             </TableCard>
         </div>
