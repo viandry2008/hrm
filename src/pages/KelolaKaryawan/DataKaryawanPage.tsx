@@ -118,6 +118,7 @@ export const DataKaryawanPage = () => {
     search: searchTerm,
     page: currentPage,
     limit: Number(showEntries),
+    status: filterStatus === 'all' ? undefined : filterStatus,
   });
 
   const { data: dataSummary, isLoading: loadingSummary, refetch: refetchSummary } =
@@ -391,14 +392,12 @@ export const DataKaryawanPage = () => {
           <Select value={filterStatus} onValueChange={setFilterStatus}>
             <SelectTrigger className="w-[240px]">
               <SelectValue>
-                {filterStatus === 'all' ? '-- Filter berdasarkan status --' : null}
               </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">Semua Karyawan</SelectItem>
-              <SelectItem value="aktif">Karyawan Aktif</SelectItem>
-              <SelectItem value="tidak_aktif">Karyawan Tidak Aktif</SelectItem>
-              <SelectItem value="habis_kontrak">Karyawan Habis Kontrak</SelectItem>
+              <SelectItem value="active">Karyawan Aktif</SelectItem>
+              <SelectItem value="inactive">Karyawan Tidak Aktif</SelectItem>
             </SelectContent>
           </Select>
         </div>

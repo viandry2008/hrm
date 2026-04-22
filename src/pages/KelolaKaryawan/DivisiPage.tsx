@@ -107,7 +107,7 @@ export const DivisiPage = () => {
                 items.map((item, idx) => (
                   <TableRow key={item.id} className="hover:bg-transparent">
 
-                    <TableCell className="border border-gray-300 bg-white text-center">
+                    <TableCell className="border border-gray-300 bg-white">
                       {(currentPage - 1) * Number(showEntries) + idx + 1}
                     </TableCell>
 

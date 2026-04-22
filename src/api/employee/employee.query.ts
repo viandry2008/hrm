@@ -7,6 +7,7 @@ export const useGetEmployees = (params: {
     search?: string;
     page?: number;
     limit?: number;
+    status?: string;
 }) => {
     return useQuery({
         queryKey: ["Employees", params],
