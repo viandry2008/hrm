@@ -13,6 +13,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import Swal from 'sweetalert2';
 import { Trash2, Download, Calendar } from 'lucide-react';
 import { TableCard } from "@/components/ui/table-card";
+import { TableToolbar } from '@/components/ui/table-toolbar';
 
 interface RekapKehadiran {
     id: string;
@@ -91,34 +92,15 @@ export const RekapKehadiranPage = () => {
         <div className="p-6 space-y-6">
 
             <TableCard icon={Calendar} title="Data Rekap Kehadiran">
-                <div className="flex flex-wrap justify-between items-center gap-4">
-                    {/* Kiri: Show entries */}
-                    <div className="flex items-center gap-4">
-                        <span className="text-sm text-muted-foreground">Show</span>
-                        <Select value={show} onValueChange={setShow}>
-                            <SelectTrigger className="w-20">
-                                <SelectValue placeholder="10" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectItem value="10">10</SelectItem>
-                                <SelectItem value="25">25</SelectItem>
-                                <SelectItem value="50">50</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <span className="text-sm text-muted-foreground">entries</span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <Input
-                            placeholder="Cari Periode"
-                            className="w-64"
-                            value={search}
-                            onChange={(e) => setSearch(e.target.value)}
-                        />
-                        <Button className="bg-blue-600 text-white hover:bg-blue-700">
-                            + Rekap Kehadiran
-                        </Button>
-                    </div>
-                </div>
+                <TableToolbar
+                    searchValue={search}
+                    onSearchChange={setSearch}
+                    searchPlaceholder="Cari rekap kehadiran..."
+                    showEntriesValue={show}
+                    onShowEntriesChange={setShow}
+                    onAddClick={() => alert('Tambah Rekap Kehadiran')}
+                    addButtonLabel="Rekap Kehadiran"
+                />
 
                 <div className="overflow-auto rounded border border-gray-300">
                     <Table className="w-full border border-gray-300 border-collapse">

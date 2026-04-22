@@ -1,3 +1,4 @@
+import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { LucideIcon } from 'lucide-react';
 
@@ -57,5 +58,27 @@ export const StatCard = ({
         </div>
       </CardContent>
     </Card>
+  );
+};
+
+interface StatCardGridProps {
+  children: React.ReactNode;
+}
+
+const gridColsMap: Record<number, string> = {
+  1: 'grid-cols-1',
+  2: 'grid-cols-1 md:grid-cols-2',
+  3: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3',
+  4: 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4',
+};
+
+export const StatCardGrid = ({ children }: StatCardGridProps) => {
+  const childCount = React.Children.count(children);
+  const gridCols = gridColsMap[childCount] || gridColsMap[4];
+
+  return (
+    <div className={`grid ${gridCols} gap-4`}>
+      {children}
+    </div>
   );
 };

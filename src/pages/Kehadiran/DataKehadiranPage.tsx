@@ -2,6 +2,7 @@ import { useState } from 'react';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Button } from '@/components/ui/button';
+import { TablePagination } from '@/components/ui/table-pagination';
 import { Input } from '@/components/ui/input';
 import {
     Table,
@@ -356,46 +357,17 @@ export const DataKehadiranPage = () => {
                     </Table>
                 </div>
 
-                <div className="flex justify-between items-center mt-4">
-                    <div className="text-sm text-gray-500">
-                        Menampilkan{' '}
-                        <strong>
-                            {Math.max((currentPage - 1) * itemsPerPage + 1, 1)} sampai{' '}
-                            {Math.min(currentPage * itemsPerPage, filteredData.length)}
-                        </strong>{' '}
-                        dari <strong>{filteredData.length}</strong> data
-                    </div>
-                    <div className="flex gap-2">
-                        <Button
-                            disabled={currentPage === 1}
-                            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                            className="bg-blue-500 text-white hover:bg-blue-600"
-                        >
-                            Sebelumnya
-                        </Button>
-                        {[...Array(totalPages)].map((_, i) => (
-                            <Button
-                                key={i}
-                                size="sm"
-                                onClick={() => setCurrentPage(i + 1)}
-                                className={
-                                    currentPage === i + 1
-                                        ? 'bg-blue-500 text-white'
-                                        : 'bg-white text-blue-600 border border-blue-600 hover:bg-blue-50'
-                                }
-                            >
-                                {i + 1}
-                            </Button>
-                        ))}
-                        <Button
-                            disabled={currentPage === totalPages}
-                            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                            className="bg-blue-500 text-white hover:bg-blue-600"
-                        >
-                            Selanjutnya
-                        </Button>
-                    </div>
-                </div>
+                <TablePagination
+                    pagination={{
+                        current_page: currentPage,
+                        per_page: totalPages,
+                        total: filteredData.length,
+                        last_page: totalPages,
+                    }}
+                    currentPage={currentPage}
+                    onPageChange={setCurrentPage}
+                    items={filteredData}
+                />
 
             </TableCard>
         </div>

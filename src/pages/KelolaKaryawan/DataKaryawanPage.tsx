@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TablePagination } from '@/components/ui/table-pagination';
-import { StatCard } from '@/components/ui/stat-card';
+import { StatCard, StatCardGrid } from '@/components/ui/stat-card';
 import Swal from 'sweetalert2';
 import {
   Table,
@@ -336,7 +336,7 @@ export const DataKaryawanPage = () => {
   return (
     <div className="p-6 space-y-6 bg-[#F8FAFC] min-h-screen">
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <StatCardGrid>
         <StatCard
           title="Total Karyawan Aktif"
           value={dataSummary?.data?.active ?? 0}
@@ -352,7 +352,16 @@ export const DataKaryawanPage = () => {
           icon={XCircle}
           borderColor="red"
         />
-      </div>
+
+        <StatCard
+          title="Total Karyawan Segera Berakhir"
+          // value={dataSummary?.data?.expiring ?? 0}
+          value={dataSummary?.data?.inactive ?? 0}
+          subtitle="Kontrak hampir habis"
+          icon={Calendar}
+          borderColor="yellow"
+        />
+      </StatCardGrid>
 
       <TableCard icon={Users} title="Manajemen Karyawan">
 
