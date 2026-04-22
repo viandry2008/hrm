@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/api/auth/auth.store';
+import { showLogoutDialog } from '@/components/ui/confirm-dialog';
 import {
   LayoutDashboard,
   Clock,
@@ -300,7 +301,10 @@ export const Sidebar = ({ onLogout, currentPath, isOpen, onToggle }: SidebarProp
         <Button
           variant="ghost"
           className="w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-white/80 hover:text-white hover:bg-[#1E4F85]/40 transition-all duration-150 justify-start"
-          onClick={onLogout}
+          onClick={async () => {
+            const confirmed = await showLogoutDialog();
+            if (confirmed) onLogout();
+          }}
         >
           <LogOut className="h-5 w-5" />
           {isOpen && <span>Log out</span>}

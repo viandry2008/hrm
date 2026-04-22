@@ -55,12 +55,11 @@ export const DivisionFormModal = ({
                         </Dialog.Close>
                     </div>
 
-                    <div className="space-y-3">
+                    <div className="space-y-4">
                         <Input
                             value={departmentName}
                             onChange={(e) => setDepartmentName(e.target.value)}
                             placeholder="Nama divisi"
-                            className="focus:border-[#1E4F85]"
                         />
                     </div>
 

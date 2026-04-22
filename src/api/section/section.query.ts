@@ -1,5 +1,4 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import Swal from "sweetalert2";
 
 import {
     createSectionApi,
@@ -10,6 +9,7 @@ import {
 } from "./section.api";
 
 import { SectionPostRequest } from "./section.types";
+import { showSuccessDialog, showErrorDialog } from "@/components/ui/confirm-dialog";
 
 /**
  * GET list sections
@@ -44,32 +44,13 @@ export const useCreateSection = (onSuccessReset?: () => void) => {
         mutationFn: (payload: SectionPostRequest) =>
             createSectionApi(payload),
 
-        onSuccess: async (data) => {
-            Swal.fire({
-                icon: "success",
-                title: '<span style="color: white;">Section Created!</span>',
-                text: data.message,
-                background: "#1166d8",
-                color: "white",
-                confirmButtonColor: "#ffffff",
-                confirmButtonText:
-                    '<span style="color: #1166d8; font-weight: bold;">OK</span>',
-                customClass: {
-                    popup: "rounded-xl",
-                    title: "text-xl",
-                    confirmButton: "text-sm px-6 py-2 rounded-lg",
-                },
-            });
-
+        onSuccess: async () => {
+            showSuccessDialog({ title: "Bagian Berhasil Dibuat!" });
             if (onSuccessReset) onSuccessReset();
         },
 
         onError: (err: any) => {
-            Swal.fire(
-                "Gagal",
-                err.response?.data?.message || "Gagal membuat Section",
-                "error"
-            );
+            showErrorDialog({ title: "Gagal!", message: err.response?.data?.message || "Gagal membuat bagian" });
         },
     });
 };
@@ -87,32 +68,13 @@ export const useUpdateSection = (onSuccessReset?: () => void) => {
             payload: SectionPostRequest;
         }) => updateSectionApi(id, payload),
 
-        onSuccess: async (data) => {
-            Swal.fire({
-                icon: "success",
-                title: '<span style="color: white;">Section Updated!</span>',
-                text: data.message,
-                background: "#1166d8",
-                color: "white",
-                confirmButtonColor: "#ffffff",
-                confirmButtonText:
-                    '<span style="color: #1166d8; font-weight: bold;">OK</span>',
-                customClass: {
-                    popup: "rounded-xl",
-                    title: "text-xl",
-                    confirmButton: "text-sm px-6 py-2 rounded-lg",
-                },
-            });
-
+        onSuccess: async () => {
+            showSuccessDialog({ title: "Bagian Berhasil Diperbarui!" });
             if (onSuccessReset) onSuccessReset();
         },
 
         onError: (err: any) => {
-            Swal.fire(
-                "Gagal",
-                err.response?.data?.message || "Gagal update Section",
-                "error"
-            );
+            showErrorDialog({ title: "Gagal!", message: err.response?.data?.message || "Gagal memperbarui bagian" });
         },
     });
 };
@@ -124,32 +86,13 @@ export const useDeleteSection = (onSuccessReset?: () => void) => {
     return useMutation({
         mutationFn: (id: number) => deleteSectionApi(id),
 
-        onSuccess: async (data) => {
-            Swal.fire({
-                icon: "success",
-                title: '<span style="color: white;">Section Deleted!</span>',
-                text: data.message,
-                background: "#1166d8",
-                color: "white",
-                confirmButtonColor: "#ffffff",
-                confirmButtonText:
-                    '<span style="color: #1166d8; font-weight: bold;">OK</span>',
-                customClass: {
-                    popup: "rounded-xl",
-                    title: "text-xl",
-                    confirmButton: "text-sm px-6 py-2 rounded-lg",
-                },
-            });
-
+        onSuccess: async () => {
+            showSuccessDialog({ title: "Bagian Berhasil Dihapus!" });
             if (onSuccessReset) onSuccessReset();
         },
 
         onError: (err: any) => {
-            Swal.fire(
-                "Gagal",
-                err.response?.data?.message || "Gagal menghapus Section",
-                "error"
-            );
+            showErrorDialog({ title: "Gagal!", message: err.response?.data?.message || "Gagal menghapus bagian" });
         },
     });
 };

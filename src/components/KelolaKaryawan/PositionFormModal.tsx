@@ -66,14 +66,11 @@ export const PositionFormModal = ({
 
                     {/* Body */}
                     <div className="space-y-4">
-                        <div>
-                            <label className="text-sm font-medium">Nama Jabatan</label>
-                            <Input
-                                value={positionName}
-                                onChange={(e) => setPositionName(e.target.value)}
-                                placeholder="Masukkan nama jabatan"
-                            />
-                        </div>
+                        <Input
+                            value={positionName}
+                            onChange={(e) => setPositionName(e.target.value)}
+                            placeholder="Nama jabatan"
+                        />
                     </div>
 
                     {/* Footer */}
@@ -87,7 +84,7 @@ export const PositionFormModal = ({
                         </Button>
 
                         <Button
-                            className="bg-blue-600 text-white"
+                            className="bg-[#1E4F85] text-white hover:bg-[#1E4F85]"
                             onClick={handleSubmit}
                             disabled={loading || !positionName.trim()}
                         >

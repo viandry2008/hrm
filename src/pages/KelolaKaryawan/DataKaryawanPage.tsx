@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { TablePagination } from '@/components/ui/table-pagination';
+import { StatCard } from '@/components/ui/stat-card';
 import Swal from 'sweetalert2';
 import {
   Table,
@@ -10,7 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -28,11 +30,13 @@ import {
   XCircle,
   Calendar,
   Trash,
+  Users,
 } from 'lucide-react';
 import { useDeleteEmployee, useDeleteMultipleEmployee, useGetEmployees, useGetEmployeeSummary, useUpdateMultipleContractEmployee, useUpdateMultipleStatusEmployee } from '@/api/employee/employee.query';
 import { useNavigate } from 'react-router-dom';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
+import { TableCard } from '@/components/ui/table-card';
 
 // Komponen Label Status
 const StatusLabel = ({ status }: { status: string }) => {
@@ -329,309 +333,241 @@ export const DataKaryawanPage = () => {
   };
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Manajemen Karyawan</h1>
-      </div>
+    <div className="p-6 space-y-6 bg-[#F8FAFC] min-h-screen">
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Card Karyawan Aktif */}
-        <Card className="bg-white border-l-4 border-green-500 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-gray-700">Total Karyawan Aktif</p>
-                <p className="text-3xl font-bold text-gray-900">{dataSummary?.data?.active ?? 0}</p>
-                <div className="flex items-center gap-1 text-sm text-green-600">
-                  {/* <TrendingUp className="w-4 h-4" /> */}
-                  <span>+2 bulan ini</span>
-                </div>
-              </div>
-              <CheckCircle className="h-10 w-10 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Total Karyawan Aktif"
+          value={dataSummary?.data?.active ?? 0}
+          subtitle="+2 bulan ini"
+          icon={CheckCircle}
+          borderColor="green"
+        />
 
-        {/* Card Karyawan Tidak Aktif */}
-        <Card className="bg-white border-l-4 border-red-500 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-gray-700">Total Karyawan Tidak Aktif</p>
-                <p className="text-3xl font-bold text-gray-900">{dataSummary?.data?.inactive ?? 0}</p>
-                <div className="flex items-center gap-1 text-sm text-red-600">
-                  {/* <TrendingDown className="w-4 h-4" /> */}
-                  <span>-1 bulan ini</span>
-                </div>
-              </div>
-              <XCircle className="h-10 w-10 text-red-500" />
-            </div>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Total Karyawan Tidak Aktif"
+          value={dataSummary?.data?.inactive ?? 0}
+          subtitle="-1 bulan ini"
+          icon={XCircle}
+          borderColor="red"
+        />
       </div>
 
-      <Card className="bg-white">
-        <CardContent className="space-y-4 p-6">
-          <div className="flex gap-2">
-            {/* Tombol Aktifkan */}
-            <Button
-              className="bg-green-700 hover:bg-green-600 text-white flex items-center gap-1"
-              disabled={selectedIds.length === 0}
-              onClick={() => updateStatusAkun('Active')}
-            >
-              <CheckCircle className="w-4 h-4" /> Aktifkan
-            </Button>
-            {/* Tombol Non Aktifkan */}
-            <Button
-              className="bg-yellow-400 hover:bg-yellow-500 text-black flex items-center gap-1"
-              disabled={selectedIds.length === 0}
-              onClick={() => updateStatusAkun('Inactive')}
-            >
-              <XCircle className="w-4 h-4" /> Non Aktifkan
-            </Button>
-            <Button
-              className="bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1"
-              disabled={selectedIds.length === 0}
-              onClick={openContractModal}
-            >
-              <Calendar className="w-4 h-4" /> Perbarui Kontrak
-            </Button>
-            <Button
-              className="bg-red-500 hover:bg-red-600 text-white flex items-center gap-1"
-              disabled={selectedIds.length === 0}
-              onClick={handleDeleteMultiple}
-            >
-              <Trash className="w-4 h-4" /> Hapus karyawan terpilih
-            </Button>
+      <TableCard icon={Users} title="Manajemen Karyawan">
 
-            {/* filter status */}
-            <Select value={filterStatus} onValueChange={setFilterStatus}>
-              <SelectTrigger className="w-[240px]">
-                <SelectValue>
-                  {filterStatus === 'all' ? '-- Filter berdasarkan status --' : null}
-                </SelectValue>
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">Semua Karyawan</SelectItem>
-                <SelectItem value="aktif">Karyawan Aktif</SelectItem>
-                <SelectItem value="tidak_aktif">Karyawan Tidak Aktif</SelectItem>
-                <SelectItem value="habis_kontrak">Karyawan Habis Kontrak</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-          <div className="flex justify-between items-center flex-wrap gap-4">
-            <div className="flex items-center gap-4 flex-wrap">
-              <div className="flex items-center gap-2">
-                <span className="text-sm text-muted-foreground">Show</span>
-                <Select value={showEntries} onValueChange={setShowEntries}>
-                  <SelectTrigger className="w-20">
-                    <SelectValue placeholder="10" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="25">25</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                  </SelectContent>
-                </Select>
-                <span className="text-sm text-muted-foreground">entries</span>
-              </div>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Cari ID, nama, divisi, jabatan atau kategori"
-                  className="pl-10 w-80 md:w-96"
-                  value={searchTerm}
-                  onChange={(e) => {
-                    setSearchTerm(e.target.value);
-                    setCurrentPage(1);
-                  }}
-                />
-              </div>
+        <div className="flex gap-2">
+          {/* Tombol Aktifkan */}
+          <Button
+            className="bg-green-700 hover:bg-green-600 text-white flex items-center gap-1"
+            disabled={selectedIds.length === 0}
+            onClick={() => updateStatusAkun('Active')}
+          >
+            <CheckCircle className="w-4 h-4" /> Aktifkan
+          </Button>
+          {/* Tombol Non Aktifkan */}
+          <Button
+            className="bg-yellow-400 hover:bg-yellow-500 text-black flex items-center gap-1"
+            disabled={selectedIds.length === 0}
+            onClick={() => updateStatusAkun('Inactive')}
+          >
+            <XCircle className="w-4 h-4" /> Non Aktifkan
+          </Button>
+          <Button
+            className="bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1"
+            disabled={selectedIds.length === 0}
+            onClick={openContractModal}
+          >
+            <Calendar className="w-4 h-4" /> Perbarui Kontrak
+          </Button>
+          <Button
+            className="bg-red-500 hover:bg-red-600 text-white flex items-center gap-1"
+            disabled={selectedIds.length === 0}
+            onClick={handleDeleteMultiple}
+          >
+            <Trash className="w-4 h-4" /> Hapus karyawan terpilih
+          </Button>
+
+          {/* filter status */}
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="w-[240px]">
+              <SelectValue>
+                {filterStatus === 'all' ? '-- Filter berdasarkan status --' : null}
+              </SelectValue>
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">Semua Karyawan</SelectItem>
+              <SelectItem value="aktif">Karyawan Aktif</SelectItem>
+              <SelectItem value="tidak_aktif">Karyawan Tidak Aktif</SelectItem>
+              <SelectItem value="habis_kontrak">Karyawan Habis Kontrak</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+        <div className="flex justify-between items-center flex-wrap gap-4">
+          <div className="flex items-center gap-4 flex-wrap">
+            <div className="flex items-center gap-2">
+              <span className="text-sm text-muted-foreground">Show</span>
+              <Select value={showEntries} onValueChange={setShowEntries}>
+                <SelectTrigger className="w-20">
+                  <SelectValue placeholder="10" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="10">10</SelectItem>
+                  <SelectItem value="25">25</SelectItem>
+                  <SelectItem value="50">50</SelectItem>
+                </SelectContent>
+              </Select>
+              <span className="text-sm text-muted-foreground">entries</span>
             </div>
-            <div className="flex gap-2">
-              {/* 🔵 Tombol Unggah Data berwarna biru */}
-              <Button
-                variant="outline"
-                className="bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1"
-                onClick={openUploadModal}
-              >
-                <Upload className="w-4 h-4" />
-                Unggah Data
-              </Button>
-              {/* 🟢 Tombol Download Data berwarna hijau */}
-              <Button
-                variant="outline"
-                className="bg-green-500 hover:bg-green-600 text-white flex items-center gap-1"
-              >
-                <Download className="w-4 h-4" />
-                Download Data
-              </Button>
-              <Button
-                className="bg-blue-600 text-white hover:bg-blue-700"
-                onClick={() => navigate('/tambah-karyawan')}
-              >
-                + Tambah Karyawan
-              </Button>
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Cari ID, nama, divisi, jabatan atau kategori"
+                className="pl-10 w-80 md:w-96"
+                value={searchTerm}
+                onChange={(e) => {
+                  setSearchTerm(e.target.value);
+                  setCurrentPage(1);
+                }}
+              />
             </div>
           </div>
-          <div className="overflow-auto rounded border border-gray-300">
-            <Table className="w-full border border-gray-300 border-collapse">
-              <TableHeader>
-                <TableRow className="bg-brand text-white hover:bg-brand ">
-                  <TableHead className="text-white border border-gray-200">
+          <div className="flex gap-2">
+            {/* 🔵 Tombol Unggah Data berwarna biru */}
+            <Button
+              variant="outline"
+              className="bg-blue-500 hover:bg-blue-600 text-white flex items-center gap-1"
+              onClick={openUploadModal}
+            >
+              <Upload className="w-4 h-4" />
+              Unggah Data
+            </Button>
+            {/* 🟢 Tombol Download Data berwarna hijau */}
+            <Button
+              variant="outline"
+              className="bg-green-500 hover:bg-green-600 text-white flex items-center gap-1"
+            >
+              <Download className="w-4 h-4" />
+              Download Data
+            </Button>
+            <Button
+              className="bg-[#1E4F85] text-white hover:bg-[#1E4F85]"
+              onClick={() => navigate('/tambah-karyawan')}
+            >
+              + Tambah Karyawan
+            </Button>
+          </div>
+        </div>
+        <div className="overflow-auto rounded border border-gray-300">
+          <Table className="w-full border border-gray-300 border-collapse">
+            <TableHeader>
+              <TableRow className="bg-brand text-white hover:bg-brand ">
+                <TableHead className="text-white border border-gray-200">
+                  <input
+                    type="checkbox"
+                    checked={selectAll}
+                    onChange={toggleSelectAll}
+                  />
+                </TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">No</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Foto</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">ID Karyawan</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Nama Karyawan</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Divisi</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Jabatan</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tgl Bergabung</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Kategori</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tgl Kontrak</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Selesai Kontrak</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Status Kerja</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Status Akun</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Pengingat Kontrak</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+
+              {isLoading && (
+                <TableRow>
+                  <TableCell colSpan={15} className="text-center py-4">Memuat data...</TableCell>
+                </TableRow>
+              )}
+
+              {!isLoading && items.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={15} className="text-center py-4">Tidak ada data</TableCell>
+                </TableRow>
+              )}
+
+              {items.map((k, idx) => (
+                <TableRow key={k.id}>
+                  <TableCell>
                     <input
                       type="checkbox"
-                      checked={selectAll}
-                      onChange={toggleSelectAll}
+                      checked={selectedIds.includes(k.id)}
+                      onChange={() => toggleSelect(k.id)}
                     />
-                  </TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">No</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Foto</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">ID Karyawan</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Nama Karyawan</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Divisi</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Jabatan</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tgl Bergabung</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Kategori</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tgl Kontrak</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Selesai Kontrak</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Status Kerja</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Status Akun</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Pengingat Kontrak</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Aksi</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+                  </TableCell>
 
-                {isLoading && (
-                  <TableRow>
-                    <TableCell colSpan={15} className="text-center py-4">Memuat data...</TableCell>
-                  </TableRow>
-                )}
-
-                {!isLoading && items.length === 0 && (
-                  <TableRow>
-                    <TableCell colSpan={15} className="text-center py-4">Tidak ada data</TableCell>
-                  </TableRow>
-                )}
-
-                {items.map((k, idx) => (
-                  <TableRow key={k.id}>
-                    <TableCell>
-                      <input
-                        type="checkbox"
-                        checked={selectedIds.includes(k.id)}
-                        onChange={() => toggleSelect(k.id)}
-                      />
-                    </TableCell>
-
-                    <TableCell className="border border-gray-200">{(currentPage - 1) * Number(showEntries) + idx + 1}</TableCell>
-                    <TableCell className="border border-gray-200">
-                      {/* <img
+                  <TableCell className="border border-gray-200">{(currentPage - 1) * Number(showEntries) + idx + 1}</TableCell>
+                  <TableCell className="border border-gray-200">
+                    {/* <img
                         src={k.foto}
                         alt={k.nama}
                         className="rounded-full w-8 h-8 object-cover"
                       /> */}
-                    </TableCell >
-                    <TableCell className="border border-gray-200">{k.employee_code}</TableCell>
-                    <TableCell className="border border-gray-200">{k.full_name}</TableCell>
-                    <TableCell className="border border-gray-200">{k.department.name}</TableCell>
-                    <TableCell className="border border-gray-200">{k.position.name}</TableCell>
-                    <TableCell className="border border-gray-200">{formatTanggal(k.join_date)}</TableCell>
-                    <TableCell className="border border-gray-200">{k.employee_type}</TableCell>
-                    <TableCell className="border border-gray-200">
-                      {k.latest_contract ? formatTanggal(k.latest_contract.start_date) : "-"}
-                    </TableCell>
-                    <TableCell className="border border-gray-200">
-                      {k.latest_contract ? formatTanggal(k.latest_contract.end_date) : "-"}
-                    </TableCell>
-                    <TableCell className="border border-gray-200">
-                      <StatusLabel status={k.employment_status} />
-                    </TableCell>
-                    <TableCell className="border border-gray-200">
-                      <StatusLabel status={k.employment_status} />
-                    </TableCell>
-                    <TableCell className="border border-gray-200">
-                      {k.latest_contract ? <ReminderLabel text="Kontrak akan habis" endDate={k.latest_contract?.end_date} /> : "-"}
-                    </TableCell>
+                  </TableCell >
+                  <TableCell className="border border-gray-200">{k.employee_code}</TableCell>
+                  <TableCell className="border border-gray-200">{k.full_name}</TableCell>
+                  <TableCell className="border border-gray-200">{k.department.name}</TableCell>
+                  <TableCell className="border border-gray-200">{k.position.name}</TableCell>
+                  <TableCell className="border border-gray-200">{formatTanggal(k.join_date)}</TableCell>
+                  <TableCell className="border border-gray-200">{k.employee_type}</TableCell>
+                  <TableCell className="border border-gray-200">
+                    {k.latest_contract ? formatTanggal(k.latest_contract.start_date) : "-"}
+                  </TableCell>
+                  <TableCell className="border border-gray-200">
+                    {k.latest_contract ? formatTanggal(k.latest_contract.end_date) : "-"}
+                  </TableCell>
+                  <TableCell className="border border-gray-200">
+                    <StatusLabel status={k.employment_status} />
+                  </TableCell>
+                  <TableCell className="border border-gray-200">
+                    <StatusLabel status={k.employment_status} />
+                  </TableCell>
+                  <TableCell className="border border-gray-200">
+                    {k.latest_contract ? <ReminderLabel text="Kontrak akan habis" endDate={k.latest_contract?.end_date} /> : "-"}
+                  </TableCell>
 
-                    <TableCell>
-                      <div className="flex gap-2">
-                        {/* <Button size="sm" className="bg-blue-600 text-white"><Eye className="w-4 h-4" /></Button> */}
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="bg-blue-600 text-white hover:bg-blue-700"
-                          title="Lihat Detail"
-                          onClick={() => handleViewDetail(k.id)}
-                        >
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                        <Button size="sm" className="bg-red-600 text-white" onClick={() => handleDeleteSingle(k.id)}>
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                ))}
-
-              </TableBody>
-            </Table>
-          </div>
-          {/* Pagination */}
-          <div className="flex justify-between items-center mt-4">
-            <div className="text-sm text-gray-500">
-              Menampilkan{" "}
-              <strong>
-                {items.length > 0
-                  ? (pagination?.current_page - 1) * pagination?.per_page + 1
-                  : 0}
-              </strong>{" "}
-              sampai{" "}
-              <strong>
-                {items.length > 0
-                  ? (pagination?.current_page - 1) * pagination?.per_page +
-                  items.length
-                  : 0}
-              </strong>{" "}
-              dari <strong>{pagination?.total ?? 0}</strong> data
-            </div>
-
-            <div className="flex gap-2">
-              <Button
-                disabled={pagination?.current_page === 1}
-                onClick={() => setCurrentPage((p) => p - 1)}
-                className="bg-blue-500 text-white hover:bg-blue-600"
-              >
-                Sebelumnya
-              </Button>
-
-              {[...Array(pagination?.last_page || 1)].map((_, i) => (
-                <Button
-                  key={i}
-                  size="sm"
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={
-                    pagination?.current_page === i + 1
-                      ? "bg-blue-500 text-white"
-                      : "bg-white text-blue-600 border border-blue-600 hover:bg-blue-50"
-                  }
-                >
-                  {i + 1}
-                </Button>
+                  <TableCell>
+                    <div className="flex gap-2">
+                      {/* <Button size="sm" className="bg-blue-600 text-white"><Eye className="w-4 h-4" /></Button> */}
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="bg-blue-600 text-white hover:bg-blue-700"
+                        title="Lihat Detail"
+                        onClick={() => handleViewDetail(k.id)}
+                      >
+                        <Eye className="w-4 h-4" />
+                      </Button>
+                      <Button size="sm" className="bg-red-600 text-white" onClick={() => handleDeleteSingle(k.id)}>
+                        <Trash2 className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </TableCell>
+                </TableRow>
               ))}
 
-              <Button
-                disabled={pagination?.current_page === pagination?.last_page}
-                onClick={() => setCurrentPage((p) => p + 1)}
-                className="bg-blue-500 text-white hover:bg-blue-600"
-              >
-                Selanjutnya
-              </Button>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
+            </TableBody>
+          </Table>
+        </div>
+        <TablePagination
+          pagination={pagination}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          items={items}
+        />
+      </TableCard>
 
       {/* Modal Upload */}
       <Dialog.Root open={isUploadModalOpen} onOpenChange={setIsUploadModalOpen}>

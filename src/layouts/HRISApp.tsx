@@ -12,6 +12,7 @@ import {
 import { APP_CONFIG } from "@/config";
 import { useAuthStore } from "@/api/auth/auth.store";
 import { useLogout } from "@/api/auth/auth.query";
+import { showLogoutDialog } from "@/components/ui/confirm-dialog";
 
 export const HRISApp = () => {
   const { isAuthenticated, user } = useAuthStore();
@@ -71,7 +72,10 @@ export const HRISApp = () => {
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-white shadow-md rounded-md mt-2 text-black">
                 <DropdownMenuItem>Profil</DropdownMenuItem>
-                <DropdownMenuItem className="text-red-600" onClick={() => logoutMutation.mutate()}
+                <DropdownMenuItem className="text-red-600" onClick={async () => {
+                  const confirmed = await showLogoutDialog();
+                  if (confirmed) logoutMutation.mutate();
+                }}
                 >
                   Keluar
                 </DropdownMenuItem>

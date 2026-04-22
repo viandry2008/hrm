@@ -1,13 +1,5 @@
 import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import {
   Table,
   TableBody,
@@ -16,7 +8,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Edit, Trash2, Plus, Search, Users } from "lucide-react";
+import { TablePagination } from "@/components/ui/table-pagination";
+import { TableToolbar } from "@/components/ui/table-toolbar";
+import { Edit, Trash2, Users } from "lucide-react";
 import { TableCard } from "@/components/ui/table-card";
 
 import {
@@ -75,45 +69,15 @@ export const DivisiPage = () => {
     <div className="p-6 space-y-6 bg-[#F8FAFC] min-h-screen">
       <TableCard icon={Users} title="Data Divisi">
 
-        <div className="flex justify-between items-center flex-wrap gap-4">
-
-          <div className="flex items-center space-x-2">
-            <span className="text-sm text-gray-600">Show</span>
-            <Select value={showEntries} onValueChange={(v) => { setShowEntries(v); setCurrentPage(1); }}>
-              <SelectTrigger className="w-20 border-gray-300">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="25">25</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-              </SelectContent>
-            </Select>
-            <span className="text-sm text-gray-600">entries</span>
-          </div>
-
-          <div className="flex items-center space-x-2">
-
-            <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 h-4 w-4" />
-              <Input
-                placeholder="Cari divisi..."
-                value={searchTerm}
-                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
-                className="pl-10 w-64 border-gray-300"
-              />
-            </div>
-
-            <Button
-              className="bg-[#1E4F85] text-white hover:bg-[#1E4F85]"
-              onClick={() => { setEditData(null); setModalOpen(true); }}
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Tambah Divisi
-            </Button>
-
-          </div>
-        </div>
+        <TableToolbar
+          searchValue={searchTerm}
+          onSearchChange={(v) => { setSearchTerm(v); setCurrentPage(1); }}
+          searchPlaceholder="Cari divisi..."
+          showEntriesValue={showEntries}
+          onShowEntriesChange={(v) => { setShowEntries(v); setCurrentPage(1); }}
+          onAddClick={() => { setEditData(null); setModalOpen(true); }}
+          addButtonLabel="Tambah Divisi"
+        />
 
         <div className="overflow-auto rounded border border-gray-300">
           <Table className="w-full border border-gray-300 border-collapse">
@@ -152,7 +116,7 @@ export const DivisiPage = () => {
                     </TableCell>
 
                     <TableCell className="border border-gray-300 bg-white">
-                      <div className="flex gap-2 justify-center">
+                      <div className="flex gap-2">
 
                         <Button
                           size="sm"
@@ -181,60 +145,12 @@ export const DivisiPage = () => {
           </Table>
         </div>
 
-        <div className="flex justify-between items-center mt-4">
-
-          <div className="text-sm text-gray-500">
-            Menampilkan{" "}
-            <strong>
-              {items.length > 0
-                ? (pagination?.current_page - 1) * pagination?.per_page + 1
-                : 0}
-            </strong>{" "}
-            sampai{" "}
-            <strong>
-              {items.length > 0
-                ? (pagination?.current_page - 1) * pagination?.per_page +
-                items.length
-                : 0}
-            </strong>{" "}
-            dari <strong>{pagination?.total ?? 0}</strong>
-          </div>
-
-          <div className="flex gap-2">
-
-            <Button
-              disabled={pagination?.current_page === 1}
-              onClick={() => setCurrentPage((p) => p - 1)}
-              className="bg-brand text-white hover:bg-brand/90"
-            >
-              Prev
-            </Button>
-
-            {[...Array(pagination?.last_page || 1)].map((_, i) => (
-              <Button
-                key={i}
-                size="sm"
-                onClick={() => setCurrentPage(i + 1)}
-                className={
-                  pagination?.current_page === i + 1
-                    ? 'bg-brand text-white'
-                    : 'bg-white text-brand border border-brand'
-                }
-              >
-                {i + 1}
-              </Button>
-            ))}
-
-            <Button
-              disabled={pagination?.current_page === pagination?.last_page}
-              onClick={() => setCurrentPage((p) => p + 1)}
-              className="bg-brand text-white hover:bg-brand/90"
-            >
-              Next
-            </Button>
-
-          </div>
-        </div>
+        <TablePagination
+          pagination={pagination}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          items={items}
+        />
 
       </TableCard>
 
