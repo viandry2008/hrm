@@ -7,6 +7,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Search, Plus, Eye, Trash2, ChevronLeft, ChevronRight, Clock, CheckCircle, XCircle, FileText } from 'lucide-react';
 import { PinjamanModal } from './PinjamanModal';
+import { StatCard, StatCardGrid } from '@/components/ui/stat-card';
+import { TableCard } from '@/components/ui/table-card';
+import { TableToolbar } from '@/components/ui/table-toolbar';
+import { TablePagination } from '@/components/ui/table-pagination';
 import Swal from 'sweetalert2';
 
 interface PinjamanData {
@@ -261,74 +265,37 @@ export const PinjamanPage = () => {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Pinjaman Karyawan</h1>
-      </div>
 
-      {/* Summary Cards dengan border kiri - mengikuti style Data Karyawan */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Menunggu Disetujui */}
-        <Card className="bg-white border-l-4 border-yellow-500 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-gray-700">Menunggu Disetujui</p>
-                <p className="text-3xl font-bold text-gray-900">
-                  {data.filter(d => d.status === 'Menunggu Disetujui').length}
-                </p>
-                <p className="text-xs text-gray-500">Pengajuan</p>
-              </div>
-              <Clock className="h-10 w-10 text-yellow-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Disetujui */}
-        <Card className="bg-white border-l-4 border-green-500 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-gray-700">Total Pengajuan Disetujui</p>
-                <p className="text-3xl font-bold text-gray-900">
-                  {data.filter(d => d.status === 'Disetujui' || d.status === 'Diproses Finance' || d.status === 'Ditransfer').length}
-                </p>
-                <p className="text-xs text-gray-500">Pengajuan</p>
-              </div>
-              <CheckCircle className="h-10 w-10 text-green-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Ditolak */}
-        <Card className="bg-white border-l-4 border-red-500 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-gray-700">Total Pengajuan Ditolak</p>
-                <p className="text-3xl font-bold text-gray-900">
-                  {data.filter(d => d.status === 'Ditolak').length}
-                </p>
-                <p className="text-xs text-gray-500">Pengajuan</p>
-              </div>
-              <XCircle className="h-10 w-10 text-red-500" />
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Total Pengajuan */}
-        <Card className="bg-white border-l-4 border-blue-600 shadow-md">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div className="space-y-1">
-                <p className="text-sm font-medium text-gray-700">Total Pengajuan Pinjaman</p>
-                <p className="text-3xl font-bold text-gray-900">{data.length}</p>
-                <p className="text-xs text-gray-500">Pengajuan</p>
-              </div>
-              <FileText className="h-10 w-10 text-blue-600" />
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+      <StatCardGrid>
+        <StatCard
+          title="Menunggu Disetujui"
+          value={data.filter(d => d.status === 'Menunggu Disetujui').length}
+          subtitle="Pengajuan"
+          icon={Clock}
+          borderColor="yellow"
+        />
+        <StatCard
+          title="Total Pengajuan Disetujui"
+          value={data.filter(d => d.status === 'Disetujui' || d.status === 'Diproses Finance' || d.status === 'Ditransfer').length}
+          subtitle="Pengajuan"
+          icon={CheckCircle}
+          borderColor="green"
+        />
+        <StatCard
+          title="Total Pengajuan Ditolak"
+          value={data.filter(d => d.status === 'Ditolak').length}
+          subtitle="Pengajuan"
+          icon={XCircle}
+          borderColor="red"
+        />
+        <StatCard
+          title="Total Pengajuan Pinjaman"
+          value={data.length}
+          subtitle="Pengajuan"
+          icon={FileText}
+          borderColor="blue"
+        />
+      </StatCardGrid>
 
       <Card className="bg-white">
         <CardHeader className="bg-blue-50 border-b">
@@ -423,49 +390,12 @@ export const PinjamanPage = () => {
             </Table>
           </div>
 
-          <div className="flex justify-between items-center mt-4">
-            <div className="text-sm text-gray-500">
-              Menampilkan{' '}
-              <strong>
-                {Math.max((currentPage - 1) * itemsPerPage + 1, 1)} sampai{' '}
-                {Math.min(currentPage * itemsPerPage, filteredData.length)}
-              </strong>{' '}
-              dari <strong>{filteredData.length}</strong> data
-            </div>
-
-            {/* Navigasi pagination */}
-            <div className="flex gap-2">
-              <Button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                className="bg-blue-500 text-white hover:bg-blue-600"
-              >
-                Sebelumnya
-              </Button>
-              {[...Array(totalPages)].map((_, i) => (
-                <Button
-                  key={i}
-                  variant={currentPage === i + 1 ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={
-                    currentPage === i + 1
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-white text-blue-600 border border-blue-600 hover:bg-blue-50'
-                  }
-                >
-                  {i + 1}
-                </Button>
-              ))}
-              <Button
-                disabled={currentPage === totalPages}
-                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                className="bg-blue-500 text-white hover:bg-blue-600"
-              >
-                Selanjutnya
-              </Button>
-            </div>
-          </div>
+          <TablePagination
+            pagination={{ current_page: currentPage, last_page: totalPages, per_page: itemsPerPage, total: filteredData.length }}
+            currentPage={currentPage}
+            onPageChange={setCurrentPage}
+            items={paginatedData}
+          />
         </CardContent>
       </Card>
 

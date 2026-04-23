@@ -36,9 +36,10 @@ export const TablePagination = ({ pagination, currentPage, onPageChange, items }
 
       <div className="flex gap-2">
         <Button
+          variant="outline"
           disabled={pagination.current_page === 1}
           onClick={() => onPageChange(currentPage - 1)}
-          className="bg-[#0F2A4D] text-white hover:bg-[#0F2A4D]/90"
+        // className="bg-[#0F2A4D] text-white hover:bg-[#0F2A4D]/90"
         >
           Sebelumnya
         </Button>
@@ -59,9 +60,10 @@ export const TablePagination = ({ pagination, currentPage, onPageChange, items }
         ))}
 
         <Button
+          variant="outline"
           disabled={pagination.current_page === pagination.last_page}
           onClick={() => onPageChange(currentPage + 1)}
-          className="bg-[#0F2A4D] text-white hover:bg-[#0F2A4D]/90"
+        // className="bg-[#0F2A4D] text-white hover:bg-[#0F2A4D]/90"
         >
           Selanjutnya
         </Button>
