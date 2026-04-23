@@ -5,7 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Search, Plus, Eye, Trash2, ChevronLeft, ChevronRight, Clock, CheckCircle, XCircle, FileText } from 'lucide-react';
+import { Search, Plus, Eye, Trash2, ChevronLeft, ChevronRight, Clock, CheckCircle, XCircle, FileText, File } from 'lucide-react';
 import { PinjamanModal } from './PinjamanModal';
 import { StatCard, StatCardGrid } from '@/components/ui/stat-card';
 import { TableCard } from '@/components/ui/table-card';
@@ -297,67 +297,38 @@ export const PinjamanPage = () => {
         />
       </StatCardGrid>
 
-      <Card className="bg-white">
-        <CardHeader className="bg-blue-50 border-b">
-          <CardTitle className="text-blue-800">Data Pengajuan</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="flex justify-between items-center mb-6">
-            <div className="flex items-center space-x-4">
-              <div className="flex items-center space-x-2">
-                <span className="text-sm text-gray-600">Show</span>
-                <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(Number(value))}>
-                  <SelectTrigger className="w-20">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="5">5</SelectItem>
-                    <SelectItem value="10">10</SelectItem>
-                    <SelectItem value="25">25</SelectItem>
-                    <SelectItem value="50">50</SelectItem>
-                  </SelectContent>
-                </Select>
-                <span className="text-sm text-gray-600">entries</span>
-              </div>
-              <div className="relative w-80">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Cari berdasarkan nama, ID, atau divisi..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <Button
-              className="bg-blue-600 hover:bg-blue-700"
-              onClick={handleOpenModal}
-            >
-              <Plus className="w-4 h-4 mr-2" />
-              Ajukan Pinjaman
-            </Button>
-          </div>
+      <TableCard icon={File} title="Data Pengajuan">
+        <TableToolbar
+          searchValue={searchTerm}
+          onSearchChange={(v) => { setSearchTerm(v); setCurrentPage(1); }}
+          searchPlaceholder="Cari berdasarkan nama, ID, atau divisi..."
+          showEntriesValue={itemsPerPage.toString()}
+          onShowEntriesChange={(v) => { setItemsPerPage(Number(v)); setCurrentPage(1); }}
+          onAddClick={handleOpenModal}
+          addButtonLabel="Ajukan Pinjaman"
+        />
 
-          <div className="overflow-auto rounded border border-gray-300">
-            <Table className="w-full border border-gray-300 border-collapse">
-              <TableHeader>
-                <TableRow className="bg-brand text-white hover:bg-brand">
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">No.</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">ID Karyawan</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Nama Karyawan</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Divisi</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Jabatan</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Jumlah Pinjaman</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Keterangan Pinjaman</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Termin</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tujuan Pinjaman</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tanggal Pengajuan</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Status</TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">Aksi</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paginatedData.map((item) => (
+        <div className="overflow-auto rounded border border-gray-300">
+          <Table className="w-full border border-gray-300 border-collapse">
+            <TableHeader>
+              <TableRow className="bg-brand text-white hover:bg-brand">
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">No.</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">ID Karyawan</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Nama Karyawan</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Divisi</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Jabatan</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Jumlah Pinjaman</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Keterangan Pinjaman</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Termin</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tujuan Pinjaman</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tanggal Pengajuan</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Status</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedData.length > 0 ? (
+                paginatedData.map((item) => (
                   <TableRow key={item.no} className="border-b hover:bg-gray-50">
                     <TableCell className="border border-gray-200 whitespace-nowrap">{item.no}</TableCell>
                     <TableCell className="border border-gray-200 whitespace-nowrap">{item.idKaryawan}</TableCell>
@@ -385,19 +356,25 @@ export const PinjamanPage = () => {
                       </div>
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={12} className="text-center py-6">
+                    Tidak ada data
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
 
-          <TablePagination
-            pagination={{ current_page: currentPage, last_page: totalPages, per_page: itemsPerPage, total: filteredData.length }}
-            currentPage={currentPage}
-            onPageChange={setCurrentPage}
-            items={paginatedData}
-          />
-        </CardContent>
-      </Card>
+        <TablePagination
+          pagination={{ current_page: currentPage, last_page: totalPages, per_page: itemsPerPage, total: filteredData.length }}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          items={paginatedData}
+        />
+      </TableCard>
 
       {/* Modal Ajukan Pinjaman */}
       <PinjamanModal

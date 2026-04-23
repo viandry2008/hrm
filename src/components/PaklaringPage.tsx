@@ -1,12 +1,14 @@
 import { useState } from 'react';
-import Swal from 'sweetalert2';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { TableCard } from "@/components/ui/table-card";
-import { Search, Plus, Eye, Trash2, ChevronLeft, ChevronRight, Download, FileText } from 'lucide-react';
-import { Badge } from '@/components/ui/badge';
+import { TableCard } from '@/components/ui/table-card';
+import { TableToolbar } from '@/components/ui/table-toolbar';
+import { TablePagination } from '@/components/ui/table-pagination';
+import { StatCard, StatCardGrid } from '@/components/ui/stat-card';
+import { Search, Eye, Trash2, FileText, File, Clock, CheckCircle, XCircle, Download } from 'lucide-react';
+import Swal from 'sweetalert2';
 
 interface PaklaringData {
   no: number;
@@ -18,8 +20,9 @@ interface PaklaringData {
   tanggalSelesai: Date;
   keterangan: string;
   dibuatTanggal: Date;
-  status: 'Menunggu Disetujui' | 'Disetujui';
+  status: 'Menunggu Disetujui' | 'Disetujui' | 'Ditolak' | 'Berlaku' | 'Selesai';
   tanggalDisetujui?: Date;
+  tanggalDitolak?: Date;
 }
 
 const mockData: PaklaringData[] = [
@@ -47,6 +50,45 @@ const mockData: PaklaringData[] = [
     dibuatTanggal: new Date('2024-06-18T14:00:00'),
     status: 'Disetujui',
     tanggalDisetujui: new Date('2024-06-19T10:30:00')
+  },
+  {
+    no: 3,
+    noSurat: 'PK/2024/003',
+    idKaryawan: 'EMP003',
+    namaKaryawan: 'Budi Santoso',
+    tanggalBergabung: new Date('2023-05-01'),
+    tanggalKontrak: new Date('2024-05-01'),
+    tanggalSelesai: new Date('2024-10-01'),
+    keterangan: 'Masa percobaan selesai',
+    dibuatTanggal: new Date('2024-05-10T08:00:00'),
+    status: 'Berlaku',
+    tanggalDisetujui: new Date('2024-05-12T11:00:00')
+  },
+  {
+    no: 4,
+    noSurat: 'PK/2024/004',
+    idKaryawan: 'EMP004',
+    namaKaryawan: 'Dewi Lestari',
+    tanggalBergabung: new Date('2022-08-15'),
+    tanggalKontrak: new Date('2024-09-01'),
+    tanggalSelesai: new Date('2025-08-31'),
+    keterangan: 'Perpanjangan kontrak',
+    dibuatTanggal: new Date('2024-08-20T10:30:00'),
+    status: 'Selesai',
+    tanggalDisetujui: new Date('2024-08-25T14:00:00')
+  },
+  {
+    no: 5,
+    noSurat: 'PK/2024/005',
+    idKaryawan: 'EMP005',
+    namaKaryawan: 'Rina Wijaya',
+    tanggalBergabung: new Date('2023-11-01'),
+    tanggalKontrak: new Date('2024-11-01'),
+    tanggalSelesai: new Date('2025-10-31'),
+    keterangan: 'Awal masa kontrak',
+    dibuatTanggal: new Date('2024-10-28T09:00:00'),
+    status: 'Ditolak',
+    tanggalDitolak: new Date('2024-10-30T16:00:00')
   }
 ];
 
@@ -67,14 +109,103 @@ export const PaklaringPage = () => {
   const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
   const formatDate = (date: Date) => {
-    const d = new Date(date);
-    const day = String(d.getDate()).padStart(2, '0');
-    const month = String(d.getMonth() + 1).padStart(2, '0');
-    const year = d.getFullYear();
-    return `${day}/${month}/${year}`;
+    return date.toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
   };
 
-  const formatDateTime = (date: Date) => `${formatDate(date)} ${date.toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' })}`;
+  const formatDateTime = (date: Date) => {
+    const options: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    };
+    return date.toLocaleDateString('id-ID', options);
+  };
+
+  const getStatusBadge = (item: PaklaringData) => {
+    const { status, tanggalDisetujui, tanggalDitolak } = item;
+
+    if (status === 'Ditolak') {
+      return (
+        <div className="flex flex-col gap-1">
+          <Badge className="bg-red-100 text-red-800 hover:bg-red-100 w-fit rounded-none px-2 py-1">
+            Ditolak
+          </Badge>
+          {tanggalDitolak && (
+            <span className="text-xs text-gray-500">
+              {formatDateTime(tanggalDitolak)}
+            </span>
+          )}
+        </div>
+      );
+    }
+
+    if (status === 'Disetujui') {
+      return (
+        <div className="flex flex-col gap-1">
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-100 w-fit rounded-none px-2 py-1">
+            Disetujui
+          </Badge>
+          {tanggalDisetujui && (
+            <span className="text-xs text-gray-500">
+              {formatDateTime(tanggalDisetujui)}
+            </span>
+          )}
+        </div>
+      );
+    }
+
+    if (status === 'Berlaku') {
+      return (
+        <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 w-fit rounded-none px-2 py-1">
+          Berlaku
+        </Badge>
+      );
+    }
+
+    if (status === 'Selesai') {
+      return (
+        <Badge className="bg-purple-100 text-purple-800 hover:bg-purple-100 w-fit rounded-none px-2 py-1">
+          Selesai
+        </Badge>
+      );
+    }
+
+    return (
+      <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 w-fit rounded-none px-2 py-1">
+        Menunggu Disetujui
+      </Badge>
+    );
+  };
+
+  const handleDelete = (no: number) => {
+    Swal.fire({
+      title: 'Hapus Data?',
+      text: 'Data yang sudah dihapus tidak dapat dikembalikan!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#d33',
+      cancelButtonColor: '#6b7280',
+      confirmButtonText: 'Hapus',
+      cancelButtonText: 'Batal'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        setData(prev => prev.filter(item => item.no !== no));
+        Swal.fire({
+          title: 'Dihapus!',
+          text: 'Data berhasil dihapus.',
+          icon: 'success',
+          confirmButtonColor: '#2563eb'
+        });
+      }
+    });
+  };
 
   const handleDownloadConfirm = async (noSurat: string, nama: string) => {
     const result = await Swal.fire({
@@ -107,169 +238,99 @@ export const PaklaringPage = () => {
     }
   };
 
-  const handleDelete = (no: number) => {
-    Swal.fire({
-      title: 'Hapus Data?',
-      text: 'Data yang sudah dihapus tidak dapat dikembalikan!',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#d33',
-      cancelButtonColor: '#6b7280',
-      confirmButtonText: 'Hapus',
-      cancelButtonText: 'Batal'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        setData(prev => prev.filter(item => item.no !== no));
-        Swal.fire({
-          title: 'Dihapus!',
-          text: 'Data berhasil dihapus.',
-          icon: 'success',
-          confirmButtonColor: '#2563eb'
-        });
-      }
-    });
-  };
-
   return (
     <div className="p-6 space-y-6">
 
-      <TableCard icon={FileText} title="Data Paklaring">
-        <div className="flex justify-between items-center mb-6">
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center space-x-2">
-              <span className="text-sm text-gray-600">Show</span>
-              <Select value={itemsPerPage.toString()} onValueChange={(val) => setItemsPerPage(Number(val))}>
-                <SelectTrigger className="w-20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="5">5</SelectItem>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="25">25</SelectItem>
-                </SelectContent>
-              </Select>
-              <span className="text-sm text-gray-600">entries</span>
-            </div>
-            <div className="relative w-80">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input
-                placeholder="Cari nama, ID, atau no surat..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-          </div>
-          <Button className="bg-blue-600 hover:bg-blue-700">
-            <Plus className="w-4 h-4 mr-2" />
-            Buat Surat
-          </Button>
-        </div>
+      <TableCard icon={File} title="Data Pengajuan Paklaring">
+        <TableToolbar
+          searchValue={searchTerm}
+          onSearchChange={(v) => { setSearchTerm(v); setCurrentPage(1); }}
+          searchPlaceholder="Cari berdasarkan nama, ID, atau nomor surat..."
+          showEntriesValue={itemsPerPage.toString()}
+          onShowEntriesChange={(v) => { setItemsPerPage(Number(v)); setCurrentPage(1); }}
+          onAddClick={() => Swal.fire({
+            title: 'Fitur Tambah Data',
+            text: 'Fitur tambah data masih dalam pengembangan.',
+            icon: 'info',
+            confirmButtonColor: '#2563eb'
+          })}
+        />
 
         <div className="overflow-auto rounded border border-gray-300">
           <Table className="w-full border border-gray-300 border-collapse">
             <TableHeader>
               <TableRow className="bg-brand text-white hover:bg-brand">
-                <TableHead className="text-white border border-gray-200 whitespace-nowrap ">No</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">No.</TableHead>
                 <TableHead className="text-white border border-gray-200 whitespace-nowrap">No Surat</TableHead>
                 <TableHead className="text-white border border-gray-200 whitespace-nowrap">ID Karyawan</TableHead>
                 <TableHead className="text-white border border-gray-200 whitespace-nowrap">Nama Karyawan</TableHead>
-                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Awal Bergabung</TableHead>
-                <TableHead className="border text-white">Tanggal Kontrak</TableHead>
-                <TableHead className="border text-white">Selesai Kontrak</TableHead>
-                <TableHead className="border text-white">Keterangan</TableHead>
-                <TableHead className="border text-white">Dibuat Tanggal</TableHead>
-                <TableHead className="border text-white">Status</TableHead>
-                <TableHead className="border text-white">Aksi</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tanggal Bergabung</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tanggal Kontrak</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tanggal Selesai</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Keterangan</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Status</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Aksi</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              {paginatedData.map((item) => (
-                <TableRow key={item.no} className="border-b hover:bg-gray-50">
-                  <TableCell className="border">{item.no}</TableCell>
-                  <TableCell className="border">{item.noSurat}</TableCell>
-                  <TableCell className="border">{item.idKaryawan}</TableCell>
-                  <TableCell className="border">{item.namaKaryawan}</TableCell>
-                  <TableCell className="border">{formatDate(item.tanggalBergabung)}</TableCell>
-                  <TableCell className="border">{formatDate(item.tanggalKontrak)}</TableCell>
-                  <TableCell className="border">{formatDate(item.tanggalSelesai)}</TableCell>
-                  <TableCell className="border">{item.keterangan}</TableCell>
-                  <TableCell className="border text-sm">{formatDateTime(item.dibuatTanggal)}</TableCell>
-                  <TableCell className="border">
-                    <div className="flex flex-col">
-                      <Badge className={item.status === 'Disetujui' ? 'bg-green-100 text-green-800' : 'bg-yellow-100 text-yellow-800'}>
-                        {item.status}
-                      </Badge>
-                      {item.tanggalDisetujui && (
-                        <span className="text-xs text-gray-500 mt-1">{formatDateTime(item.tanggalDisetujui)}</span>
-                      )}
-                    </div>
-                  </TableCell>
-                  <TableCell className="border">
-                    <div className="flex space-x-2">
-                      <Button size="sm" variant="outline">
-                        <Eye className="w-4 h-4" />
-                      </Button>
-                      {item.status === 'Disetujui' && item.noSurat && (
+              {paginatedData.length > 0 ? (
+                paginatedData.map((item) => (
+                  <TableRow key={item.no} className="border-b hover:bg-gray-50">
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{item.no}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{item.noSurat}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{item.idKaryawan}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{item.namaKaryawan}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{formatDate(item.tanggalBergabung)}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{formatDate(item.tanggalKontrak)}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{formatDate(item.tanggalSelesai)}</TableCell>
+                    <TableCell className="max-w-xs truncate border-r whitespace-nowrap">{item.keterangan}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">
+                      {getStatusBadge(item)}
+                    </TableCell>
+                    <TableCell className="border">
+                      <div className="flex space-x-2">
+                        <Button size="sm" variant="outline">
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        {item.status === 'Disetujui' && item.noSurat && (
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="text-blue-600 hover:text-blue-700"
+                            onClick={() => handleDownloadConfirm(item.noSurat!, item.namaKaryawan)}
+                          >
+                            <Download className="w-4 h-4" />
+                          </Button>
+                        )}
                         <Button
                           size="sm"
                           variant="outline"
-                          className="text-blue-600 hover:text-blue-700"
-                          onClick={() => handleDownloadConfirm(item.noSurat!, item.namaKaryawan)}
+                          className="text-red-600 hover:text-red-700"
+                          onClick={() => handleDelete(item.no)}
                         >
-                          <Download className="w-4 h-4" />
+                          <Trash2 className="w-4 h-4" />
                         </Button>
-                      )}
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        className="text-red-600 hover:text-red-700"
-                        onClick={() => handleDelete(item.no)}
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={10} className="text-center py-6">
+                    Tidak ada data
                   </TableCell>
                 </TableRow>
-              ))}
+              )}
             </TableBody>
           </Table>
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between mt-4 gap-3">
-          <div className="text-sm text-gray-600">
-            Menampilkan {startIndex + 1} to {Math.min(startIndex + itemsPerPage, filteredData.length)} of {filteredData.length} data
-          </div>
-          <div className="flex items-center space-x-2">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
-              disabled={currentPage === 1}
-            >
-              Sebelumnya
-            </Button>
-            {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-              <Button
-                key={page}
-                variant={currentPage === page ? 'default' : 'outline'}
-                size="sm"
-                onClick={() => setCurrentPage(page)}
-              >
-                {page}
-              </Button>
-            ))}
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
-              disabled={currentPage === totalPages}
-            >
-              Selanjutnya
-            </Button>
-          </div>
-        </div>
-
+        <TablePagination
+          pagination={{ current_page: currentPage, last_page: totalPages, per_page: itemsPerPage, total: filteredData.length }}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          items={paginatedData}
+        />
       </TableCard>
     </div>
   );
