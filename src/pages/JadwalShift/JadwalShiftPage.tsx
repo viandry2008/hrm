@@ -1,8 +1,8 @@
 // pages/JadwalShiftPage.tsx
 import React, { useState } from 'react';
-import { ShiftPage } from '@/components/JadwalShift/ShiftPage';
-import { GroupPage } from '@/components/JadwalShift/GroupPage';
-import { AturShiftPage } from '@/components/JadwalShift/AturShiftPage';
+import { ShiftPage } from '@/pages/JadwalShift/ShiftPage';
+import { GroupPage } from '@/pages/JadwalShift/GroupPage';
+import { AturShiftPage } from '@/pages/JadwalShift/AturShiftPage';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';

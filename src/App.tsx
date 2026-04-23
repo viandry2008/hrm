@@ -10,9 +10,10 @@ import NotFound from "./pages/NotFound";
 
 // Pages - Dashboard & Jadwal Shift
 import { DashboardPage } from "./pages/main/DashboardPage";
-// import { ShiftPage } from "./components/JadwalShift/ShiftPage";
-// import { GrupPage } from "./components/JadwalShift/GrupPage";
-// import { JadwalShiftPage } from "./components/JadwalShift/JadwalShiftPage";
+import { ShiftPage } from "./pages/JadwalShift/ShiftPage";
+import { GroupPage } from "./pages/JadwalShift/GroupPage";
+// import { JadwalShiftPage } from "./pages/JadwalShift/JadwalShiftPage";
+// import { AturShiftPage } from "./pages/JadwalShift/AturShiftPage";
 
 // Pages - Kehadiran & Request Absen
 // import { KehadiranPage } from "./components/Kehadiran/KehadiranPage";
@@ -36,7 +37,7 @@ import { KeteranganBekerjaPage } from './components/KeteranganBekerjaPage';
 import { PaklaringPage } from './components/PaklaringPage';
 import { SuratPeringatanPage } from "./components/SuratPeringatanPage";
 import { KontrakKerjaPage } from "./components/KontrakKerjaPage";
-// import SuratPenawaranKerjaPage from "./components/SuratPenawaranKerjaPage";
+import { SuratPenawaranKerjaPage } from "./pages/Surat/SuratPenawaranKerjaPage";
 
 // Pages - Kelola Karyawan
 import { KelolaKaryawanPage } from "./pages/KelolaKaryawan/KelolaKaryawanPage";
@@ -85,9 +86,9 @@ const App = () => (
 
                   {/*  SEMUA ROLE (HR, KARYAWAN, ATASAN) */}
                   <Route path="dashboard" element={<DashboardPage />} />
-                  {/* <Route path="shift" element={<ShiftPage />} />
-                  <Route path="grup" element={<GrupPage />} />
-                  <Route path="jadwal-shift" element={<JadwalShiftPage />} /> */}
+                  <Route path="shift" element={<ShiftPage />} />
+                  <Route path="grup" element={<GroupPage />} />
+                  {/* <Route path="jadwal-shift" element={<JadwalShiftPage />} /> */}
                   <Route path="keterangan-bekerja" element={<KeteranganBekerjaPage />} />
                   <Route path="paklaring" element={<PaklaringPage />} />
                   <Route path="/detail-karyawan/:id" element={<DetailKaryawanPage />} />
@@ -102,7 +103,7 @@ const App = () => (
                     <Route path="bagian" element={<BagianPage />} />
                     <Route path="kontrak-kerja" element={<KontrakKerjaPage />} />
                     <Route path="surat-peringatan" element={<SuratPeringatanPage />} />
-                    {/* <Route path="penawaran-kerja" element={<SuratPenawaranKerjaPage />} /> */}
+                    <Route path="penawaran-kerja" element={<SuratPenawaranKerjaPage />} />
                     <Route path="po" element={<POPage />} />
                     <Route path="kpi" element={<DataCutiPage />} />
                   </Route>
