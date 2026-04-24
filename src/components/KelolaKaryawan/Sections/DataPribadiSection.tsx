@@ -3,9 +3,18 @@ import { User } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useGetReligions } from "@/api/religion/religion.query";
 
 const DataPribadiSection = ({ formData, updateForm }: any) => {
-  return (
+    const { data: religionData, isLoading: isLoadingReligions } = useGetReligions({
+        search: "",
+        page: 1,
+        limit: 10,
+    });
+
+    const religions = religionData?.data ?? [];
+
+    return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
       <div className="flex items-center space-x-2 p-3 bg-brand text-white rounded-t-lg">
         <User className="w-5 h-5" />
@@ -163,16 +172,14 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
             <Label className="font-semibold mb-1">Agama <span className="text-red-500">*</span></Label>
             <Select onValueChange={(value) => updateForm("agama", value)}>
               <SelectTrigger className="h-[42px] bg-white">
-                <SelectValue placeholder="-- Pilih Agama --" />
+                <SelectValue placeholder={isLoadingReligions ? "Loading religions..." : "-- Pilih Agama --"} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="Islam">Islam</SelectItem>
-                <SelectItem value="Kristen">Kristen</SelectItem>
-                <SelectItem value="Katolik">Katolik</SelectItem>
-                <SelectItem value="Hindu">Hindu</SelectItem>
-                <SelectItem value="Buddha">Buddha</SelectItem>
-                <SelectItem value="Konghucu">Konghucu</SelectItem>
-                <SelectItem value="Atheis">Atheis</SelectItem>
+                {religions.map((religion) => (
+                  <SelectItem key={religion.id} value={religion.name}>
+                    {religion.name}
+                  </SelectItem>
+                ))}
               </SelectContent>
             </Select>
           </div>

@@ -3,6 +3,7 @@ import { User } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { useGetRoles } from "@/api/role/role.query";
 
 interface AkunSectionProps {
     formData: any;
@@ -10,6 +11,14 @@ interface AkunSectionProps {
 }
 
 const AkunSection: React.FC<AkunSectionProps> = ({ formData, updateForm }) => {
+    const { data: roleData, isLoading: isLoadingRoles } = useGetRoles({
+        search: "",
+        page: 1,
+        limit: 1000,
+    });
+
+    const roles = roleData?.data ?? [];
+
     return (
         <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
             <div className="flex items-center space-x-2 p-3 bg-brand text-white rounded-t-lg">
@@ -64,15 +73,14 @@ const AkunSection: React.FC<AkunSectionProps> = ({ formData, updateForm }) => {
                             value={formData.role || ""}
                         >
                             <SelectTrigger className="h-[42px] bg-white text-sm">
-                                <SelectValue placeholder="-- Pilih Role --" />
+                                <SelectValue placeholder={isLoadingRoles ? "Loading roles..." : "-- Pilih Role --"} />
                             </SelectTrigger>
                             <SelectContent className="text-sm">
-                                <SelectItem value="Staff">Staff</SelectItem>
-                                <SelectItem value="Admin">Admin</SelectItem>
-                                <SelectItem value="Supervisor">Supervisor</SelectItem>
-                                <SelectItem value="Manager">Manager</SelectItem>
-                                <SelectItem value="Head">Head</SelectItem>
-                                <SelectItem value="Direktur">Direktur</SelectItem>
+                                {roles.map((role) => (
+                                    <SelectItem key={role.id} value={role.name_role}>
+                                        {role.name_role}
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     </div>
