@@ -35,7 +35,7 @@ import { POPage } from "./components/POPage";
 import { PengunduranDiriPage } from './components/PengunduranDiriPage';
 import { KeteranganBekerjaPage } from './components/KeteranganBekerjaPage';
 import { PaklaringPage } from './components/PaklaringPage';
-import { SuratPeringatanPage } from "./components/SuratPeringatanPage";
+import { SuratPeringatanPage } from "./pages/Surat/SuratPeringatanPage";
 import { KontrakKerjaPage } from "./components/KontrakKerjaPage";
 import { SuratPenawaranKerjaPage } from "./pages/Surat/SuratPenawaranKerjaPage";
 

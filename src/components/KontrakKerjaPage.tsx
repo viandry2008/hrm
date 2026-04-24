@@ -1,12 +1,14 @@
-import { useState } from "react";
+import { useState } from 'react';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { StatCard, StatCardGrid } from '@/components/ui/stat-card';
+import { TableCard } from '@/components/ui/table-card';
+import { TableToolbar } from '@/components/ui/table-toolbar';
+import { TablePagination } from '@/components/ui/table-pagination';
+import { Search, Eye, Trash2, Calendar, FileText, File, Send } from 'lucide-react';
 import Swal from 'sweetalert2';
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle,} from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow,} from "@/components/ui/table";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
-import { Search, Plus, Eye, Trash2, ChevronLeft, ChevronRight, Paperclip, Clock, CheckCircle, XCircle, FileText, Send } from "lucide-react";
 
 interface KontrakKerjaData {
   no: number;
@@ -17,127 +19,168 @@ interface KontrakKerjaData {
   tanggalSelesai: Date;
   dibuatTanggal: Date;
   dibuatOleh: string;
-  status: "Menunggu Disetujui" | "Disetujui" | "Telah Ditandatangani" | "Ditolak"
+  status: 'Menunggu Disetujui' | 'Disetujui' | 'Telah Ditandatangani' | 'Ditolak' | 'Aktif';
   tanggalDisetujui?: Date;
   tanggalDitolak?: Date;
   tanggalTelahDitandatangani?: Date;
   tanggalStatus?: Date;
-  tipeKontrak?: "Kontrak Baru" | "Renewal Kontrak";
+  tipeKontrak?: 'Kontrak Baru' | 'Renewal Kontrak';
 }
 
 const mockKontrak: KontrakKerjaData[] = [
   {
     no: 1,
-    nomorSurat: "SK-001/HRD/2024",
-    nama: "Budi Santoso",
-    idKaryawan: "EMP001",
-    tanggalMulai: new Date("2024-07-01"),
-    tanggalSelesai: new Date("2025-06-30"),
-    dibuatTanggal: new Date("2024-06-15T09:00:00"),
-    dibuatOleh: "Admin HR",
-    status: "Disetujui",
-    tanggalDisetujui: new Date('2024-06-01T09:30:00'),
-    tanggalStatus: new Date('2024-06-01T09:30:00'),
+    nomorSurat: 'SK-001/HRD/2024',
+    nama: 'Budi Santoso',
+    idKaryawan: 'EMP001',
+    tanggalMulai: new Date('2024-07-01'),
+    tanggalSelesai: new Date('2025-06-30'),
+    dibuatTanggal: new Date('2024-06-15T09:00:00'),
+    dibuatOleh: 'Admin HR',
+    status: 'Aktif',
+    tipeKontrak: 'Kontrak Baru',
   },
   {
     no: 2,
-    nomorSurat: "SK-002/HRD/2024",
-    nama: "Siti Aminah",
-    idKaryawan: "EMP002",
-    tanggalMulai: new Date("2024-07-15"),
-    tanggalSelesai: new Date("2025-07-14"),
-    dibuatTanggal: new Date("2024-06-25T10:30:00"),
-    dibuatOleh: "Admin HR",
-    status: "Menunggu Disetujui",
-    tipeKontrak: "Renewal Kontrak",
+    nomorSurat: 'SK-002/HRD/2024',
+    nama: 'Siti Aminah',
+    idKaryawan: 'EMP002',
+    tanggalMulai: new Date('2024-07-15'),
+    tanggalSelesai: new Date('2025-07-14'),
+    dibuatTanggal: new Date('2024-06-25T10:30:00'),
+    dibuatOleh: 'Admin HR',
+    status: 'Menunggu Disetujui',
+    tipeKontrak: 'Renewal Kontrak',
   },
   {
     no: 3,
-    nomorSurat: "SK-003/HRD/2024",
-    nama: "Andi Prasetyo",
-    idKaryawan: "EMP003",
-    tanggalMulai: new Date("2024-08-01"),
-    tanggalSelesai: new Date("2025-07-31"),
-    dibuatTanggal: new Date("2024-07-10T14:00:00"),
-    dibuatOleh: "Admin HR",
-    status: "Ditolak",
+    nomorSurat: 'SK-003/HRD/2024',
+    nama: 'Andi Prasetyo',
+    idKaryawan: 'EMP003',
+    tanggalMulai: new Date('2024-08-01'),
+    tanggalSelesai: new Date('2025-07-31'),
+    dibuatTanggal: new Date('2024-07-10T14:00:00'),
+    dibuatOleh: 'Admin HR',
+    status: 'Ditolak',
     tanggalDitolak: new Date('2024-07-12T11:00:00'),
     tanggalStatus: new Date('2024-07-12T11:00:00'),
   },
   {
     no: 4,
-    nomorSurat: "SK-004/HRD/2024",
-    nama: "Dewi Lestari",
-    idKaryawan: "EMP004",
-    tanggalMulai: new Date("2024-09-01"),
-    tanggalSelesai: new Date("2025-08-31"),
-    dibuatTanggal: new Date("2024-08-15T16:00:00"),
-    dibuatOleh: "Admin HR",
-    status: "Telah Ditandatangani",
+    nomorSurat: 'SK-004/HRD/2024',
+    nama: 'Dewi Lestari',
+    idKaryawan: 'EMP004',
+    tanggalMulai: new Date('2024-09-01'),
+    tanggalSelesai: new Date('2025-08-31'),
+    dibuatTanggal: new Date('2024-08-15T16:00:00'),
+    dibuatOleh: 'Admin HR',
+    status: 'Telah Ditandatangani',
     tanggalTelahDitandatangani: new Date('2024-08-20T10:00:00'),
     tanggalStatus: new Date('2024-08-20T10:00:00'),
   },
 ];
 
 export const KontrakKerjaPage = () => {
-  const [search, setSearch] = useState("");
+  const [search, setSearch] = useState('');
   const [data, setData] = useState<KontrakKerjaData[]>(mockKontrak);
   const [currentPage, setCurrentPage] = useState(1);
-  const [show, setShow] = useState(10);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   const filteredData = data.filter((item) =>
-    [item.nomorSurat, item.nama, item.idKaryawan]
-      .join(" ")
-      .toLowerCase()
-      .includes(search.toLowerCase())
+    item.nama.toLowerCase().includes(search.toLowerCase()) ||
+    item.idKaryawan.toLowerCase().includes(search.toLowerCase()) ||
+    item.nomorSurat.toLowerCase().includes(search.toLowerCase())
   );
 
-  const totalPages = Math.ceil(filteredData.length / show);
-  const startIndex = (currentPage - 1) * show;
-  const paginatedData = filteredData.slice(startIndex, startIndex + show);
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
 
-  // Fungsi untuk menghitung durasi kontrak dalam format "X Bulan"
-  const calculateDuration = (startDate: Date, endDate: Date): string => {
-    const start = new Date(startDate);
-    const end = new Date(endDate);
-    
-    // Hitung selisih tahun dan bulan
-    let years = end.getFullYear() - start.getFullYear();
-    let months = end.getMonth() - start.getMonth();
-    
-    // Jika tanggal akhir lebih kecil dari tanggal mulai, kurangi 1 bulan
-    if (end.getDate() < start.getDate()) {
-      months--;
-    }
-    
-    // Hitung total bulan
-    const totalMonths = years * 12 + months;
-    
-    if (totalMonths <= 0) {
-      return "0 Bulan";
-    }
-    
-    return `${totalMonths} Bulan`;
+  const formatDate = (date: Date) => {
+    return date.toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    });
   };
 
-  const formatDate = (date: Date) =>
-    date.toLocaleDateString("id-ID", {
-      weekday: "long",
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
+  const formatDateTime = (date: Date) => {
+    return date.toLocaleDateString('id-ID', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
     });
+  };
 
-  const formatDateTime = (date: Date) =>
-    date.toLocaleString("id-ID", {
-      day: "2-digit",
-      month: "2-digit",
-      year: "numeric",
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  const getStatusBadge = (item: KontrakKerjaData) => {
+    const { status, tanggalStatus } = item;
 
-  const handleDeleteSingle = (id: number) => {
+    switch (status) {
+      case 'Aktif':
+        return (
+          <div className="flex flex-col gap-1">
+            <Badge className="bg-green-100 text-green-800 hover:bg-green-100 w-fit rounded-none px-2 py-1">
+              Aktif
+            </Badge>
+          </div>
+        );
+      case 'Menunggu Disetujui':
+        return (
+          <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-100 w-fit rounded-none px-2 py-1">
+            Menunggu Disetujui
+          </Badge>
+        );
+      case 'Disetujui':
+        return (
+          <div className="flex flex-col gap-1">
+            <Badge className="bg-green-100 text-green-800 hover:bg-green-100 w-fit rounded-none px-2 py-1">
+              Disetujui
+            </Badge>
+            {tanggalStatus && (
+              <span className="text-xs text-gray-500">
+                {formatDateTime(tanggalStatus)}
+              </span>
+            )}
+          </div>
+        );
+      case 'Telah Ditandatangani':
+        return (
+          <div className="flex flex-col gap-1">
+            <Badge className="bg-blue-100 text-blue-800 hover:bg-blue-100 w-fit rounded-none px-2 py-1">
+              Telah Ditandatangani
+            </Badge>
+            {tanggalStatus && (
+              <span className="text-xs text-gray-500">
+                {formatDateTime(tanggalStatus)}
+              </span>
+            )}
+          </div>
+        );
+      case 'Ditolak':
+        return (
+          <div className="flex flex-col gap-1">
+            <Badge className="bg-red-100 text-red-800 hover:bg-red-100 w-fit rounded-none px-2 py-1">
+              Ditolak
+            </Badge>
+            {tanggalStatus && (
+              <span className="text-xs text-gray-500">
+                {formatDateTime(tanggalStatus)}
+              </span>
+            )}
+          </div>
+        );
+      default:
+        return (
+          <Badge className="bg-gray-100 text-gray-800 hover:bg-gray-100 w-fit rounded-none px-2 py-1">
+            {status}
+          </Badge>
+        );
+    }
+  };
+
+  const handleDeleteSingle = (no: number) => {
     Swal.fire({
       title: 'Apakah Anda yakin?',
       text: 'Data Kontrak Kerja ini akan dihapus permanen',
@@ -156,7 +199,7 @@ export const KontrakKerjaPage = () => {
       iconColor: '#bfdbfe',
     }).then((result) => {
       if (result.isConfirmed) {
-        setData((prev) => prev.filter((item) => item.no !== id));
+        setData((prev) => prev.filter((item) => item.no !== no));
         Swal.fire({
           title: 'Berhasil!',
           text: 'Kontrak Kerja berhasil dihapus.',
@@ -173,8 +216,8 @@ export const KontrakKerjaPage = () => {
     });
   };
 
-  const handleSend = (id: number) => {
-    const itemToSend = data.find(item => item.no === id);
+  const handleSend = (no: number) => {
+    const itemToSend = data.find(item => item.no === no);
     if (!itemToSend) return;
 
     Swal.fire({
@@ -195,7 +238,7 @@ export const KontrakKerjaPage = () => {
       iconColor: '#bfdbfe',
     }).then((result) => {
       if (result.isConfirmed) {
-        console.log(`Kontrak dengan ID/No ${id} dikirim.`);
+        console.log(`Kontrak dengan ID/No ${no} dikirim.`);
         Swal.fire({
           title: 'Berhasil!',
           text: 'Kontrak Kerja berhasil dikirim.',
@@ -214,319 +257,143 @@ export const KontrakKerjaPage = () => {
 
   return (
     <div className="p-6 space-y-6">
-      <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold text-gray-900">Kontrak Kerja Karyawan</h1>
-      </div>
+      <StatCardGrid>
+        <StatCard
+          title="Menunggu Disetujui"
+          value={data.filter(d => d.status === 'Menunggu Disetujui').length}
+          subtitle="Pengajuan"
+          icon={Calendar}
+          borderColor="yellow"
+        />
+        <StatCard
+          title="Total Kontrak Aktif"
+          value={data.filter(d => d.status === 'Disetujui' || d.status === 'Aktif' || d.status === 'Telah Ditandatangani').length}
+          subtitle="Pengajuan"
+          icon={FileText}
+          borderColor="green"
+        />
+        <StatCard
+          title="Total Kontrak Ditolak"
+          value={data.filter(d => d.status === 'Ditolak').length}
+          subtitle="Pengajuan"
+          icon={File}
+          borderColor="red"
+        />
 
-      {/* Grid Information Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
-        {/* Menunggu Disetujui */}
-        <Card className="bg-yellow-500 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">
-              Menunggu Disetujui
-            </CardTitle>
-            <Clock className="h-4 w-4 text-white" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">
-              {data.filter(d => d.status === 'Menunggu Disetujui').length}
-            </div>
-            <p className="text-xs text-white">Pengajuan</p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Telah Ditandatangani"
+          value={data.filter(d => d.status === 'Telah Ditandatangani').length}
+          subtitle="Kontrak"
+          icon={File}
+          borderColor="old_blue"
+        />
 
-        {/* Disetujui */}
-        <Card className="bg-green-700 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">
-              Total Pengajuan Disetujui
-            </CardTitle>
-            <CheckCircle className="h-4 w-4 text-white" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">
-              {data.filter(d => d.status === 'Disetujui').length}
-            </div>
-            <p className="text-xs text-white">Pengajuan</p>
-          </CardContent>
-        </Card>
+        <StatCard
+          title="Total Kontrak Kerja"
+          value={data.length}
+          subtitle="Pengajuan"
+          icon={FileText}
+          borderColor="blue"
+        />
+      </StatCardGrid>
 
-        {/* Ditolak */}
-        <Card className="bg-red-600 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">
-              Total Pengajuan Ditolak
-            </CardTitle>
-            <XCircle className="h-4 w-4 text-white" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">
-              {data.filter(d => d.status === 'Ditolak').length}
-            </div>
-            <p className="text-xs text-white">Pengajuan</p>
-          </CardContent>
-        </Card>
+      <TableCard icon={File} title="Data Kontrak Kerja">
+        <TableToolbar
+          searchValue={search}
+          onSearchChange={(v) => { setSearch(v); setCurrentPage(1); }}
+          searchPlaceholder="Cari berdasarkan nama, ID, atau nomor surat..."
+          showEntriesValue={itemsPerPage.toString()}
+          onShowEntriesChange={(v) => { setItemsPerPage(Number(v)); setCurrentPage(1); }}
+          onAddClick={() => Swal.fire({
+            title: 'Fitur Tambah Data',
+            text: 'Fitur tambah data masih dalam pengembangan.',
+            icon: 'info',
+            confirmButtonColor: '#2563eb'
+          })}
+        />
 
-        {/* Telah Ditandatangani */}
-        <Card className="bg-blue-800 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">
-              Telah Ditandatangani
-            </CardTitle>
-            <FileText className="h-4 w-4 text-white" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">
-              {data.filter(d => d.status === 'Telah Ditandatangani').length}
-            </div>
-            <p className="text-xs text-white">Kontrak</p>
-          </CardContent>
-        </Card>
-
-        {/* Total Kontrak */}
-        <Card className="bg-blue-600 shadow-sm">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium text-white">
-              Total Kontrak Kerja
-            </CardTitle>
-            <FileText className="h-4 w-4 text-white" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-white">{data.length}</div>
-            <p className="text-xs text-white">Pengajuan</p>
-          </CardContent>
-        </Card>
-      </div>
-
-      <Card>
-        <CardHeader className="bg-blue-50 border-b">
-          <CardTitle className="text-blue-800">Data Kontrak Kerja</CardTitle>
-        </CardHeader>
-        <CardContent className="p-6">
-          <div className="flex justify-between items-center flex-wrap gap-4 mb-6">
-            <div className="flex gap-4 items-center">
-              <span className="text-sm text-muted-foreground">Show</span>
-              <Select value={show.toString()} onValueChange={(v) => {setShow(Number(v)); setCurrentPage(1);}}>
-                <SelectTrigger className="w-20">
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="10">10</SelectItem>
-                  <SelectItem value="20">20</SelectItem>
-                  <SelectItem value="100">100</SelectItem>
-                </SelectContent>
-              </Select>
-              <span className="text-sm text-muted-foreground">entries</span>
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-                <Input
-                  placeholder="Cari nama, ID, atau surat..."
-                  className="pl-10"
-                  value={search}
-                  onChange={(e) => {setSearch(e.target.value); setCurrentPage(1);}}
-                />
-              </div>
-            </div>
-            <Button className="bg-blue-600 text-white hover:bg-blue-700">
-              <FileText className="w-4 h-4 mr-2" /> Buat Kontrak
-            </Button>
-          </div>
-          <div className="overflow-auto rounded border border-gray-300">
-            <Table className="w-full border border-gray-300 border-collapse">
-              <TableHeader>
-                <TableRow className="bg-brand text-white hover:bg-brand">
-                   <TableHead className="border text-white whitespace-nowrap">No.</TableHead>
-                   <TableHead className="border text-white whitespace-nowrap">Nomor Surat</TableHead>
-                   <TableHead className="border text-white whitespace-nowrap">ID Karyawan</TableHead>
-                   <TableHead className="border text-white whitespace-nowrap">Nama Karyawan</TableHead>
-                   <TableHead className="border text-white whitespace-nowrap">Tanggal Mulai Kontrak</TableHead>
-                   <TableHead className="border text-white whitespace-nowrap">Tanggal Selesai Kontrak</TableHead>
-                   {/* Kolom baru */}
-                   <TableHead className="border text-white whitespace-nowrap">Durasi Kontrak</TableHead>
-                   <TableHead className="border text-white whitespace-nowrap">Tipe Kontrak</TableHead>
-                   {/* --- */}
-                   <TableHead className="border text-white whitespace-nowrap">Dibuat Tanggal</TableHead>
-                   <TableHead className="border text-white whitespace-nowrap">Dibuat Oleh</TableHead>
-                   <TableHead className="border text-white whitespace-nowrap">Status</TableHead>
-                   <TableHead className="border text-white whitespace-nowrap">Aksi</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {paginatedData.length > 0 ? (
-                  paginatedData.map((item) => (
-                   <TableRow key={item.no} className="border-b hover:bg-gray-50">
-                      <TableCell className="border border-gray-200 whitespace-nowrap">{item.no}</TableCell>
-                      <TableCell className="border border-gray-200 whitespace-nowrap">{item.nomorSurat}</TableCell>
-                      <TableCell className="border border-gray-200 whitespace-nowrap">{item.idKaryawan}</TableCell>
-                      <TableCell className="border border-gray-200 whitespace-nowrap">{item.nama}</TableCell>
-                      <TableCell className="border border-gray-200 whitespace-nowrap">{formatDate(item.tanggalMulai)}</TableCell>
-                      <TableCell className="border border-gray-200 whitespace-nowrap">{formatDate(item.tanggalSelesai)}</TableCell>
-                      <TableCell className="border border-gray-200 whitespace-nowrap">
-                        {calculateDuration(item.tanggalMulai, item.tanggalSelesai)}
-                      </TableCell>
-                      <TableCell className="border border-gray-200 whitespace-nowrap">
-                        Kontrak Baru
-                      </TableCell>
-                      {/* --- */}
-                      <TableCell className="border border-gray-200 whitespace-nowrap">{formatDateTime(item.dibuatTanggal)}</TableCell>
-                      <TableCell className="border border-gray-200 whitespace-nowrap">{item.dibuatOleh}</TableCell>
-                      <TableCell className="border border-gray-200 whitespace-nowrap">
-                        <div className="flex flex-col items-start">
-                          <Badge
-                            className={
-                              item.status === "Disetujui"
-                                ? "bg-green-100 text-green-800 hover:bg-green-100"
-                                : item.status === "Menunggu Disetujui"
-                                ? "bg-yellow-100 text-yellow-800 hover:bg-yellow-100"
-                                : item.status === "Ditolak"
-                                ? "bg-red-100 text-red-800 hover:bg-red-100"
-                                : "bg-blue-100 text-blue-800 hover:bg-blue-100"
-                            }
+        <div className="overflow-auto rounded border border-gray-300">
+          <Table className="w-full border border-gray-300 border-collapse">
+            <TableHeader>
+              <TableRow className="bg-brand text-white hover:bg-brand">
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">No.</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Nomor Surat</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">ID Karyawan</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Nama Karyawan</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tanggal Mulai</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tanggal Berakhir</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tipe Kontrak</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Status</TableHead>
+                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Aksi</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {paginatedData.length > 0 ? (
+                paginatedData.map((item) => (
+                  <TableRow key={item.no} className="border-b hover:bg-gray-50">
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{item.no}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{item.nomorSurat}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{item.idKaryawan}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{item.nama}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{formatDate(item.tanggalMulai)}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{formatDate(item.tanggalSelesai)}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">{item.tipeKontrak || 'Kontrak Baru'}</TableCell>
+                    <TableCell className="border border-gray-200 whitespace-nowrap">
+                      {getStatusBadge(item)}
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex space-x-2">
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="bg-blue-600 text-white hover:bg-blue-700"
+                          title="Lihat Detail"
+                        >
+                          <Eye className="w-4 h-4" />
+                        </Button>
+                        {(item.status === 'Disetujui' || item.status === 'Aktif') && (
+                          <Button
+                            size="sm"
+                            className="bg-pink-600 text-white hover:bg-pink-700"
+                            title="Kirim ke Karyawan"
+                            onClick={() => handleSend(item.no)}
                           >
-                            {item.status}
-                          </Badge>
-                          {item.tanggalStatus && (
-                            <span className="text-xs text-gray-500 mt-1">
-                              {formatDateTime(item.tanggalStatus)}
-                            </span>
-                          )}
-                        </div>
-                      </TableCell>
-                      <TableCell className="border">
-                        <div className="flex space-x-2">
-                          {/* Tombol View */}
+                            <Send className="w-4 h-4" />
+                          </Button>
+                        )}
+                        {(item.status === 'Menunggu Disetujui' || item.status === 'Telah Ditandatangani') && (
                           <Button
                             variant="ghost"
                             size="sm"
-                            className="bg-blue-600 text-white hover:bg-blue-700"
-                            title="Lihat Detail"
+                            className="bg-red-600 text-white hover:bg-red-700"
+                            title="Hapus Data"
+                            onClick={() => handleDeleteSingle(item.no)}
                           >
-                            <Eye className="w-4 h-4" />
+                            <Trash2 className="w-4 h-4" />
                           </Button>
-
-                          {/* Logika Tombol Send dan Delete */}
-                          {(() => {
-                            // Jika status "Menunggu Disetujui", tampilkan tombol Delete
-                            if (item.status === "Menunggu Disetujui") {
-                              return (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="bg-red-600 text-white hover:bg-red-700"
-                                  title="Hapus Data"
-                                  onClick={() => handleDeleteSingle(item.no)}
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              );
-                            }
-                            // Jika status "Ditolak", tidak tampilkan tombol tambahan
-                            if (item.status === "Ditolak") {
-                              return null;
-                            }
-                            // Jika status "Telah Ditandatangani", hanya tampilkan tombol Delete
-                            if (item.status === "Telah Ditandatangani") {
-                              return (
-                                <Button
-                                  variant="ghost"
-                                  size="sm"
-                                  className="bg-red-600 text-white hover:bg-red-700"
-                                  title="Hapus Data"
-                                  onClick={() => handleDeleteSingle(item.no)}
-                                >
-                                  <Trash2 className="w-4 h-4" />
-                                </Button>
-                              );
-                            }
-                            // Untuk status "Disetujui", tampilkan Send dan Delete
-                            if (item.status === "Disetujui") {
-                              return (
-                                <>
-                                  {/* Tombol Send dengan warna Pink */}
-                                  <Button
-                                    size="sm"
-                                    className="bg-pink-600 text-white hover:bg-pink-700"
-                                    title="Kirim ke Karyawan"
-                                    onClick={() => handleSend(item.no)}
-                                  >
-                                    <Send className="w-4 h-4 text-white" />
-                                  </Button>
-                                  <Button
-                                    variant="ghost"
-                                    size="sm"
-                                    className="bg-red-600 text-white hover:bg-red-700"
-                                    title="Hapus Data"
-                                    onClick={() => handleDeleteSingle(item.no)}
-                                  >
-                                    <Trash2 className="w-4 h-4" />
-                                  </Button>
-                                </>
-                              );
-                            }
-                            // Default
-                            return null;
-                          })()}
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
-                ) : (
-                  <TableRow>
-                    <TableCell colSpan={12} className="text-center py-4"> {/* Perbarui colspan */}
-                      Tidak ada data kontrak yang ditemukan.
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
-                )}
-              </TableBody>
-            </Table>
-          </div>
-          {/* PAGINATION */}
-          <div className="flex justify-between items-center mt-4">
-            <div className="text-sm text-gray-500">
-              Menampilkan{' '}
-              <strong>
-                {Math.max((currentPage - 1) * show + 1, 1)} sampai{' '}
-                {Math.min(currentPage * show, filteredData.length)}
-              </strong>{' '}
-              dari <strong>{filteredData.length}</strong> data
-            </div>
+                ))
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={9} className="text-center py-6">
+                    Tidak ada data
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
 
-            {/* Navigasi pagination */}
-            <div className="flex gap-2">
-              <Button
-                disabled={currentPage === 1}
-                onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-                className="bg-blue-500 text-white hover:bg-blue-600"
-              >
-                Sebelumnya
-              </Button>
-              {[...Array(totalPages)].map((_, i) => (
-                <Button
-                  key={i}
-                  variant={currentPage === i + 1 ? 'default' : 'outline'}
-                  onClick={() => setCurrentPage(i + 1)}
-                  className={
-                    currentPage === i + 1
-                      ? 'bg-blue-500 text-white'
-                      : 'bg-white text-blue-600 border border-blue-600 hover:bg-blue-50'
-                  }
-                >
-                  {i + 1}
-                </Button>
-              ))}
-              <Button
-                disabled={currentPage === totalPages || totalPages === 0}
-                onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-                className="bg-blue-500 text-white hover:bg-blue-600"
-              >
-                Selanjutnya
-              </Button>
-            </div>
-          </div>
-          {/* AKHIR PAGINATION */}
-        </CardContent>
-      </Card>
+        <TablePagination
+          pagination={{ current_page: currentPage, last_page: totalPages, per_page: itemsPerPage, total: filteredData.length }}
+          currentPage={currentPage}
+          onPageChange={setCurrentPage}
+          items={paginatedData}
+        />
+      </TableCard>
     </div>
   );
 };
