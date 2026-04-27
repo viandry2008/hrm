@@ -30,4 +30,9 @@ export const ENDPOINTS = {
 
     //religion
     RELIGIONS: "/religions",
+
+    // categories
+    CATEGORIES: "/categories",
+    // bank
+    BANKS: "/banks",
 };

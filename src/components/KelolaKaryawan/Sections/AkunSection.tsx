@@ -37,7 +37,7 @@ const AkunSection: React.FC<AkunSectionProps> = ({ formData, updateForm }) => {
                             placeholder="Masukkan username"
                             value={formData.username || ""}
                             onChange={(e) => updateForm("username", e.target.value)}
-                            className="bg-white text-sm"
+
                         />
                     </div>
 
@@ -49,7 +49,7 @@ const AkunSection: React.FC<AkunSectionProps> = ({ formData, updateForm }) => {
                             placeholder="Masukkan email"
                             value={formData.email || ""}
                             onChange={(e) => updateForm("email", e.target.value)}
-                            className="bg-white text-sm"
+
                         />
                     </div>
 
@@ -61,7 +61,6 @@ const AkunSection: React.FC<AkunSectionProps> = ({ formData, updateForm }) => {
                             placeholder="••••"
                             value={formData.password || ""}
                             onChange={(e) => updateForm("password", e.target.value)}
-                            className="bg-white text-sm"
                         />
                     </div>
 

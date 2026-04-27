@@ -1,60 +1,52 @@
 import React, { useEffect, useState } from "react";
 import { CreditCard } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { useGetBanks } from "@/api/bank/bank.query";
 
-const BankSection = ({ formData, updateForm }: any) => {
-  const [banks, setBanks] = useState<any[]>([]);
-  const [selectedBank, setSelectedBank] = useState<any>(null);
+interface BankSectionProps {
+  updateForm: (key: string, value: any) => void;
+  formData: Record<string, any>;
+}
 
-  // Fetch Bank List
-  useEffect(() => {
-    fetch("https://api.saas.dana.id")
-      .then((res) => res.json())
-      .then((data) => setBanks(data))
-      .catch(() => setBanks([]));
-  }, []);
+const BankSection = ({ formData, updateForm }: BankSectionProps) => {
+  const { data: bankData, isLoading: isLoadingBanks } = useGetBanks({
+    search: "",
+    page: 1,
+    limit: 100,
+  });
 
-  const handleSelectBank = (code: string) => {
-    const bank = banks.find((b: any) => b.code === code);
-    setSelectedBank(bank);
+  const banks = bankData?.data ?? [];
 
-    updateForm("bank", {
-      kode: bank?.code,
-      nama: bank?.name,
-      logo: bank?.logo
-    });
-  };
-
-  // Masking Nomor Rekening
+  // Masking nomor rekening
   const maskRekening = (value: string) => {
     if (!value) return "";
     const raw = value.replace(/\D/g, "");
     return raw.replace(/(\d{4})(?=\d)/g, "$1-");
   };
 
-  // Cari bank yang dipilih berdasarkan formData
-  useEffect(() => {
-    if (formData.bank?.kode) {
-      const bank = banks.find((b: any) => b.code === formData.bank.kode);
-      if (bank) setSelectedBank(bank);
-    }
-  }, [formData.bank?.kode, banks]);
-
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-      {/* Header Biru #0F2A4D */}
+      {/* Header */}
       <div className="flex items-center space-x-2 p-3 bg-brand text-white rounded-t-lg">
         <CreditCard className="w-5 h-5" />
         <h3 className="font-semibold">Detail Akun Bank</h3>
       </div>
 
-      {/* Konten Form */}
+      {/* Content */}
       <div className="p-4">
         <div className="grid grid-cols-2 gap-6">
 
-          {/* Nama Pemilik Rekening */}
+          {/* Nama Pemilik */}
           <div className="flex flex-col gap-2">
-            <label className="font-medium text-sm text-gray-700">Nama Pemilik Rekening</label>
+            <label className="font-medium text-sm text-gray-700">
+              Nama Pemilik Rekening
+            </label>
             <input
               type="text"
               className="border p-2 w-full rounded text-sm text-gray-800"
@@ -66,7 +58,9 @@ const BankSection = ({ formData, updateForm }: any) => {
 
           {/* Nomor Rekening */}
           <div className="flex flex-col gap-2">
-            <label className="font-medium text-sm text-gray-700">Nomor Rekening</label>
+            <label className="font-medium text-sm text-gray-700">
+              Nomor Rekening
+            </label>
             <input
               type="text"
               inputMode="numeric"
@@ -81,35 +75,45 @@ const BankSection = ({ formData, updateForm }: any) => {
             />
           </div>
 
-          {/* Seleksi Bank — Pakai Select UI Component */}
+          {/* Select Bank (FIXED) */}
           <div className="flex flex-col gap-2">
             <label className="font-medium text-sm text-gray-700">Bank</label>
-            <div className="flex items-center gap-3">
-              <Select
-                onValueChange={handleSelectBank}
-                value={formData.bank?.kode || ""}
-              >
-                <SelectTrigger className="h-[42px] bg-white text-sm">
-                  <SelectValue placeholder="-- Pilih Bank --" />
-                </SelectTrigger>
-                <SelectContent className="text-sm max-h-60">
-                  {banks.map((bank: any) => (
-                    <SelectItem key={bank.code} value={bank.code}>
+
+            <Select
+              onValueChange={(value) => updateForm("bank", value)}
+              value={formData?.bank || ""}
+            >
+              <SelectTrigger className="h-[42px] bg-white text-sm">
+                <SelectValue
+                  placeholder={
+                    isLoadingBanks ? "Loading..." : "-- Pilih Bank --"
+                  }
+                />
+              </SelectTrigger>
+
+              <SelectContent className="text-sm max-h-60">
+                {isLoadingBanks ? (
+                  <SelectItem value="loading" disabled>
+                    Loading...
+                  </SelectItem>
+                ) : banks.length === 0 ? (
+                  <SelectItem value="empty" disabled>
+                    Tidak ada data bank
+                  </SelectItem>
+                ) : (
+                  banks.map((bank) => (
+                    <SelectItem
+                      key={bank.id}
+                      value={bank.id.toString()}
+                    >
                       {bank.name}
                     </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-
-              {selectedBank && (
-                <img
-                  src={selectedBank.logo}
-                  alt="Logo Bank"
-                  className="w-12 h-12 border rounded bg-white p-1 object-contain"
-                />
-              )}
-            </div>
+                  ))
+                )}
+              </SelectContent>
+            </Select>
           </div>
+
         </div>
       </div>
     </div>

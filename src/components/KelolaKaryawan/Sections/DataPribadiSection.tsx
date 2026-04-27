@@ -6,15 +6,15 @@ import { Label } from "@/components/ui/label";
 import { useGetReligions } from "@/api/religion/religion.query";
 
 const DataPribadiSection = ({ formData, updateForm }: any) => {
-    const { data: religionData, isLoading: isLoadingReligions } = useGetReligions({
-        search: "",
-        page: 1,
-        limit: 10,
-    });
+  const { data: religionData, isLoading: isLoadingReligions } = useGetReligions({
+    search: "",
+    page: 1,
+    limit: 10,
+  });
 
-    const religions = religionData?.data ?? [];
+  const religions = religionData?.data ?? [];
 
-    return (
+  return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
       <div className="flex items-center space-x-2 p-3 bg-brand text-white rounded-t-lg">
         <User className="w-5 h-5" />
@@ -74,6 +74,7 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
               placeholder="Nama Karyawan"
               value={formData.nama || ""}
               onChange={(e) => updateForm("nama", e.target.value)}
+
             />
           </div>
 
@@ -85,6 +86,7 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
               placeholder="08xxx"
               value={formData.telepon || ""}
               onChange={(e) => updateForm("telepon", e.target.value)}
+
             />
           </div>
 
@@ -94,7 +96,7 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
             <Input
               type="text"
               placeholder="Tempat Lahir"
-              className="bg-[#ffff] text-sm"
+
               value={formData.tempatLahir || ""}
               onChange={(e) => updateForm("tempatLahir", e.target.value)}
             />
@@ -105,7 +107,6 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
             <Label className="font-semibold">Tanggal Lahir <span className="text-red-500">*</span></Label>
             <Input
               type="date"
-              className="bg-[#ffff] text-sm"
               onChange={(e) => updateForm("tanggallahir", e.target.value)}
             />
           </div>
@@ -170,16 +171,25 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
           {/* AGAMA */}
           <div className="flex flex-col gap-2">
             <Label className="font-semibold mb-1">Agama <span className="text-red-500">*</span></Label>
-            <Select onValueChange={(value) => updateForm("agama", value)}>
+            <Select
+              value={formData?.agama || ""}
+              onValueChange={(value) => updateForm("agama", value)}
+            >
               <SelectTrigger className="h-[42px] bg-white">
-                <SelectValue placeholder={isLoadingReligions ? "Loading religions..." : "-- Pilih Agama --"} />
+                <SelectValue placeholder={isLoadingReligions ? "Loading..." : "-- Pilih Agama --"} />
               </SelectTrigger>
               <SelectContent>
-                {religions.map((religion) => (
-                  <SelectItem key={religion.id} value={religion.name}>
-                    {religion.name}
-                  </SelectItem>
-                ))}
+                {isLoadingReligions ? (
+                  <SelectItem value="loading" disabled>Loading...</SelectItem>
+                ) : religions.length === 0 ? (
+                  <SelectItem value="empty" disabled>Tidak ada data</SelectItem>
+                ) : (
+                  religions.map((religion) => (
+                    <SelectItem key={religion.id} value={religion.id.toString()}>
+                      {religion.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>

@@ -3,8 +3,45 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Briefcase, AlertTriangle, Calendar } from "lucide-react";
+import { useGetPositions } from "@/api/position/position.query";
+import { useGetDepartments } from "@/api/division/division.query";
+import { useGetSections } from "@/api/section/section.query";
+import { useGetCategories } from "@/api/category/category.query";
+interface DataKepegawaianSectionProps {
+  updateForm: (key: string, value: any) => void;
+  formData: Record<string, any>;
+}
 
-const DataKepegawaianSection = ({ updateForm, formData }: any) => {
+const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSectionProps) => {
+  const { data: positionData, isLoading: isLoadingPositions } = useGetPositions({
+    search: "",
+    page: 1,
+    limit: 100,
+  });
+
+  const { data: departmentData, isLoading: isLoadingDepartments } = useGetDepartments({
+    search: "",
+    page: 1,
+    limit: 100,
+  });
+
+  const positions = positionData?.data ?? [];
+  const departments = departmentData?.data ?? [];
+
+  const { data: sectionsData, isLoading: isLoadingSections } = useGetSections({
+    search: "",
+    page: 1,
+    limit: 100,
+  });
+
+  const { data: categoriesData, isLoading: isLoadingCategories } = useGetCategories({
+    search: "",
+    page: 1,
+    limit: 100,
+  });
+
+  const sections = sectionsData?.data ?? [];
+  const categories = categoriesData?.data ?? [];
   return (
     <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
       <div className="flex items-center space-x-2 p-3 bg-brand text-white rounded-t-lg">
@@ -31,21 +68,23 @@ const DataKepegawaianSection = ({ updateForm, formData }: any) => {
             <Label className="font-semibold">Divisi <span className="text-red-500">*</span></Label>
             <Select
               onValueChange={(value) => updateForm("divisi", value)}
-              defaultValue={formData?.divisi}
+              value={formData?.divisi || ""}
             >
               <SelectTrigger className="h-[42px] bg-white">
-                <SelectValue placeholder="-- Pilih Divisi --" />
+                <SelectValue placeholder={isLoadingDepartments ? "Loading..." : "-- Pilih Divisi --"} />
               </SelectTrigger>
               <SelectContent className="text-sm">
-                <SelectItem value="Marketing">Marketing</SelectItem>
-                <SelectItem value="Sales">Sales</SelectItem>
-                <SelectItem value="IT">IT</SelectItem>
-                <SelectItem value="Finance & Accounting">Finance & Accounting</SelectItem>
-                <SelectItem value="HR & GA">HR & GA</SelectItem>
-                <SelectItem value="Warehouse">Warehouse</SelectItem>
-                <SelectItem value="Produksi">Produksi</SelectItem>
-                <SelectItem value="Operasional">Operasional</SelectItem>
-                <SelectItem value="Logistik">Logistik</SelectItem>
+                {isLoadingDepartments ? (
+                  <SelectItem value="" disabled>Loading...</SelectItem>
+                ) : departments.length === 0 ? (
+                  <SelectItem value="" disabled>Tidak ada data divisi</SelectItem>
+                ) : (
+                  departments.map((dept) => (
+                    <SelectItem key={dept.id} value={dept.id.toString()}>
+                      {dept.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -55,23 +94,23 @@ const DataKepegawaianSection = ({ updateForm, formData }: any) => {
             <Label className="font-semibold">Jabatan <span className="text-red-500">*</span></Label>
             <Select
               onValueChange={(value) => updateForm("jabatan", value)}
-              defaultValue={formData?.jabatan}
+              value={formData?.jabatan || ""}
             >
               <SelectTrigger className="h-[42px] bg-white">
-                <SelectValue placeholder="-- Pilih Jabatan --" />
+                <SelectValue placeholder={isLoadingPositions ? "Loading..." : "-- Pilih Jabatan --"} />
               </SelectTrigger>
               <SelectContent className="text-sm">
-                <SelectItem value="Staff">Staff</SelectItem>
-                <SelectItem value="Admin">Admin</SelectItem>
-                <SelectItem value="Leader">Leader</SelectItem>
-                <SelectItem value="Supervisor">Supervisor</SelectItem>
-                <SelectItem value="Manager">Manager</SelectItem>
-                <SelectItem value="Senior Manager">Senior Manager</SelectItem>
-                <SelectItem value="General Manager">General Manager</SelectItem>
-                <SelectItem value="Head">Head</SelectItem>
-                <SelectItem value="Asisten Direktur">Asisten Direktur</SelectItem>
-                <SelectItem value="Direktur">Direktur</SelectItem>
-                <SelectItem value="Komisaris">Komisaris</SelectItem>
+                {isLoadingPositions ? (
+                  <SelectItem value="" disabled>Loading...</SelectItem>
+                ) : positions.length === 0 ? (
+                  <SelectItem value="" disabled>Tidak ada data jabatan</SelectItem>
+                ) : (
+                  positions.map((pos) => (
+                    <SelectItem key={pos.id} value={pos.id.toString()}>
+                      {pos.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -81,24 +120,23 @@ const DataKepegawaianSection = ({ updateForm, formData }: any) => {
             <Label className="font-semibold">Bagian <span className="text-red-500">*</span></Label>
             <Select
               onValueChange={(value) => updateForm("bagian", value)}
-              defaultValue={formData?.bagian}
+              value={formData?.bagian || ""}
             >
               <SelectTrigger className="h-[42px] bg-white">
-                <SelectValue placeholder="-- Pilih Bagian --" />
+                <SelectValue placeholder={isLoadingSections ? "Loading..." : "-- Pilih Bagian --"} />
               </SelectTrigger>
               <SelectContent className="text-sm">
-                <SelectItem value="IT Support">IT Support</SelectItem>
-                <SelectItem value="IT Helpdesk">IT Helpdesk</SelectItem>
-                <SelectItem value="IT Management">IT Management</SelectItem>
-                <SelectItem value="System Analyst">System Analyst</SelectItem>
-                <SelectItem value="Infrastructure & Network">Infrastructure & Network</SelectItem>
-                <SelectItem value="Database Administrator">Database Administrator</SelectItem>
-                <SelectItem value="Back End Developer">Back End Developer</SelectItem>
-                <SelectItem value="Front End Developer">Front End Developer</SelectItem>
-                <SelectItem value="Full Stack Developer">Full Stack Developer</SelectItem>
-                <SelectItem value="Mobile Developer">Mobile Developer</SelectItem>
-                <SelectItem value="AI Engineer">AI Engineer</SelectItem>
-                <SelectItem value="Product Owner">Product Owner</SelectItem>
+                {isLoadingSections ? (
+                  <SelectItem value="" disabled>Loading...</SelectItem>
+                ) : sections.length === 0 ? (
+                  <SelectItem value="" disabled>Tidak ada data bagian</SelectItem>
+                ) : (
+                  sections.map((section) => (
+                    <SelectItem key={section.id} value={section.id.toString()}>
+                      {section.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
@@ -174,16 +212,23 @@ const DataKepegawaianSection = ({ updateForm, formData }: any) => {
             <Label className="font-semibold">Kategori Karyawan <span className="text-red-500">*</span></Label>
             <Select
               onValueChange={(value) => updateForm("kategori", value)}
-              defaultValue={formData?.kategori}
+              value={formData?.kategori || ""}
             >
               <SelectTrigger className="h-[42px] bg-white">
-                <SelectValue placeholder="-- Pilih Kategori --" />
+                <SelectValue placeholder={isLoadingCategories ? "Loading..." : "-- Pilih Kategori --"} />
               </SelectTrigger>
               <SelectContent className="text-sm">
-                <SelectItem value="Magang">Magang</SelectItem>
-                <SelectItem value="PKWT">PKWT</SelectItem>
-                <SelectItem value="PKWTT">PKWTT</SelectItem>
-                <SelectItem value="KHL">KHL</SelectItem>
+                {isLoadingCategories ? (
+                  <SelectItem value="" disabled>Loading...</SelectItem>
+                ) : categories.length === 0 ? (
+                  <SelectItem value="" disabled>Tidak ada data kategori</SelectItem>
+                ) : (
+                  categories.map((category) => (
+                    <SelectItem key={category.id} value={category.id.toString()}>
+                      {category.name}
+                    </SelectItem>
+                  ))
+                )}
               </SelectContent>
             </Select>
           </div>
