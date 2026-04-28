@@ -40,9 +40,9 @@ export const FormSelect: React.FC<FormSelectProps> = ({
         </SelectTrigger>
         <SelectContent className="text-sm">
           {loading ? (
-            <SelectItem value="" disabled>Loading...</SelectItem>
+            <SelectItem value="loading" disabled>Loading...</SelectItem>
           ) : options.length === 0 ? (
-            <SelectItem value="" disabled>{emptyMessage}</SelectItem>
+            <SelectItem value="empty" disabled>{emptyMessage}</SelectItem>
           ) : (
             options.map((option) => (
               <SelectItem

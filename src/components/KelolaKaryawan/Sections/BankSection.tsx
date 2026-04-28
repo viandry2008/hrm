@@ -1,7 +1,7 @@
-import React from "react";
+import React, { useState } from "react";
 import { CreditCard } from "lucide-react";
 import { FormInput } from "@/components/ui/form-input";
-import { FormSelect } from "@/components/ui/form-select";
+import { FormCombobox } from "@/components/ui/form-combobox";
 import { FormSection } from "@/components/ui/form-section";
 import { useGetBanks } from "@/api/bank/bank.query";
 
@@ -11,8 +11,10 @@ interface BankSectionProps {
 }
 
 const BankSection = ({ formData, updateForm }: BankSectionProps) => {
+  const [bankSearch, setBankSearch] = useState("");
+
   const { data: bankData, isLoading: isLoadingBanks } = useGetBanks({
-    search: "",
+    search: bankSearch,
     page: 1,
     limit: 100,
   });
@@ -53,11 +55,12 @@ const BankSection = ({ formData, updateForm }: BankSectionProps) => {
         }}
       />
 
-      <FormSelect
+      <FormCombobox
         label="Bank"
         placeholder="-- Pilih Bank --"
         value={formData?.bank || ""}
         onValueChange={(value) => updateForm("bank", value)}
+        onSearch={setBankSearch}
         loading={isLoadingBanks}
         emptyMessage="Tidak ada data bank"
         options={bankOptions}
