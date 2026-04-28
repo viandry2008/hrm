@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { TablePagination } from '@/components/ui/table-pagination';
 import { StatCard, StatCardGrid } from '@/components/ui/stat-card';
+import { Badge } from '@/components/ui/badge';
 import Swal from 'sweetalert2';
 import {
   Table,
@@ -26,11 +27,13 @@ import {
   Trash2,
   Download,
   Upload,
-  CheckCircle,
-  XCircle,
+  Check,
+  X,
   Calendar,
   Trash,
   Users,
+  CheckCircle,
+  XCircle,
 } from 'lucide-react';
 import { useDeleteEmployee, useDeleteMultipleEmployee, useGetEmployees, useGetEmployeeSummary, useUpdateMultipleContractEmployee, useUpdateMultipleStatusEmployee } from '@/api/employee/employee.query';
 import { useNavigate } from 'react-router-dom';
@@ -41,15 +44,21 @@ import { TableCard } from '@/components/ui/table-card';
 // Komponen Label Status
 const StatusLabel = ({ status }: { status: string }) => {
   const isAktif = status === 'active';
-  const textAktif = status === 'active' ? 'Aktif' : 'Tidak Aktif';
-  const color = isAktif ? 'bg-green-600 text-white' : 'bg-red-600 text-white';
-  const Icon = isAktif ? CheckCircle : XCircle;
 
-  return (
-    <span className={`inline-flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-md ${color} whitespace-nowrap max-w-full truncate`}>
-      <Icon className="w-3 h-3" />
-      {textAktif}
-    </span>
+  return isAktif ? (
+    <Badge
+      className="bg-green-100 text-green-700 rounded-sm px-3 py-1 flex items-center gap-1.5 w-fit mx-auto font-medium hover:bg-green-100"
+    >
+      <Check className="w-3.5 h-3.5" />
+      Aktif
+    </Badge>
+  ) : (
+    <Badge
+      className="bg-red-100 text-red-600 rounded-sm px-3 py-1 flex items-center gap-1.5 w-fit mx-auto font-medium hover:bg-red-100"
+    >
+      <X className="w-3.5 h-3.5" />
+      Tidak Aktif
+    </Badge>
   );
 };
 
@@ -124,28 +133,40 @@ export const DataKaryawanPage = () => {
   const { data: dataSummary, isLoading: loadingSummary, refetch: refetchSummary } =
     useGetEmployeeSummary();
 
-  const deleteSingle = useDeleteEmployee(() => refetch());
+  const deleteSingle = useDeleteEmployee(() => {
+    refetch();
+    refetchSummary();
+  });
 
   const updateStatusMutation = useUpdateMultipleStatusEmployee(() => {
     setSelectedIds([]);
     setSelectAll(false);
     refetch();
+    refetchSummary();
   });
 
   const deleteMultiple = useDeleteMultipleEmployee(() => {
     setSelectedIds([]);
     setSelectAll(false);
     refetch();
+    refetchSummary();
   });
 
   const updateContractMutation = useUpdateMultipleContractEmployee(() => {
     setSelectedIds([]);
     setSelectAll(false);
     refetch();
+    refetchSummary();
   });
 
   const items = data?.data ?? [];
   const pagination = data?.meta;
+
+  useEffect(() => {
+    if (data) {
+      refetchSummary();
+    }
+  }, [data]);
 
   const toggleSelectAll = () => {
     if (selectAll) {
@@ -272,6 +293,7 @@ export const DataKaryawanPage = () => {
           closeContractModal();
           setSelectedIds([]);
           setSelectAll(false);
+          refetchSummary();
         },
         onError: () => {
           Swal.fire("Gagal", "Terjadi kesalahan saat memperbarui kontrak", "error");
