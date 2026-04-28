@@ -1,11 +1,18 @@
 import React from "react";
 import { User } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormInput } from "@/components/ui/form-input";
+import { FormSelect } from "@/components/ui/form-select";
+import { FormTextarea } from "@/components/ui/form-textarea";
+import { FormFile } from "@/components/ui/form-file";
+import { FormSection } from "@/components/ui/form-section";
 import { useGetReligions } from "@/api/religion/religion.query";
 
-const DataPribadiSection = ({ formData, updateForm }: any) => {
+interface DataPribadiSectionProps {
+  formData: Record<string, any>;
+  updateForm: (key: string, value: any) => void;
+}
+
+const DataPribadiSection = ({ formData, updateForm }: DataPribadiSectionProps) => {
   const { data: religionData, isLoading: isLoadingReligions } = useGetReligions({
     search: "",
     page: 1,
@@ -13,240 +20,162 @@ const DataPribadiSection = ({ formData, updateForm }: any) => {
   });
 
   const religions = religionData?.data ?? [];
+  const religionOptions = religions.map((religion) => ({
+    value: religion.id.toString(),
+    label: religion.name,
+  }));
+
+  const genderOptions = [
+    { value: "Laki - Laki", label: "Laki - Laki" },
+    { value: "Perempuan", label: "Perempuan" },
+  ];
+
+  const educationOptions = [
+    { value: "SD", label: "SD" },
+    { value: "SMP", label: "SMP" },
+    { value: "SMA/SMK", label: "SMA / SMK" },
+    { value: "D1", label: "D1" },
+    { value: "D2", label: "D2" },
+    { value: "D3", label: "D3" },
+    { value: "S1", label: "S1" },
+    { value: "S2", label: "S2" },
+    { value: "S3", label: "S3" },
+  ];
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-      <div className="flex items-center space-x-2 p-3 bg-brand text-white rounded-t-lg">
-        <User className="w-5 h-5" />
-        <h3 className="font-semibold">Data Pribadi</h3>
-      </div>
-      <div className="p-4">
-        <div className="grid grid-cols-2 gap-6">
+    <FormSection
+      title="Data Pribadi"
+      icon={<User className="w-5 h-5" />}
+    >
+      <FormFile
+        label="File Foto Profile"
+        required
+        accept="image/*"
+        value={formData.foto || null}
+        onChange={(file) => updateForm("foto", file)}
+      />
 
-          {/* FOTO */}
-          <div className="flex items-center gap-4">
+      <FormInput
+        label="Nama Karyawan"
+        required
+        placeholder="Nama Karyawan"
+        value={formData.nama || ""}
+        onChange={(value) => updateForm("nama", value)}
+      />
 
-            {/* PREVIEW FOTO */}
-            <div className="w-20 h-20 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center overflow-hidden shadow-sm">
-              {formData.foto ? (
-                <img
-                  src={URL.createObjectURL(formData.foto)}
-                  alt="avatar"
-                  className="w-full h-full object-cover"
-                />
-              ) : (
-                <User className="w-10 h-10 text-gray-400" />
-              )}
-            </div>
+      <FormInput
+        label="Nomor Telepon"
+        required
+        placeholder="08xxx"
+        value={formData.telepon || ""}
+        onChange={(value) => updateForm("telepon", value)}
+      />
 
-            {/* CUSTOM FILE INPUT */}
-            <div className="flex-1">
-              <Label className="font-semibold mb-1 block">File Foto Profile</Label>
+      <FormInput
+        label="Tempat Lahir"
+        required
+        placeholder="Tempat Lahir"
+        value={formData.tempatLahir || ""}
+        onChange={(value) => updateForm("tempatLahir", value)}
+      />
 
-              <div className="flex items-center h-[42px] border border-gray-300 rounded-md overflow-hidden">
-                <label
-                  htmlFor="fotoUpload"
-                  className="bg-blue-600 text-white px-4 py-5 cursor-pointer hover:bg-blue-700 transition text-sm flex items-center"
-                >
-                  Pilih File
-                </label>
+      <FormInput
+        label="Tanggal Lahir"
+        required
+        type="date"
+        value={formData.tanggallahir || ""}
+        onChange={(value) => updateForm("tanggallahir", value)}
+      />
 
-                <span className="px-3 text-sm text-gray-600 truncate">
-                  {formData.foto ? formData.foto.name : "Tidak ada file yang dipilih"}
-                </span>
-              </div>
+      <FormSelect
+        label="Jenis Kelamin"
+        required
+        placeholder="-- Pilih Jenis Kelamin --"
+        value={formData.jeniskelamin || ""}
+        onValueChange={(value) => updateForm("jeniskelamin", value)}
+        options={genderOptions}
+      />
 
-              <input
-                id="fotoUpload"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => updateForm("foto", e.target.files?.[0])}
-              />
-            </div>
-          </div>
+      <FormTextarea
+        label="Alamat KTP"
+        required
+        placeholder="Alamat lengkap sesuai KTP"
+        value={formData.alamatKTP || ""}
+        onChange={(value) => updateForm("alamatKTP", value)}
+      />
 
-          {/* NAMA */}
-          <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Nama Karyawan <span className="text-red-500">*</span></Label>
-            <Input
-              type="text"
-              placeholder="Nama Karyawan"
-              value={formData.nama || ""}
-              onChange={(e) => updateForm("nama", e.target.value)}
+      <FormTextarea
+        label="Alamat Domisili"
+        required
+        placeholder="Alamat domisili saat ini"
+        value={formData.alamatDomisili || ""}
+        onChange={(value) => updateForm("alamatDomisili", value)}
+      />
 
-            />
-          </div>
+      <FormSelect
+        label="Pendidikan"
+        required
+        placeholder="-- Pilih Pendidikan --"
+        value={formData.pendidikan || ""}
+        onValueChange={(value) => updateForm("pendidikan", value)}
+        options={educationOptions}
+      />
 
-          {/* TELEPON */}
-          <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Nomor Telepon <span className="text-red-500">*</span></Label>
-            <Input
-              type="text"
-              placeholder="08xxx"
-              value={formData.telepon || ""}
-              onChange={(e) => updateForm("telepon", e.target.value)}
+      <FormSelect
+        label="Agama"
+        required
+        placeholder="-- Pilih Agama --"
+        value={formData.agama || ""}
+        onValueChange={(value) => updateForm("agama", value)}
+        loading={isLoadingReligions}
+        emptyMessage="Tidak ada data agama"
+        options={religionOptions}
+      />
 
-            />
-          </div>
+      <FormInput
+        label="Nama Suami/Istri"
+        placeholder="contoh: nama1, nama2, dst"
+        value={formData.namaSuamiIstri || ""}
+        onChange={(value) => updateForm("namaSuamiIstri", value)}
+      />
 
-          {/* TEMPAT LAHIR */}
-          <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Tempat Lahir <span className="text-red-500">*</span></Label>
-            <Input
-              type="text"
-              placeholder="Tempat Lahir"
+      <FormInput
+        label="Nama Anak"
+        placeholder="Contoh: Nama1, Nama2, dst"
+        value={formData.namaAnak || ""}
+        onChange={(value) => updateForm("namaAnak", value)}
+      />
 
-              value={formData.tempatLahir || ""}
-              onChange={(e) => updateForm("tempatLahir", e.target.value)}
-            />
-          </div>
+      <FormInput
+        label="Jumlah Anak"
+        type="number"
+        placeholder="Total jumlah anak"
+        value={formData.jumlahAnak || ""}
+        onChange={(value) => updateForm("jumlahAnak", value)}
+      />
 
-          {/* TANGGAL LAHIR */}
-          <div className="flex flex-col gap-2">
-            <Label className="font-semibold">Tanggal Lahir <span className="text-red-500">*</span></Label>
-            <Input
-              type="date"
-              onChange={(e) => updateForm("tanggallahir", e.target.value)}
-            />
-          </div>
+      <FormInput
+        label="Nama Bapak"
+        placeholder="Nama Bapak"
+        value={formData.namaBapak || ""}
+        onChange={(value) => updateForm("namaBapak", value)}
+      />
 
-          {/* JENIS KELAMIN */}
-          <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Jenis Kelamin <span className="text-red-500">*</span></Label>
-            <Select onValueChange={(value) => updateForm("jeniskelamin", value)}>
-              <SelectTrigger className="h-[42px] bg-white">
-                <SelectValue placeholder="-- Pilih Jenis Kelamin --" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="Laki - Laki">Laki - Laki</SelectItem>
-                <SelectItem value="Perempuan">Perempuan</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
+      <FormInput
+        label="Nama Ibu"
+        placeholder="Nama Ibu"
+        value={formData.namaIbu || ""}
+        onChange={(value) => updateForm("namaIbu", value)}
+      />
 
-
-          {/* ALAMAT KTP */}
-          <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Alamat KTP <span className="text-red-500">*</span></Label>
-            <textarea
-              className="border rounded-md px-3 py-2 bg-white"
-              onChange={(e) => updateForm("alamatKTP", e.target.value)}
-              value={formData.alamatKTP || ""}
-            />
-            <p className="text-xs italic">*) Isi alamat sesuai KTP</p>
-          </div>
-
-          {/* ALAMAT DOMISILI */}
-          <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Alamat Domisili <span className="text-red-500">*</span></Label>
-            <textarea
-              className="border rounded-md px-3 py-2 bg-white"
-              onChange={(e) => updateForm("alamatDomisili", e.target.value)}
-            />
-            <p className="text-xs italic">*) Jika mengisi domisili harap input nama kota</p>
-          </div>
-
-          {/* PENDIDIKAN */}
-          <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Pendidikan <span className="text-red-500">*</span></Label>
-            <Select onValueChange={(value) => updateForm("pendidikan", value)}>
-              <SelectTrigger className="h-[42px] bg-white">
-                <SelectValue placeholder="-- Pilih Pendidikan --" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="SD">SD</SelectItem>
-                <SelectItem value="SMP">SMP</SelectItem>
-                <SelectItem value="SMA/SMK">SMA / SMK</SelectItem>
-                <SelectItem value="D1">D1</SelectItem>
-                <SelectItem value="D2">D2</SelectItem>
-                <SelectItem value="D3">D3</SelectItem>
-                <SelectItem value="S1">S1</SelectItem>
-                <SelectItem value="S2">S2</SelectItem>
-                <SelectItem value="S3">S3</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* AGAMA */}
-          <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Agama <span className="text-red-500">*</span></Label>
-            <Select
-              value={formData?.agama || ""}
-              onValueChange={(value) => updateForm("agama", value)}
-            >
-              <SelectTrigger className="h-[42px] bg-white">
-                <SelectValue placeholder={isLoadingReligions ? "Loading..." : "-- Pilih Agama --"} />
-              </SelectTrigger>
-              <SelectContent>
-                {isLoadingReligions ? (
-                  <SelectItem value="loading" disabled>Loading...</SelectItem>
-                ) : religions.length === 0 ? (
-                  <SelectItem value="empty" disabled>Tidak ada data</SelectItem>
-                ) : (
-                  religions.map((religion) => (
-                    <SelectItem key={religion.id} value={religion.id.toString()}>
-                      {religion.name}
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
-          </div>
-
-          {/* NAMA SUAMI/ISTRI */}
-          <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Nama Suami/Istri</Label>
-            <Input
-              type="text"
-              placeholder="contoh: nama1, nama2, dst"
-              value={formData.namasuamiistri || ""}
-              onChange={(e) => updateForm("namaSuamiIstri", e.target.value)}
-            />
-          </div>
-
-          {/* NAMA ANAK */}
-          <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Nama Anak</Label>
-            <Input
-              type="text"
-              placeholder="Contoh: Nama1, Nama2, dst"
-              onChange={(e) => updateForm("namaAnak", e.target.value)}
-            />
-          </div>
-
-          {/* JUMLAH ANAK */}
-          <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Jumlah Anak</Label>
-            <Input
-              type="number"
-              placeholder="Total jumlah anak"
-              onChange={(e) => updateForm("jumlahAnak", e.target.value)}
-            />
-          </div>
-
-          {/* NAMA BAPAK */}
-          <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Nama Bapak</Label>
-            <Input
-              type="text"
-              placeholder="Nama Bapak"
-              onChange={(e) => updateForm("namaBapak", e.target.value)}
-            />
-          </div>
-
-          {/* NAMA IBU */}
-          <div className="flex flex-col gap-2">
-            <Label className="font-semibold mb-1">Nama Ibu</Label>
-            <Input
-              type="text"
-              placeholder="Nama Ibu"
-              onChange={(e) => updateForm("namaIbu", e.target.value)}
-            />
-          </div>
+      {/* Help text for addresses */}
+      <div className="col-span-2 mt-2">
+        <div className="text-xs italic text-gray-600 space-y-1">
+          <p>*) Isi alamat sesuai KTP</p>
+          <p>*) Jika mengisi domisili harap input nama kota</p>
         </div>
       </div>
-    </div>
+    </FormSection>
   );
 };
 

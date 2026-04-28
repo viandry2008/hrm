@@ -1,16 +1,16 @@
 import React from "react";
 import { User } from "lucide-react";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { FormInput } from "@/components/ui/form-input";
+import { FormSelect } from "@/components/ui/form-select";
+import { FormSection } from "@/components/ui/form-section";
 import { useGetRoles } from "@/api/role/role.query";
 
 interface AkunSectionProps {
-    formData: any;
+    formData: Record<string, any>;
     updateForm: (key: string, value: any) => void;
 }
 
-const AkunSection: React.FC<AkunSectionProps> = ({ formData, updateForm }) => {
+const AkunSection = ({ formData, updateForm }: AkunSectionProps) => {
     const { data: roleData, isLoading: isLoadingRoles } = useGetRoles({
         search: "",
         page: 1,
@@ -18,74 +18,53 @@ const AkunSection: React.FC<AkunSectionProps> = ({ formData, updateForm }) => {
     });
 
     const roles = roleData?.data ?? [];
+    const roleOptions = roles.map((role) => ({
+        value: role.name_role,
+        label: role.name_role,
+    }));
 
     return (
-        <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-            <div className="flex items-center space-x-2 p-3 bg-brand text-white rounded-t-lg">
-                <User className="w-5 h-5" />
-                <h3 className="font-semibold">Informasi Akun</h3>
-            </div>
-            <div className="p-4">
-                <div className="grid grid-cols-2 gap-6">
+        <FormSection
+            title="Informasi Akun"
+            icon={<User className="w-5 h-5" />}
+        >
+            <FormInput
+                label="Username"
+                required
+                placeholder="Masukkan username"
+                value={formData.username || ""}
+                onChange={(value) => updateForm("username", value)}
+            />
 
-                    {/* USERNAME */}
-                    <div className="flex flex-col gap-2">
-                        <Label className="font-semibold text-sm">Username <span className="text-red-500">*</span></Label>
+            <FormInput
+                label="Email"
+                required
+                type="email"
+                placeholder="Masukkan email"
+                value={formData.email || ""}
+                onChange={(value) => updateForm("email", value)}
+            />
 
-                        <Input
-                            type="text"
-                            placeholder="Masukkan username"
-                            value={formData.username || ""}
-                            onChange={(e) => updateForm("username", e.target.value)}
+            <FormInput
+                label="Password"
+                required
+                type="password"
+                placeholder="••••"
+                value={formData.password || ""}
+                onChange={(value) => updateForm("password", value)}
+            />
 
-                        />
-                    </div>
-
-                    {/* EMAIL */}
-                    <div className="flex flex-col gap-2">
-                        <Label className="font-semibold text-sm">Email <span className="text-red-500">*</span></Label>
-                        <Input
-                            type="text"
-                            placeholder="Masukkan email"
-                            value={formData.email || ""}
-                            onChange={(e) => updateForm("email", e.target.value)}
-
-                        />
-                    </div>
-
-                    {/* PASSWORD */}
-                    <div className="flex flex-col gap-2">
-                        <Label className="font-semibold text-sm">Password <span className="text-red-500">*</span></Label>
-                        <Input
-                            type="password"
-                            placeholder="••••"
-                            value={formData.password || ""}
-                            onChange={(e) => updateForm("password", e.target.value)}
-                        />
-                    </div>
-
-                    {/* ROLE */}
-                    <div className="flex flex-col gap-2">
-                        <Label className="font-semibold text-sm">Role <span className="text-red-500">*</span></Label>
-                        <Select
-                            onValueChange={(value) => updateForm("role", value)}
-                            value={formData.role || ""}
-                        >
-                            <SelectTrigger className="h-[42px] bg-white text-sm">
-                                <SelectValue placeholder={isLoadingRoles ? "Loading roles..." : "-- Pilih Role --"} />
-                            </SelectTrigger>
-                            <SelectContent className="text-sm">
-                                {roles.map((role) => (
-                                    <SelectItem key={role.id} value={role.name_role}>
-                                        {role.name_role}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </div>
-                </div>
-            </div>
-        </div>
+            <FormSelect
+                label="Role"
+                required
+                placeholder="-- Pilih Role --"
+                value={formData.role || ""}
+                onValueChange={(value) => updateForm("role", value)}
+                loading={isLoadingRoles}
+                emptyMessage="Tidak ada data role"
+                options={roleOptions}
+            />
+        </FormSection>
     );
 };
 

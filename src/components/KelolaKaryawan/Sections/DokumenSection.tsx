@@ -1,283 +1,151 @@
 import React from "react";
 import { FileText } from "lucide-react";
+import { FormInput } from "@/components/ui/form-input";
+import { FormFileSimple } from "@/components/ui/form-file-simple";
+import { FormSection } from "@/components/ui/form-section";
 
-const DokumenSection = ({ updateForm, formData }: any) => {
-  // Fungsi untuk menampilkan nama file setelah dipilih
-  const getFileName = (file: File | null) => {
-    return file ? file.name : "Tidak ada file yang dipilih";
-  };
+interface DokumenSectionProps {
+  formData: Record<string, any>;
+  updateForm: (key: string, value: any) => void;
+}
 
+const DokumenSection = ({ formData, updateForm }: DokumenSectionProps) => {
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm">
-      {/* Header Biru #0F2A4D */}
-      <div className="flex items-center space-x-2 p-3 bg-brand text-white rounded-t-lg">
-        <FileText className="w-5 h-5" />
-        <h3 className="font-semibold">Dokumen Pendukung</h3>
-      </div>
+    <FormSection
+      title="Dokumen Pendukung"
+      icon={<FileText className="w-5 h-5" />}
+    >
+      <FormFileSimple
+        label="Upload KTP"
+        value={formData.ktp || null}
+        onChange={(file) => updateForm("ktp", file)}
+        accept="image/*,.pdf"
+      />
 
-      {/* Konten Form */}
-      <div className="p-4">
-        <div className="grid grid-cols-2 gap-6">
+      <FormInput
+        label="Nomor KTP"
+        placeholder="32xxxxxx"
+        value={formData.nomorKTP || ""}
+        onChange={(value) => updateForm("nomorKTP", value)}
+      />
 
-          {/* UPLOAD KTP */}
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-sm text-gray-700">Upload KTP</label>
-            <div className="flex items-center gap-0">
-              <input
-                type="file"
-                onChange={(e) => updateForm("ktp", e.target.files?.[0])}
-                className="hidden"
-                id="upload-ktp"
-              />
-              <label
-                htmlFor="upload-ktp"
-                className="border border-gray-300 p-2 rounded-l-md bg-gray-100 text-sm text-gray-700 cursor-pointer whitespace-nowrap"
-              >
-                Pilih File
-              </label>
-              <div className="border border-gray-300 p-2 rounded-r-md w-full text-sm text-gray-400 truncate">
-                {getFileName(formData.ktp)}
+      <FormFileSimple
+        label="Upload Kartu Keluarga"
+        value={formData.kartuKeluarga || null}
+        onChange={(file) => updateForm("kartuKeluarga", file)}
+        accept="image/*,.pdf"
+      />
+
+      <FormInput
+        label="No Kartu Keluarga"
+        placeholder="Nomor kartu keluarga"
+        value={formData.noKartuKeluarga || ""}
+        onChange={(value) => updateForm("noKartuKeluarga", value)}
+      />
+
+      <FormFileSimple
+        label="Upload NPWP"
+        value={formData.npwp || null}
+        onChange={(file) => updateForm("npwp", file)}
+        accept="image/*,.pdf"
+      />
+
+      {/* NPWP Number with individual digit inputs */}
+      <div className="flex flex-col gap-2">
+        <label className="font-semibold text-sm text-gray-700">Nomor NPWP</label>
+        <div className="flex gap-1 flex-wrap">
+          {[...Array(15)].map((_, i) => {
+            const separators: { [key: number]: string } = {
+              1: ".", 4: ".", 7: ".", 8: "-", 11: "."
+            };
+
+            const digits =
+              formData.npwpNumber?.replace(/\D/g, "").padEnd(15, "").split("") || [];
+
+            const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+              const value = e.target.value.replace(/\D/g, "");
+              if (!/^\d?$/.test(value)) return;
+
+              const arr =
+                formData.npwpNumber?.replace(/\D/g, "").split("") || Array(15).fill("");
+              arr[i] = value;
+
+              updateForm("npwpNumber", arr.join("").slice(0, 15));
+
+              if (value && i < 14) {
+                document.getElementById(`npwp_${i + 1}`)?.focus();
+              }
+            };
+
+            const handleBackspace = (e: React.KeyboardEvent<HTMLInputElement>) => {
+              if (e.key === "Backspace" && !digits[i] && i > 0) {
+                document.getElementById(`npwp_${i - 1}`)?.focus();
+              }
+            };
+
+            return (
+              <div key={i} className="flex items-center">
+                <input
+                  id={`npwp_${i}`}
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={1}
+                  className="border p-1 rounded w-9 text-center text-sm text-gray-800 h-[42px]"
+                  value={digits[i] || ""}
+                  onChange={handleChange}
+                  onKeyDown={handleBackspace}
+                />
+                {separators[i] && (
+                  <span className="font-bold text-gray-700 mx-1">{separators[i]}</span>
+                )}
               </div>
-            </div>
-          </div>
-
-          {/* NOMOR KTP */}
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-sm text-gray-700">Nomor KTP</label>
-            <input
-              type="text"
-              placeholder="32xxxxxx"
-              value={formData.nomorKTP || ""}
-              onChange={(e) => updateForm("nomorKTP", e.target.value)}
-              className="border p-2 rounded w-full text-sm text-gray-800"
-            />
-          </div>
-
-          {/* UPLOAD KARTU KELUARGA */}
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-sm text-gray-700">Upload Kartu Keluarga</label>
-            <div className="flex items-center gap-0">
-              <input
-                type="file"
-                onChange={(e) => updateForm("kartuKeluarga", e.target.files?.[0])}
-                className="hidden"
-                id="upload-kartu-keluarga"
-              />
-              <label
-                htmlFor="upload-kartu-keluarga"
-                className="border border-gray-300 p-2 rounded-l-md bg-gray-100 text-sm text-gray-700 cursor-pointer whitespace-nowrap"
-              >
-                Pilih File
-              </label>
-              <div className="border border-gray-300 p-2 rounded-r-md w-full text-sm text-gray-400 truncate">
-                {getFileName(formData.kartuKeluarga)}
-              </div>
-            </div>
-          </div>
-
-          {/* NO KARTU KELUARGA */}
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-sm text-gray-700">No Kartu Keluarga</label>
-            <input
-              type="text"
-              placeholder="Nama Bapak"
-              value={formData.noKartuKeluarga || ""}
-              onChange={(e) => updateForm("noKartuKeluarga", e.target.value)}
-              className="border p-2 rounded w-full text-sm text-gray-800"
-            />
-          </div>
-
-          {/* UPLOAD NPWP */}
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-sm text-gray-700">Upload NPWP</label>
-            <div className="flex items-center gap-0">
-              <input
-                type="file"
-                onChange={(e) => updateForm("npwp", e.target.files?.[0])}
-                className="hidden"
-                id="upload-npwp"
-              />
-              <label
-                htmlFor="upload-npwp"
-                className="border border-gray-300 p-2 rounded-l-md bg-gray-100 text-sm text-gray-700 cursor-pointer whitespace-nowrap"
-              >
-                Pilih File
-              </label>
-              <div className="border border-gray-300 p-2 rounded-r-md w-full text-sm text-gray-400 truncate">
-                {getFileName(formData.npwp)}
-              </div>
-            </div>
-          </div>
-
-          {/* NOMOR NPWP (dengan input box terpisah) */}
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-sm text-gray-700">Nomor NPWP</label>
-            <div className="flex gap-1 flex-wrap">
-              {[...Array(15)].map((_, i) => {
-                const separators: { [key: number]: string } = {
-                  1: ".", 4: ".", 7: ".", 8: "-", 11: "."
-                };
-
-                const digits =
-                  formData.npwpNumber?.replace(/\D/g, "").padEnd(15, "").split("") || [];
-
-                const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-                  const value = e.target.value.replace(/\D/g, "");
-                  if (!/^\d?$/.test(value)) return;
-
-                  const arr =
-                    formData.npwpNumber?.replace(/\D/g, "").split("") || Array(15).fill("");
-                  arr[i] = value;
-
-                  updateForm("npwpNumber", arr.join("").slice(0, 15));
-
-                  if (value && i < 14) {
-                    document.getElementById(`npwp_${i + 1}`)?.focus();
-                  }
-                };
-
-                const handleBackspace = (e: React.KeyboardEvent<HTMLInputElement>) => {
-                  if (e.key === "Backspace" && !digits[i] && i > 0) {
-                    document.getElementById(`npwp_${i - 1}`)?.focus();
-                  }
-                };
-
-                return (
-                  <div key={i} className="flex items-center">
-                    <input
-                      id={`npwp_${i}`}
-                      type="text"
-                      inputMode="numeric"
-                      maxLength={1}
-                      className="border p-1 rounded w-9 text-center text-sm text-gray-800"
-                      value={digits[i] || ""}
-                      onChange={handleChange}
-                      onKeyDown={handleBackspace}
-                    />
-                    {separators[i] && (
-                      <span className="font-bold text-gray-700 mx-1">{separators[i]}</span>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* UPLOAD KPJ */}
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-sm text-gray-700">Upload KPJ</label>
-            <div className="flex items-center gap-0">
-              <input
-                type="file"
-                onChange={(e) => updateForm("kpj", e.target.files?.[0])}
-                className="hidden"
-                id="upload-kpj"
-              />
-              <label
-                htmlFor="upload-kpj"
-                className="border border-gray-300 p-2 rounded-l-md bg-gray-100 text-sm text-gray-700 cursor-pointer whitespace-nowrap"
-              >
-                Pilih File
-              </label>
-              <div className="border border-gray-300 p-2 rounded-r-md w-full text-sm text-gray-400 truncate">
-                {getFileName(formData.kpj)}
-              </div>
-            </div>
-          </div>
-
-          {/* NOMOR KPJ */}
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-sm text-gray-700">Nomor KPJ</label>
-            <input
-              type="text"
-              placeholder="32xxxxxx"
-              value={formData.nomorKPJ || ""}
-              onChange={(e) => updateForm("nomorKPJ", e.target.value)}
-              className="border p-2 rounded w-full text-sm text-gray-800"
-            />
-          </div>
-
-          {/* UPLOAD JKN */}
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-sm text-gray-700">Upload JKN</label>
-            <div className="flex items-center gap-0">
-              <input
-                type="file"
-                onChange={(e) => updateForm("jkn", e.target.files?.[0])}
-                className="hidden"
-                id="upload-jkn"
-              />
-              <label
-                htmlFor="upload-jkn"
-                className="border border-gray-300 p-2 rounded-l-md bg-gray-100 text-sm text-gray-700 cursor-pointer whitespace-nowrap"
-              >
-                Pilih File
-              </label>
-              <div className="border border-gray-300 p-2 rounded-r-md w-full text-sm text-gray-400 truncate">
-                {getFileName(formData.jkn)}
-              </div>
-            </div>
-          </div>
-
-          {/* NOMOR JKN */}
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-sm text-gray-700">Nomor JKN</label>
-            <input
-              type="text"
-              placeholder="32xxxxxx"
-              value={formData.nomorJKN || ""}
-              onChange={(e) => updateForm("nomorJKN", e.target.value)}
-              className="border p-2 rounded w-full text-sm text-gray-800"
-            />
-          </div>
-
-          {/* UPLOAD CV / RIWAYAT HIDUP */}
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-sm text-gray-700">Upload CV / Riwayat Hidup</label>
-            <div className="flex items-center gap-0">
-              <input
-                type="file"
-                onChange={(e) => updateForm("cv", e.target.files?.[0])}
-                className="hidden"
-                id="upload-cv"
-              />
-              <label
-                htmlFor="upload-cv"
-                className="border border-gray-300 p-2 rounded-l-md bg-gray-100 text-sm text-gray-700 cursor-pointer whitespace-nowrap"
-              >
-                Pilih File
-              </label>
-              <div className="border border-gray-300 p-2 rounded-r-md w-full text-sm text-gray-400 truncate">
-                {getFileName(formData.cv)}
-              </div>
-            </div>
-          </div>
-
-          {/* UPLOAD FILE PENDUKUNG LAINNYA */}
-          <div className="flex flex-col gap-2">
-            <label className="font-medium text-sm text-gray-700">Upload File Pendukung Lainnya</label>
-            <div className="flex items-center gap-0">
-              <input
-                type="file"
-                onChange={(e) => updateForm("pendukungLain", e.target.files?.[0])}
-                className="hidden"
-                id="upload-pendukung-lain"
-              />
-              <label
-                htmlFor="upload-pendukung-lain"
-                className="border border-gray-300 p-2 rounded-l-md bg-gray-100 text-sm text-gray-700 cursor-pointer whitespace-nowrap"
-              >
-                Pilih File
-              </label>
-              <div className="border border-gray-300 p-2 rounded-r-md w-full text-sm text-gray-400 truncate">
-                {getFileName(formData.pendukungLain)}
-              </div>
-            </div>
-          </div>
-
+            );
+          })}
         </div>
       </div>
-    </div>
+
+      <FormFileSimple
+        label="Upload KPJ"
+        value={formData.kpj || null}
+        onChange={(file) => updateForm("kpj", file)}
+        accept="image/*,.pdf"
+      />
+
+      <FormInput
+        label="Nomor KPJ"
+        placeholder="Nomor KPJ"
+        value={formData.nomorKPJ || ""}
+        onChange={(value) => updateForm("nomorKPJ", value)}
+      />
+
+      <FormFileSimple
+        label="Upload JKN"
+        value={formData.jkn || null}
+        onChange={(file) => updateForm("jkn", file)}
+        accept="image/*,.pdf"
+      />
+
+      <FormInput
+        label="Nomor JKN"
+        placeholder="Nomor JKN"
+        value={formData.nomorJKN || ""}
+        onChange={(value) => updateForm("nomorJKN", value)}
+      />
+
+      <FormFileSimple
+        label="Upload CV / Riwayat Hidup"
+        value={formData.cv || null}
+        onChange={(file) => updateForm("cv", file)}
+        accept=".pdf,.doc,.docx"
+      />
+
+      <FormFileSimple
+        label="Upload File Pendukung Lainnya"
+        value={formData.pendukungLain || null}
+        onChange={(file) => updateForm("pendukungLain", file)}
+        accept=".pdf,.doc,.docx,image/*"
+      />
+    </FormSection>
   );
 };
 

@@ -9,11 +9,95 @@ import KontakSection from "@/components/KelolaKaryawan/Sections/KontakSection";
 import KendaraanSection from "@/components/KelolaKaryawan/Sections/KendaraanSection";
 import InformasiGajiSection from "@/components/KelolaKaryawan/Sections/InformasiGajiSection";
 
-const TambahKaryawanPage = () => {
-    const [formData, setFormData] = useState<any>({});
+interface FormData {
+  // Akun fields
+  username?: string;
+  email?: string;
+  password?: string;
+  role?: string;
 
-    const updateForm = (key: string, value: any) => {
-        setFormData((prev: any) => ({ ...prev, [key]: value }));
+  // Data Pribadi fields
+  foto?: File;
+  nama?: string;
+  telepon?: string;
+  tempatLahir?: string;
+  tanggallahir?: string;
+  jeniskelamin?: string;
+  alamatKTP?: string;
+  alamatDomisili?: string;
+  pendidikan?: string;
+  agama?: string;
+  namaSuamiIstri?: string;
+  namaAnak?: string;
+  jumlahAnak?: string;
+  namaBapak?: string;
+  namaIbu?: string;
+
+  // Data Kepegawaian fields
+  idKaryawan?: string;
+  divisi?: string;
+  jabatan?: string;
+  bagian?: string;
+  lokasi?: string;
+  tanggalBergabung?: string;
+  tanggalKontrak?: string;
+  selesaiKontrak?: string;
+  grup?: string;
+  kategori?: string;
+  marital?: string;
+  referensi?: string;
+  noSio?: string;
+  akun?: string;
+  statusKerja?: string;
+  punyaNPWP?: string;
+
+  // Bank fields
+  namaPemilik?: string;
+  nomorRekening?: string;
+  bank?: string;
+
+  // Dokumen fields
+  ktp?: File;
+  nomorKTP?: string;
+  kartuKeluarga?: File;
+  noKartuKeluarga?: string;
+  npwp?: File;
+  npwpNumber?: string;
+  kpj?: File;
+  nomorKPJ?: string;
+  jkn?: File;
+  nomorJKN?: string;
+  cv?: File;
+  pendukungLain?: File;
+
+  // Kontak fields
+  namaDarurat?: string;
+  hubunganDarurat?: string;
+  nomorTeleponDarurat?: string;
+
+  // Kendaraan fields
+  sim?: File;
+  nomorSIM?: string;
+  stnk?: File;
+  nomorSTNK?: string;
+  gambarDepan?: File;
+  gambarBelakang?: File;
+  gambarSamping?: File;
+
+  // Gaji fields
+  gaji_pokok?: number;
+  tunjangan_jabatan?: number;
+  tunjangan_project?: number;
+  tunjangan_makan?: number;
+  tunjangan_transport?: number;
+  tunjangan_lain?: number;
+}
+
+const TambahKaryawanPage = () => {
+    const [formData, setFormData] = useState<FormData>({});
+
+    const updateForm = (key: keyof FormData, value: any) => {
+        setFormData((prev) => ({ ...prev, [key]: value }));
     };
 
     const handleSubmit = () => {
