@@ -89,6 +89,49 @@ export const ForgotPasswordPage = () => {
       const newCode = [...code];
       newCode[index] = value;
       setCode(newCode);
+
+      // Otomatis pindah ke input berikutnya jika digit terisi
+      if (value && index < 5) {
+        const nextInput = document.getElementById(`code-${index + 1}`) as HTMLInputElement;
+        if (nextInput) {
+          nextInput.focus();
+        }
+      }
+    }
+  };
+
+  const handleCodeKeyDown = (index: number, e: React.KeyboardEvent) => {
+    const key = e.key;
+
+    // Backspace: hapus current dan focus ke previous
+    if (key === "Backspace") {
+      if (code[index]) {
+        const newCode = [...code];
+        newCode[index] = "";
+        setCode(newCode);
+      } else if (index > 0) {
+        const prevInput = document.getElementById(`code-${index - 1}`) as HTMLInputElement;
+        if (prevInput) {
+          prevInput.focus();
+        }
+      }
+      e.preventDefault();
+    }
+
+    // ArrowLeft: pindah ke input sebelumnya
+    if (key === "ArrowLeft" && index > 0) {
+      const prevInput = document.getElementById(`code-${index - 1}`) as HTMLInputElement;
+      if (prevInput) {
+        prevInput.focus();
+      }
+    }
+
+    // ArrowRight: pindah ke input berikutnya
+    if (key === "ArrowRight" && index < 5) {
+      const nextInput = document.getElementById(`code-${index + 1}`) as HTMLInputElement;
+      if (nextInput) {
+        nextInput.focus();
+      }
     }
   };
 
@@ -169,13 +212,18 @@ export const ForgotPasswordPage = () => {
                       {code.map((digit, i) => (
                         <Input
                           key={i}
+                          id={`code-${i}`}
                           type="text"
                           maxLength={1}
                           value={digit}
                           onChange={(e) =>
                             handleCodeChange(i, e.target.value)
                           }
-                          className="w-12 h-12 text-center text-xl font-bold border-2 border-gray-300 focus:border-blue-500 rounded-lg"
+                          onKeyDown={(e) =>
+                            handleCodeKeyDown(i, e)
+                          }
+                          className="w-12 h-12 text-center text-xl font-bold border-2 border-gray-300 focus:border-blue-500 rounded-lg focus:outline-none transition-colors"
+                          inputMode="numeric"
                         />
                       ))}
                     </div>
