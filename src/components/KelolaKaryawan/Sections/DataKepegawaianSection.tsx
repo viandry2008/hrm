@@ -8,6 +8,7 @@ import { useGetPositions } from "@/api/position/position.query";
 import { useGetDepartments } from "@/api/division/division.query";
 import { useGetSections } from "@/api/section/section.query";
 import { useGetCategories } from "@/api/category/category.query";
+import { useGetMaritals } from "@/api/marital/marital.query";
 
 interface DataKepegawaianSectionProps {
   updateForm: (key: string, value: any) => void;
@@ -39,10 +40,18 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
     limit: 100,
   });
 
+  const { data: maritalsData, isLoading: isLoadingMaritals } = useGetMaritals({
+    search: "",
+    page: 1,
+    limit: 100,
+  });
+
   const positions = positionData?.data ?? [];
   const departments = departmentData?.data ?? [];
   const sections = sectionsData?.data ?? [];
   const categories = categoriesData?.data ?? [];
+
+  const maritals = maritalsData?.data ?? [];
 
   const positionOptions = positions.map((pos) => ({
     value: pos.id.toString(),
@@ -73,16 +82,10 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
     label: cat.name,
   }));
 
-  const maritalOptions = [
-    { value: "TK/0", label: "TK/0 - Rp 54.000.000" },
-    { value: "TK/1", label: "TK/1 - Rp 58.500.000" },
-    { value: "TK/2", label: "TK/2 - Rp 63.000.000" },
-    { value: "TK/3", label: "TK/3 - Rp 67.500.000" },
-    { value: "K/0", label: "K/0 - Rp 58.500.000" },
-    { value: "K/1", label: "K/1 - Rp 63.000.000" },
-    { value: "K/2", label: "K/2 - Rp 67.500.000" },
-    { value: "K/3", label: "K/3 - Rp 72.000.000" },
-  ];
+  const maritalOptions = maritals.map((marital) => ({
+    value: marital.id.toString(),
+    label: `${marital.name} - Rp ${parseFloat(marital.amount).toLocaleString('id-ID')}`,
+  }));
 
   const accountStatusOptions = [
     { value: "Aktif", label: "Aktif" },
@@ -198,6 +201,8 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
         placeholder="-- Pilih Status Marital --"
         value={formData.marital || ""}
         onValueChange={(value) => updateForm("marital", value)}
+        loading={isLoadingMaritals}
+        emptyMessage="Tidak ada data marital"
         options={maritalOptions}
       />
 

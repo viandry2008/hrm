@@ -35,4 +35,7 @@ export const ENDPOINTS = {
     CATEGORIES: "/categories",
     // bank
     BANKS: "/banks",
+
+    // maritals
+    MARITALS: "/maritals",
 };
