@@ -19,7 +19,7 @@ const AkunSection = ({ formData, updateForm }: AkunSectionProps) => {
 
     const roles = roleData?.data ?? [];
     const roleOptions = roles.map((role) => ({
-        value: role.name_role,
+        value: role.id.toString(),
         label: role.name_role,
     }));
 

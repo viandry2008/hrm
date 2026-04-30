@@ -1,7 +1,8 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Swal from "sweetalert2";
-import { deleteEmployeeApi, deleteMultipleEmployeeApi, getEmployeesApi, getSummaryEmployeeApi, updateMultipleContractEmployeeApi, updateMultipleStatusEmployeeApi } from "./employee.api";
+import { createEmployeeApi, deleteEmployeeApi, deleteMultipleEmployeeApi, getEmployeesApi, getSummaryEmployeeApi, updateMultipleContractEmployeeApi, updateMultipleStatusEmployeeApi } from "./employee.api";
 import { EmployeeMultipleChangeRequest, EmployeeMultipleContractRequest } from "./employee.types";
+import { EmployeePostRequest } from "./employee.types";
 
 export const useGetEmployees = (params: {
     search?: string;
@@ -46,6 +47,28 @@ export const useGetEmployeeSummary = () => {
     return useQuery({
         queryKey: ["EmployeeSummary"],
         queryFn: () => getSummaryEmployeeApi(),
+    });
+};
+
+export const useCreateEmployee = (onSuccessReset?: () => void) => {
+    return useMutation({
+        mutationFn: (payload: FormData) => createEmployeeApi(payload),
+
+        onSuccess: async () => {
+            Swal.fire({
+                title: 'Berhasil!',
+                text: 'Karyawan berhasil ditambahkan.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false,
+            });
+
+            onSuccessReset?.();
+        },
+
+        onError: (err: any) => {
+            Swal.fire("Gagal", err.response?.data?.message || "Gagal menambahkan karyawan", "error");
+        },
     });
 };
 

@@ -59,7 +59,11 @@ const BankSection = ({ formData, updateForm }: BankSectionProps) => {
         label="Bank"
         placeholder="-- Pilih Bank --"
         value={formData?.bank || ""}
-        onValueChange={(value) => updateForm("bank", value)}
+        onValueChange={(value) => {
+          const selectedBank = banks.find((bank: any) => bank.id.toString() === value);
+          updateForm("bank", value);
+          updateForm("bankName", selectedBank?.name || "");
+        }}
         onSearch={setBankSearch}
         loading={isLoadingBanks}
         emptyMessage="Tidak ada data bank"

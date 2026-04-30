@@ -81,6 +81,41 @@ export interface EmployeeListResponse {
 
 
 //========= create & update
+export interface EmployeePostRequest {
+    employee_code?: string;
+    full_name?: string;
+    phone_number?: string;
+    gender?: string;
+    marital_status_id?: number | null;
+    department_id?: number | null;
+    position_id?: number | null;
+    company_id?: number | null;
+    grade_id?: number | null;
+    bank_id?: number | null;
+    address_ktp?: string | null;
+    address_domicile?: string | null;
+    employment_status?: string;
+    employee_type?: string;
+    join_date?: string;
+    birth_date?: string;
+    birth_place?: string;
+    national_id?: string | null;
+    family_card_number?: string | null;
+    education?: string | null;
+    religion?: string | null;
+    tax_number?: string | null;
+    bpjstk_number?: string | null;
+    bpjs_number?: string | null;
+    bank_account_number?: string | null;
+    bank_account_holder_name?: string | null;
+}
+
+export interface EmployeePostResponse {
+    success: boolean;
+    code: number;
+    message: string;
+    data: any;
+}
 
 
 //========= message

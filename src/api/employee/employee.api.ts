@@ -1,11 +1,22 @@
 import apiClient from "../client";
 import { ENDPOINTS } from "../endpoints";
-import { EmployeeMessageResponse, EmployeeListResponse, EmployeeMultipleDeleteRequest, EmployeeSummaryResponse, EmployeeMultipleChangeRequest, EmployeeMultipleContractRequest } from "./employee.types";
+import { EmployeeMessageResponse, EmployeeListResponse, EmployeeMultipleDeleteRequest, EmployeeSummaryResponse, EmployeeMultipleChangeRequest, EmployeeMultipleContractRequest, EmployeePostResponse } from "./employee.types";
 
 export const getEmployeesApi = async (
     params: { search?: string; limit?: number; page?: number; status?: string }
 ): Promise<EmployeeListResponse> => {
     const { data } = await apiClient.get(ENDPOINTS.EMPLOYEES, { params });
+    return data;
+};
+
+export const createEmployeeApi = async (
+    payload: FormData
+): Promise<EmployeePostResponse> => {
+    const { data } = await apiClient.post(ENDPOINTS.EMPLOYEES, payload, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
     return data;
 };
 
