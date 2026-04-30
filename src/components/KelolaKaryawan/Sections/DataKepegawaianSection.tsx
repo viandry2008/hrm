@@ -238,49 +238,6 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
         options={workStatusOptions}
       />
 
-      {/* NPWP Section */}
-      <div className="col-span-2 flex flex-col gap-2 mt-2">
-        <label className="font-semibold text-sm text-gray-700">
-          Apakah karyawan memiliki NPWP? <span className="text-red-500">*</span>
-        </label>
-        <div className="flex items-center gap-8">
-          <label className="flex items-center gap-3 cursor-pointer group select-none">
-            <input
-              type="radio"
-              name="punyaNPWP"
-              value="YA"
-              checked={formData.punyaNPWP === "YA"}
-              onChange={(e) => updateForm("punyaNPWP", e.target.value)}
-              className="w-5 h-5 border-2 border-gray-300 text-[#0F2A4D] focus:outline-none focus:ring-0 accent-[#0F2A4D] cursor-pointer transition-colors"
-            />
-            <span className="text-sm font-medium text-gray-600 group-hover:text-[#0F2A4D] transition-colors">
-              YA
-            </span>
-          </label>
-
-          <label className="flex items-center gap-3 cursor-pointer group select-none">
-            <input
-              type="radio"
-              name="punyaNPWP"
-              value="TIDAK"
-              checked={formData.punyaNPWP === "TIDAK"}
-              onChange={(e) => updateForm("punyaNPWP", e.target.value)}
-              className="w-5 h-5 border-2 border-gray-300 text-[#0F2A4D] focus:outline-none focus:ring-0 accent-[#0F2A4D] cursor-pointer transition-colors"
-            />
-            <span className="text-sm font-medium text-gray-600 group-hover:text-[#0F2A4D] transition-colors">
-              TIDAK
-            </span>
-          </label>
-        </div>
-
-        {/* Warning otomatis */}
-        {formData.punyaNPWP === "TIDAK" && (
-          <div className="mt-3 flex items-start gap-2 p-3 bg-amber-50 border border-amber-200 rounded-md text-xs text-amber-800 animate-in fade-in slide-in-from-top-1 duration-200">
-            <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" />
-            <p>Jika karyawan <strong>tidak memiliki NPWP</strong>, potongan PPh Pasal 21 akan dikenakan tarif <strong>20% lebih tinggi</strong> sesuai ketentuan perpajakan.</p>
-          </div>
-        )}
-      </div>
     </FormSection>
   );
 };

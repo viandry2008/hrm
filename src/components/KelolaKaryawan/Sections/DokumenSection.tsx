@@ -10,6 +10,20 @@ interface DokumenSectionProps {
 }
 
 const DokumenSection = ({ formData, updateForm }: DokumenSectionProps) => {
+  const formatNPWP = (digits: string) => {
+    if (!digits) return "";
+    let formatted = "";
+    const separators: { [key: number]: string } = {
+      1: ".", 4: ".", 7: ".", 8: "-", 11: "."
+    };
+    for (let i = 0; i < digits.length; i++) {
+      formatted += digits[i];
+      if (separators[i]) {
+        formatted += separators[i];
+      }
+    }
+    return formatted;
+  };
   return (
     <FormSection
       title="Dokumen Pendukung"
@@ -50,58 +64,18 @@ const DokumenSection = ({ formData, updateForm }: DokumenSectionProps) => {
         accept="image/*,.pdf"
       />
 
-      {/* NPWP Number with individual digit inputs */}
+      {/* NPWP Number with formatted input */}
       <div className="flex flex-col gap-2">
         <label className="font-semibold text-sm text-gray-700">Nomor NPWP</label>
-        <div className="flex gap-1 flex-wrap">
-          {[...Array(15)].map((_, i) => {
-            const separators: { [key: number]: string } = {
-              1: ".", 4: ".", 7: ".", 8: "-", 11: "."
-            };
-
-            const digits =
-              formData.npwpNumber?.replace(/\D/g, "").padEnd(15, "").split("") || [];
-
-            const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-              const value = e.target.value.replace(/\D/g, "");
-              if (!/^\d?$/.test(value)) return;
-
-              const arr =
-                formData.npwpNumber?.replace(/\D/g, "").split("") || Array(15).fill("");
-              arr[i] = value;
-
-              updateForm("npwpNumber", arr.join("").slice(0, 15));
-
-              if (value && i < 14) {
-                document.getElementById(`npwp_${i + 1}`)?.focus();
-              }
-            };
-
-            const handleBackspace = (e: React.KeyboardEvent<HTMLInputElement>) => {
-              if (e.key === "Backspace" && !digits[i] && i > 0) {
-                document.getElementById(`npwp_${i - 1}`)?.focus();
-              }
-            };
-
-            return (
-              <div key={i} className="flex items-center">
-                <input
-                  id={`npwp_${i}`}
-                  type="text"
-                  inputMode="numeric"
-                  maxLength={1}
-                  className="border p-1 rounded w-9 text-center text-sm text-gray-800 h-[42px]"
-                  value={digits[i] || ""}
-                  onChange={handleChange}
-                  onKeyDown={handleBackspace}
-                />
-                {separators[i] && (
-                  <span className="font-bold text-gray-700 mx-1">{separators[i]}</span>
-                )}
-              </div>
-            );
-          })}
-        </div>
+        <FormInput
+          label=""
+          placeholder="12.345.678.9-012.345"
+          value={formatNPWP(formData.npwpNumber || "")}
+          onChange={(value) => {
+            const raw = value.replace(/\D/g, "").slice(0, 15);
+            updateForm("npwpNumber", raw);
+          }}
+        />
       </div>
 
       <FormFileSimple
