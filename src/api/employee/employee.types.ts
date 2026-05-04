@@ -1,3 +1,5 @@
+import { use } from "marked";
+
 //========= read
 export interface PositionItem {
     id: number;
@@ -6,6 +8,23 @@ export interface PositionItem {
     description: string | null;
     created_at: string | null;
     updated_at: string | null;
+}
+
+export interface UserItem {
+    id: number;
+    employee_id: number;
+    name: string;
+    username: string;
+    email: string;
+    avatar: string | null;
+    email_verified_at: string | null;
+    last_login_at: string | null;
+    role_id: number;
+    status: string;
+    remember_token: string | null;
+    created_at: string;
+    updated_at: string;
+    deleted_at: string | null;
 }
 
 export interface DepartmentItem {
@@ -60,6 +79,7 @@ export interface EmployeeItem {
     updated_at: string;
     deleted_at: string | null;
 
+    user: UserItem;
     department: DepartmentItem;
     position: PositionItem;
     latest_contract: LatestItem;

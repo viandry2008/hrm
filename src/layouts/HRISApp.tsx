@@ -61,7 +61,7 @@ export const HRISApp = () => {
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center gap-2 cursor-pointer">
                   <img
-                    src="https://randomuser.me/api/portraits/men/19.jpg"
+                    src={user?.avatar || "https://randomuser.me/api/portraits/men/19.jpg"}
                     alt="Avatar"
                     className="w-8 h-8 rounded-full object-cover border-2 border-white"
                   />

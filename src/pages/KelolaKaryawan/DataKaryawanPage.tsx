@@ -540,11 +540,11 @@ export const DataKaryawanPage = () => {
 
                   <TableCell className="border border-gray-200">{(currentPage - 1) * Number(showEntries) + idx + 1}</TableCell>
                   <TableCell className="border border-gray-200">
-                    {/* <img
-                        src={k.foto}
-                        alt={k.nama}
-                        className="rounded-full w-8 h-8 object-cover"
-                      /> */}
+                    <img
+                      src={k.user.avatar || "https://randomuser.me/api/portraits/men/19.jpg"}
+                      alt={k.user.name}
+                      className="rounded-full w-8 h-8 object-cover"
+                    />
                   </TableCell >
                   <TableCell className="border border-gray-200">{k.employee_code}</TableCell>
                   <TableCell className="border border-gray-200">{k.full_name}</TableCell>
