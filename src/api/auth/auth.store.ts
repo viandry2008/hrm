@@ -6,7 +6,9 @@ type AuthState = {
     user: LoginResponse["data"] | null;
     token: string | null;
     isAuthenticated: boolean;
-    setAuth: (data: LoginResponse) => void;
+    isManagement: boolean;
+    setAuth: (data: LoginResponse, isManagement?: boolean) => void;
+    setManagement: (isManagement: boolean) => void;
     logout: () => void;
 };
 
@@ -16,11 +18,18 @@ export const useAuthStore = create<AuthState>()(
             user: null,
             token: null,
             isAuthenticated: false,
+            isManagement: false,
 
-            setAuth: (data) => {
+            setAuth: (data, isManagement = false) => {
                 const token = data?.data?.token;
                 const user = data?.data;
                 const expiresAt = Date.now() + 7 * 24 * 60 * 60 * 1000;
+                const currentSlug = user?.role?.slug_role?.toLowerCase() || "";
+                let managementFlag = isManagement;
+
+                if (managementFlag && (currentSlug === "karyawan" || currentSlug === "employee")) {
+                    managementFlag = false;
+                }
 
                 if (token) {
                     localStorage.setItem("token", token);
@@ -29,6 +38,7 @@ export const useAuthStore = create<AuthState>()(
                     localStorage.setItem("user_name", user?.name || "");
                     localStorage.setItem("user_role", user?.role?.slug_role || "");
                     localStorage.setItem("role", user?.role?.slug_role || "");
+                    localStorage.setItem("is_management", String(managementFlag));
                     localStorage.setItem("token_expires", expiresAt.toString());
                 }
 
@@ -36,7 +46,13 @@ export const useAuthStore = create<AuthState>()(
                     user,
                     token,
                     isAuthenticated: true,
+                    isManagement: managementFlag,
                 });
+            },
+
+            setManagement: (isManagement) => {
+                localStorage.setItem("is_management", String(isManagement));
+                set({ isManagement });
             },
 
             logout: () => {
@@ -46,6 +62,7 @@ export const useAuthStore = create<AuthState>()(
                 localStorage.removeItem("user_name");
                 localStorage.removeItem("user_role");
                 localStorage.removeItem("role");
+                localStorage.removeItem("is_management");
                 localStorage.removeItem("token_expires");
 
                 set({

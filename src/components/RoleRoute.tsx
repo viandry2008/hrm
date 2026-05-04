@@ -7,9 +7,11 @@ interface Props {
 
 export const RoleRoute = ({ allowedRoles }: Props) => {
   const user = useAuthStore((s) => s.user);
+  const isManagement = useAuthStore((s) => s.isManagement);
   const userRole = user?.role?.slug_role || "";
+  const effectiveRole = isManagement ? userRole : "KARYAWAN";
 
-  if (!allowedRoles.includes(userRole)) {
+  if (!allowedRoles.includes(effectiveRole)) {
     return <Navigate to="/unauthorized" />;
   }
 

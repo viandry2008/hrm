@@ -147,10 +147,13 @@ export const Sidebar = ({ onLogout, currentPath, isOpen, onToggle }: SidebarProp
   const [openDropdown, setOpenDropdown] = useState<string | null>(null);
   const navigate = useNavigate();
   const user = useAuthStore((s) => s.user);
+  const isManagement = useAuthStore((s) => s.isManagement);
   const userRole = user?.role?.slug_role || "";
 
+  const effectiveRole = isManagement ? userRole : "KARYAWAN";
+
   const filteredMenuItems = menuItems.filter(item =>
-    item.roles.includes(userRole)
+    item.roles.includes(effectiveRole)
   );
 
   useEffect(() => {

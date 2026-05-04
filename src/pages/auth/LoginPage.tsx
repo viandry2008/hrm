@@ -35,7 +35,7 @@ export const LoginPage = () => {
     }
 
     try {
-      await loginMutation.mutateAsync({ username, password });
+      await loginMutation.mutateAsync({ username, password, is_management: role === "management" });
 
       await Swal.fire({
         title: '<span style="color: white">Berhasil Masuk!</span>',

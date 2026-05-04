@@ -10,8 +10,8 @@ export const useLogin = () => {
 
     return useMutation({
         mutationFn: (payload: LoginRequest) => loginApi(payload),
-        onSuccess: async (data) => {
-            setAuth(data);
+        onSuccess: async (data, variables) => {
+            setAuth(data, variables.is_management);
         },
         onError: (err: any) => {
             Swal.fire("Gagal", err.response?.data?.message || "Login gagal", "error");
