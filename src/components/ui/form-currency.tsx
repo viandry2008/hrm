@@ -9,6 +9,8 @@ interface FormCurrencyProps {
   value: number | string;
   onChange: (value: number) => void;
   className?: string;
+  id?: string;
+  error?: string;
 }
 
 const formatRupiah = (value: any) => {
@@ -32,6 +34,8 @@ export const FormCurrency: React.FC<FormCurrencyProps> = ({
   value,
   onChange,
   className = "",
+  id,
+  error,
 }) => {
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
@@ -44,13 +48,15 @@ export const FormCurrency: React.FC<FormCurrencyProps> = ({
           Rp
         </span>
         <Input
+          id={id}
           type="text"
           placeholder={placeholder}
           value={formatRupiah(value)}
           onChange={(e) => onChange(parseNumber(e.target.value))}
-          className="h-[42px] bg-white text-sm pl-10"
+          className={`h-[42px] bg-white text-sm pl-10 ${error ? "border-red-500" : ""}`}
         />
       </div>
+      {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );
 };

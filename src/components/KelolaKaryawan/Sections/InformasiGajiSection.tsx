@@ -6,9 +6,10 @@ import { FormSection } from "@/components/ui/form-section";
 interface InformasiGajiSectionProps {
   formData: Record<string, any>;
   updateForm: (key: string, value: any) => void;
+  errors?: Record<string, string>;
 }
 
-const InformasiGajiSection = ({ formData, updateForm }: InformasiGajiSectionProps) => {
+const InformasiGajiSection = ({ formData, updateForm, errors }: InformasiGajiSectionProps) => {
   return (
     <FormSection
       title="Informasi Gaji"
@@ -19,6 +20,8 @@ const InformasiGajiSection = ({ formData, updateForm }: InformasiGajiSectionProp
         required
         placeholder="Masukkan gaji pokok"
         value={formData.gaji_pokok || 0}
+        id="field-gaji_pokok"
+        error={errors?.gaji_pokok}
         onChange={(value) => updateForm("gaji_pokok", value)}
       />
 

@@ -7,9 +7,10 @@ import { FormSection } from "@/components/ui/form-section";
 interface DokumenSectionProps {
   formData: Record<string, any>;
   updateForm: (key: string, value: any) => void;
+  errors?: Record<string, string>;
 }
 
-const DokumenSection = ({ formData, updateForm }: DokumenSectionProps) => {
+const DokumenSection = ({ formData, updateForm, errors }: DokumenSectionProps) => {
   const formatNPWP = (digits: string) => {
     if (!digits) return "";
     let formatted = "";

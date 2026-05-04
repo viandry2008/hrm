@@ -9,6 +9,8 @@ interface FormFileProps {
   value: File | null;
   onChange: (file: File | null) => void;
   className?: string;
+  id?: string;
+  error?: string;
 }
 
 export const FormFile: React.FC<FormFileProps> = ({
@@ -18,11 +20,13 @@ export const FormFile: React.FC<FormFileProps> = ({
   value,
   onChange,
   className = "",
+  id,
+  error,
 }) => {
-  const inputId = `upload-${label.toLowerCase().replace(/\s+/g, '-')}`;
+  const inputId = id || `upload-${label.toLowerCase().replace(/\s+/g, '-')}`;
 
   return (
-    <div className={`flex items-center gap-4 ${className}`}>
+    <div id={inputId} className={`flex items-center gap-4 ${className}`}>
       {/* PREVIEW */}
       <div className="w-20 h-20 rounded-full bg-gray-100 border border-gray-300 flex items-center justify-center overflow-hidden shadow-sm">
         {value ? (
@@ -43,23 +47,24 @@ export const FormFile: React.FC<FormFileProps> = ({
           {required && <span className="text-red-500 ml-1">*</span>}
         </Label>
         <div className="flex items-center gap-0">
-          <input
-            type="file"
-            onChange={(e) => onChange(e.target.files?.[0] || null)}
-            accept={accept}
-            className="hidden"
-            id={inputId}
-          />
+            <input
+              type="file"
+              onChange={(e) => onChange(e.target.files?.[0] || null)}
+              accept={accept}
+              className="hidden"
+              id={`${inputId}-input`}
+            />
           <label
-            htmlFor={inputId}
-            className="border border-gray-300 p-2 rounded-l-md bg-gray-100 text-sm text-gray-700 cursor-pointer whitespace-nowrap hover:bg-gray-200 transition-colors"
+              htmlFor={`${inputId}-input`}
+            className={`border p-2 rounded-l-md bg-gray-100 text-sm text-gray-700 cursor-pointer whitespace-nowrap hover:bg-gray-200 transition-colors ${error ? "border-red-500" : "border-gray-300"}`}
           >
             Pilih File
           </label>
-          <div className="border border-gray-300 p-2 rounded-r-md w-full text-sm text-gray-400 truncate bg-white">
+          <div className={`border p-2 rounded-r-md w-full text-sm truncate bg-white ${error ? "border-red-500" : "border-gray-300"}`}>
             {value ? value.name : "Tidak ada file yang dipilih"}
           </div>
         </div>
+        {error && <p className="text-red-500 text-sm mt-1">{error}</p>}
       </div>
     </div>
   );

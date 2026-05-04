@@ -8,9 +8,10 @@ import { useGetRoles } from "@/api/role/role.query";
 interface AkunSectionProps {
     formData: Record<string, any>;
     updateForm: (key: string, value: any) => void;
+    errors?: Record<string, string>;
 }
 
-const AkunSection = ({ formData, updateForm }: AkunSectionProps) => {
+const AkunSection = ({ formData, updateForm, errors }: AkunSectionProps) => {
     const { data: roleData, isLoading: isLoadingRoles } = useGetRoles({
         search: "",
         page: 1,
@@ -33,6 +34,8 @@ const AkunSection = ({ formData, updateForm }: AkunSectionProps) => {
                 required
                 placeholder="Masukkan username"
                 value={formData.username || ""}
+                id="field-username"
+                error={errors?.username}
                 onChange={(value) => updateForm("username", value)}
             />
 
@@ -42,6 +45,8 @@ const AkunSection = ({ formData, updateForm }: AkunSectionProps) => {
                 type="email"
                 placeholder="Masukkan email"
                 value={formData.email || ""}
+                id="field-email"
+                error={errors?.email}
                 onChange={(value) => updateForm("email", value)}
             />
 
@@ -51,6 +56,8 @@ const AkunSection = ({ formData, updateForm }: AkunSectionProps) => {
                 type="password"
                 placeholder="••••"
                 value={formData.password || ""}
+                id="field-password"
+                error={errors?.password}
                 onChange={(value) => updateForm("password", value)}
             />
 
@@ -59,6 +66,8 @@ const AkunSection = ({ formData, updateForm }: AkunSectionProps) => {
                 required
                 placeholder="-- Pilih Role --"
                 value={formData.role || ""}
+                id="field-role"
+                error={errors?.role}
                 onValueChange={(value) => updateForm("role", value)}
                 loading={isLoadingRoles}
                 emptyMessage="Tidak ada data role"

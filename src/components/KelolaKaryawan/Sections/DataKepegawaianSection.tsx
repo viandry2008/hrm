@@ -13,9 +13,10 @@ import { useGetMaritals } from "@/api/marital/marital.query";
 interface DataKepegawaianSectionProps {
   updateForm: (key: string, value: any) => void;
   formData: Record<string, any>;
+  errors?: Record<string, string>;
 }
 
-const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSectionProps) => {
+const DataKepegawaianSection = ({ updateForm, formData, errors }: DataKepegawaianSectionProps) => {
   const { data: positionData, isLoading: isLoadingPositions } = useGetPositions({
     search: "",
     page: 1,
@@ -107,6 +108,8 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
         required
         placeholder="ID otomatis"
         value={formData.idKaryawan || ""}
+        id="field-idKaryawan"
+        error={errors?.idKaryawan}
         onChange={(value) => updateForm("idKaryawan", value)}
       />
 
@@ -115,6 +118,8 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
         required
         placeholder="-- Pilih Divisi --"
         value={formData.divisi || ""}
+        id="field-divisi"
+        error={errors?.divisi}
         onValueChange={(value) => updateForm("divisi", value)}
         loading={isLoadingDepartments}
         emptyMessage="Tidak ada data divisi"
@@ -126,6 +131,8 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
         required
         placeholder="-- Pilih Jabatan --"
         value={formData.jabatan || ""}
+        id="field-jabatan"
+        error={errors?.jabatan}
         onValueChange={(value) => updateForm("jabatan", value)}
         loading={isLoadingPositions}
         emptyMessage="Tidak ada data jabatan"
@@ -137,6 +144,8 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
         required
         placeholder="-- Pilih Bagian --"
         value={formData.bagian || ""}
+        id="field-bagian"
+        error={errors?.bagian}
         onValueChange={(value) => updateForm("bagian", value)}
         loading={isLoadingSections}
         emptyMessage="Tidak ada data bagian"
@@ -148,6 +157,8 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
         required
         placeholder="-- Pilih Lokasi --"
         value={formData.lokasi || ""}
+        id="field-lokasi"
+        error={errors?.lokasi}
         onValueChange={(value) => updateForm("lokasi", value)}
         options={locationOptions}
       />
@@ -157,6 +168,8 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
         required
         type="date"
         value={formData.tanggalBergabung || ""}
+        id="field-tanggalBergabung"
+        error={errors?.tanggalBergabung}
         onChange={(value) => updateForm("tanggalBergabung", value)}
       />
 
@@ -165,6 +178,8 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
         required
         type="date"
         value={formData.tanggalKontrak || ""}
+        id="field-tanggalKontrak"
+        error={errors?.tanggalKontrak}
         onChange={(value) => updateForm("tanggalKontrak", value)}
       />
 
@@ -173,6 +188,8 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
         required
         type="date"
         value={formData.selesaiKontrak || ""}
+        id="field-selesaiKontrak"
+        error={errors?.selesaiKontrak}
         onChange={(value) => updateForm("selesaiKontrak", value)}
       />
 
@@ -189,6 +206,8 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
         required
         placeholder="-- Pilih Kategori --"
         value={formData.kategori || ""}
+        id="field-kategori"
+        error={errors?.kategori}
         onValueChange={(value) => updateForm("kategori", value)}
         loading={isLoadingCategories}
         emptyMessage="Tidak ada data kategori"
@@ -200,6 +219,8 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
         required
         placeholder="-- Pilih Status Marital --"
         value={formData.marital || ""}
+        id="field-marital"
+        error={errors?.marital}
         onValueChange={(value) => updateForm("marital", value)}
         loading={isLoadingMaritals}
         emptyMessage="Tidak ada data marital"
@@ -225,6 +246,8 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
         required
         placeholder="-- Pilih Status Akun --"
         value={formData.akun || ""}
+        id="field-akun"
+        error={errors?.akun}
         onValueChange={(value) => updateForm("akun", value)}
         options={accountStatusOptions}
       />
@@ -234,6 +257,8 @@ const DataKepegawaianSection = ({ updateForm, formData }: DataKepegawaianSection
         required
         placeholder="-- Pilih Status Kerja --"
         value={formData.statusKerja || ""}
+        id="field-statusKerja"
+        error={errors?.statusKerja}
         onValueChange={(value) => updateForm("statusKerja", value)}
         options={workStatusOptions}
       />

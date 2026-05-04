@@ -10,9 +10,10 @@ import { useGetReligions } from "@/api/religion/religion.query";
 interface DataPribadiSectionProps {
   formData: Record<string, any>;
   updateForm: (key: string, value: any) => void;
+  errors?: Record<string, string>;
 }
 
-const DataPribadiSection = ({ formData, updateForm }: DataPribadiSectionProps) => {
+const DataPribadiSection = ({ formData, updateForm, errors }: DataPribadiSectionProps) => {
   const { data: religionData, isLoading: isLoadingReligions } = useGetReligions({
     search: "",
     page: 1,
@@ -52,6 +53,8 @@ const DataPribadiSection = ({ formData, updateForm }: DataPribadiSectionProps) =
         required
         accept="image/*"
         value={formData.foto || null}
+        id="field-foto"
+        error={errors?.foto}
         onChange={(file) => updateForm("foto", file)}
       />
 
@@ -60,6 +63,8 @@ const DataPribadiSection = ({ formData, updateForm }: DataPribadiSectionProps) =
         required
         placeholder="Nama Karyawan"
         value={formData.nama || ""}
+        id="field-nama"
+        error={errors?.nama}
         onChange={(value) => updateForm("nama", value)}
       />
 
@@ -68,6 +73,8 @@ const DataPribadiSection = ({ formData, updateForm }: DataPribadiSectionProps) =
         required
         placeholder="08xxx"
         value={formData.telepon || ""}
+        id="field-telepon"
+        error={errors?.telepon}
         onChange={(value) => updateForm("telepon", value)}
       />
 
@@ -76,6 +83,8 @@ const DataPribadiSection = ({ formData, updateForm }: DataPribadiSectionProps) =
         required
         placeholder="Tempat Lahir"
         value={formData.tempatLahir || ""}
+        id="field-tempatLahir"
+        error={errors?.tempatLahir}
         onChange={(value) => updateForm("tempatLahir", value)}
       />
 
@@ -84,6 +93,8 @@ const DataPribadiSection = ({ formData, updateForm }: DataPribadiSectionProps) =
         required
         type="date"
         value={formData.tanggallahir || ""}
+        id="field-tanggallahir"
+        error={errors?.tanggallahir}
         onChange={(value) => updateForm("tanggallahir", value)}
       />
 
@@ -92,6 +103,8 @@ const DataPribadiSection = ({ formData, updateForm }: DataPribadiSectionProps) =
         required
         placeholder="-- Pilih Jenis Kelamin --"
         value={formData.jeniskelamin || ""}
+        id="field-jeniskelamin"
+        error={errors?.jeniskelamin}
         onValueChange={(value) => updateForm("jeniskelamin", value)}
         options={genderOptions}
       />
@@ -101,6 +114,8 @@ const DataPribadiSection = ({ formData, updateForm }: DataPribadiSectionProps) =
         required
         placeholder="Alamat lengkap sesuai KTP"
         value={formData.alamatKTP || ""}
+        id="field-alamatKTP"
+        error={errors?.alamatKTP}
         onChange={(value) => updateForm("alamatKTP", value)}
       />
 
@@ -109,6 +124,8 @@ const DataPribadiSection = ({ formData, updateForm }: DataPribadiSectionProps) =
         required
         placeholder="Alamat domisili saat ini"
         value={formData.alamatDomisili || ""}
+        id="field-alamatDomisili"
+        error={errors?.alamatDomisili}
         onChange={(value) => updateForm("alamatDomisili", value)}
       />
 
@@ -117,6 +134,8 @@ const DataPribadiSection = ({ formData, updateForm }: DataPribadiSectionProps) =
         required
         placeholder="-- Pilih Pendidikan --"
         value={formData.pendidikan || ""}
+        id="field-pendidikan"
+        error={errors?.pendidikan}
         onValueChange={(value) => updateForm("pendidikan", value)}
         options={educationOptions}
       />
@@ -126,6 +145,8 @@ const DataPribadiSection = ({ formData, updateForm }: DataPribadiSectionProps) =
         required
         placeholder="-- Pilih Agama --"
         value={formData.agama || ""}
+        id="field-agama"
+        error={errors?.agama}
         onValueChange={(value) => updateForm("agama", value)}
         loading={isLoadingReligions}
         emptyMessage="Tidak ada data agama"

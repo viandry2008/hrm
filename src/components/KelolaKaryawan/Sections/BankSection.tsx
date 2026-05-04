@@ -8,9 +8,10 @@ import { useGetBanks } from "@/api/bank/bank.query";
 interface BankSectionProps {
   formData: Record<string, any>;
   updateForm: (key: string, value: any) => void;
+  errors?: Record<string, string>;
 }
 
-const BankSection = ({ formData, updateForm }: BankSectionProps) => {
+const BankSection = ({ formData, updateForm, errors }: BankSectionProps) => {
   const [bankSearch, setBankSearch] = useState("");
 
   const { data: bankData, isLoading: isLoadingBanks } = useGetBanks({

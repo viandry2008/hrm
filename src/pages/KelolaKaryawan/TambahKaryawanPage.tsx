@@ -9,6 +9,7 @@ import BankSection from "@/components/KelolaKaryawan/Sections/BankSection";
 import KontakSection from "@/components/KelolaKaryawan/Sections/KontakSection";
 import KendaraanSection from "@/components/KelolaKaryawan/Sections/KendaraanSection";
 import InformasiGajiSection from "@/components/KelolaKaryawan/Sections/InformasiGajiSection";
+import Swal from "sweetalert2";
 
 interface FormData {
     // Akun fields
@@ -30,7 +31,7 @@ interface FormData {
     agama?: string;
     namaSuamiIstri?: string;
     namaAnak?: string;
-    jumlahAnak?: string;
+    // jumlahAnak?: string;
     namaBapak?: string;
     namaIbu?: string;
 
@@ -97,6 +98,7 @@ interface FormData {
 
 const TambahKaryawanPage = () => {
     const [formData, setFormData] = useState<FormData>({});
+    const [errors, setErrors] = useState<Record<string, string>>({});
 
     const createEmployeeMutation = useCreateEmployee(() => {
         setFormData({});
@@ -187,6 +189,56 @@ const TambahKaryawanPage = () => {
     };
 
     const handleSubmit = () => {
+        const newErrors: Record<string, string> = {};
+
+        // Required fields mapping to error messages
+        const requiredFields = {
+            username: "Username wajib diisi",
+            email: "Email wajib diisi",
+            password: "Password wajib diisi",
+            role: "Role wajib diisi",
+            foto: "File Foto Profile wajib diisi",
+            nama: "Nama wajib diisi",
+            telepon: "Nomor Telepon wajib diisi",
+            tempatLahir: "Tempat Lahir wajib diisi",
+            tanggallahir: "Tanggal Lahir wajib diisi",
+            jeniskelamin: "Jenis Kelamin wajib diisi",
+            alamatKTP: "Alamat KTP wajib diisi",
+            alamatDomisili: "Alamat Domisili wajib diisi",
+            pendidikan: "Pendidikan wajib diisi",
+            agama: "Agama wajib diisi",
+            idKaryawan: "ID Karyawan wajib diisi",
+            divisi: "Divisi wajib diisi",
+            jabatan: "Jabatan wajib diisi",
+            bagian: "Bagian wajib diisi",
+            lokasi: "Lokasi Kerja wajib diisi",
+            tanggalBergabung: "Tanggal Bergabung wajib diisi",
+            tanggalKontrak: "Tanggal Kontrak wajib diisi",
+            selesaiKontrak: "Selesai Kontrak wajib diisi",
+            kategori: "Kategori Karyawan wajib diisi",
+            marital: "Status Marital wajib diisi",
+            akun: "Status Akun wajib diisi",
+            statusKerja: "Status Kerja wajib diisi",
+            gaji_pokok: "Gaji Pokok wajib diisi",
+        };
+
+        Object.entries(requiredFields).forEach(([key, message]) => {
+            const value = formData[key as keyof FormData];
+            if (value === undefined || value === null || value === "" || (typeof value === "number" && value === 0)) {
+                newErrors[key] = message;
+            }
+        });
+
+        setErrors(newErrors);
+        if (Object.keys(newErrors).length > 0) {
+            const firstErrorKey = Object.keys(newErrors)[0];
+            const errorElement = document.getElementById(`field-${firstErrorKey}`);
+            if (errorElement) {
+                errorElement.scrollIntoView({ behavior: "smooth", block: "center" });
+            }
+            return;
+        }
+
         const payload = buildFormDataPayload(formData);
         createEmployeeMutation.mutate(payload);
     };
@@ -196,18 +248,18 @@ const TambahKaryawanPage = () => {
             <h1 className="text-2xl font-bold mb-6">Tambah Karyawan</h1>
 
             <div className="space-y-6">
-                <AkunSection formData={formData} updateForm={updateForm} />
-                <DataPribadiSection formData={formData} updateForm={updateForm} />
-                <DataKepegawaianSection formData={formData} updateForm={updateForm} />
-                <InformasiGajiSection formData={formData} updateForm={updateForm} />
-                <DokumenSection formData={formData} updateForm={updateForm} />
-                <BankSection formData={formData} updateForm={updateForm} />
-                <KontakSection formData={formData} updateForm={updateForm} />
-                <KendaraanSection formData={formData} updateForm={updateForm} />
+                <AkunSection formData={formData} updateForm={updateForm} errors={errors} />
+                <DataPribadiSection formData={formData} updateForm={updateForm} errors={errors} />
+                <DataKepegawaianSection formData={formData} updateForm={updateForm} errors={errors} />
+                <InformasiGajiSection formData={formData} updateForm={updateForm} errors={errors} />
+                <DokumenSection formData={formData} updateForm={updateForm} errors={errors} />
+                <BankSection formData={formData} updateForm={updateForm} errors={errors} />
+                <KontakSection formData={formData} updateForm={updateForm} errors={errors} />
+                <KendaraanSection formData={formData} updateForm={updateForm} errors={errors} />
             </div>
 
             <div className="mt-8 flex justify-end">
-                <Button onClick={handleSubmit} className="bg-blue-600 text-white hover:bg-blue-700">
+                <Button onClick={handleSubmit} className="bg-[#1E4F85] text-white">
                     Simpan
                 </Button>
             </div>

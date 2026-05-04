@@ -12,6 +12,8 @@ interface FormSelectProps {
   emptyMessage?: string;
   options: Array<{ value: string; label: string; disabled?: boolean }>;
   className?: string;
+  id?: string;
+  error?: string;
 }
 
 export const FormSelect: React.FC<FormSelectProps> = ({
@@ -24,6 +26,8 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   emptyMessage = "Tidak ada data tersedia",
   options,
   className = "",
+  id,
+  error,
 }) => {
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
@@ -35,7 +39,7 @@ export const FormSelect: React.FC<FormSelectProps> = ({
         onValueChange={onValueChange}
         value={value}
       >
-        <SelectTrigger className="h-[42px] bg-white text-sm">
+        <SelectTrigger id={id} className={`h-[42px] bg-white text-sm ${error ? "border-red-500" : ""}`}>
           <SelectValue placeholder={loading ? "Loading..." : placeholder} />
         </SelectTrigger>
         <SelectContent className="text-sm">
@@ -56,6 +60,7 @@ export const FormSelect: React.FC<FormSelectProps> = ({
           )}
         </SelectContent>
       </Select>
+      {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );
 };

@@ -7,9 +7,10 @@ import { FormSection } from "@/components/ui/form-section";
 interface KontakSectionProps {
   formData: Record<string, any>;
   updateForm: (key: string, value: any) => void;
+  errors?: Record<string, string>;
 }
 
-const KontakSection = ({ formData, updateForm }: KontakSectionProps) => {
+const KontakSection = ({ formData, updateForm, errors }: KontakSectionProps) => {
   const relationshipOptions = [
     { value: "Orang Tua (Ayah)", label: "Orang Tua (Ayah)" },
     { value: "Orang Tua (Ibu)", label: "Orang Tua (Ibu)" },

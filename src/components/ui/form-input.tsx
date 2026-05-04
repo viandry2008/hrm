@@ -10,6 +10,8 @@ interface FormInputProps {
   value: string;
   onChange: (value: string) => void;
   className?: string;
+  id?: string;
+  error?: string;
 }
 
 export const FormInput: React.FC<FormInputProps> = ({
@@ -20,6 +22,8 @@ export const FormInput: React.FC<FormInputProps> = ({
   value,
   onChange,
   className = "",
+  id,
+  error,
 }) => {
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
@@ -28,12 +32,14 @@ export const FormInput: React.FC<FormInputProps> = ({
         {required && <span className="text-red-500 ml-1">*</span>}
       </Label>
       <Input
+        id={id}
         type={type}
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="h-[42px] bg-white"
+        className={`h-[42px] bg-white ${error ? "border-red-500" : ""}`}
       />
+      {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>
   );
 };

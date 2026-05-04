@@ -7,9 +7,10 @@ import { FormSection } from "@/components/ui/form-section";
 interface KendaraanSectionProps {
   formData: Record<string, any>;
   updateForm: (key: string, value: any) => void;
+  errors?: Record<string, string>;
 }
 
-const KendaraanSection = ({ formData, updateForm }: KendaraanSectionProps) => {
+const KendaraanSection = ({ formData, updateForm, errors }: KendaraanSectionProps) => {
   return (
     <FormSection
       title="Identitas Kendaraan"
