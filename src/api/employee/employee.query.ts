@@ -1,6 +1,6 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
 import Swal from "sweetalert2";
-import { createEmployeeApi, deleteEmployeeApi, deleteMultipleEmployeeApi, getEmployeesApi, getSummaryEmployeeApi, updateMultipleContractEmployeeApi, updateMultipleStatusEmployeeApi } from "./employee.api";
+import { createEmployeeApi, deleteEmployeeApi, deleteMultipleEmployeeApi, getEmployeeApi, getEmployeesApi, getSummaryEmployeeApi, updateMultipleContractEmployeeApi, updateMultipleStatusEmployeeApi } from "./employee.api";
 import { EmployeeMultipleChangeRequest, EmployeeMultipleContractRequest } from "./employee.types";
 import { EmployeePostRequest } from "./employee.types";
 
@@ -13,6 +13,14 @@ export const useGetEmployees = (params: {
     return useQuery({
         queryKey: ["Employees", params],
         queryFn: () => getEmployeesApi(params),
+    });
+};
+
+export const useGetEmployee = (id?: number | string) => {
+    return useQuery({
+        queryKey: ["Employee", id],
+        queryFn: () => getEmployeeApi(id as number | string),
+        enabled: Boolean(id),
     });
 };
 
@@ -155,4 +163,3 @@ export const useUpdateMultipleContractEmployee = (onSuccessReset?: () => void) =
         },
     });
 };
-

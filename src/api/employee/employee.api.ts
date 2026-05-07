@@ -1,11 +1,18 @@
 import apiClient from "../client";
 import { ENDPOINTS } from "../endpoints";
-import { EmployeeMessageResponse, EmployeeListResponse, EmployeeMultipleDeleteRequest, EmployeeSummaryResponse, EmployeeMultipleChangeRequest, EmployeeMultipleContractRequest, EmployeePostResponse } from "./employee.types";
+import { EmployeeMessageResponse, EmployeeListResponse, EmployeeMultipleDeleteRequest, EmployeeSummaryResponse, EmployeeMultipleChangeRequest, EmployeeMultipleContractRequest, EmployeePostResponse, EmployeeDetailResponse } from "./employee.types";
 
 export const getEmployeesApi = async (
     params: { search?: string; limit?: number; page?: number; status?: string }
 ): Promise<EmployeeListResponse> => {
     const { data } = await apiClient.get(ENDPOINTS.EMPLOYEES, { params });
+    return data;
+};
+
+export const getEmployeeApi = async (
+    id: number | string
+): Promise<EmployeeDetailResponse> => {
+    const { data } = await apiClient.get(`${ENDPOINTS.EMPLOYEES}/${id}`);
     return data;
 };
 
@@ -68,4 +75,3 @@ export const updateMultipleContractEmployeeApi = async (
     const { data } = await apiClient.post(`${ENDPOINTS.MULTIPLE_CONTRACT_EMPLOYEE}`, payload);
     return data;
 };
-

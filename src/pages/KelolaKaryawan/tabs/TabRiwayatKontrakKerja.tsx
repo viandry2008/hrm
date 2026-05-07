@@ -11,41 +11,44 @@ import { Badge } from '@/components/ui/badge';
 import { Check, X } from 'lucide-react';
 
 const TabRiwayatKontrakKerja = ({ data }: any) => {
-  // Dummy data riwayat kontrak
-  const kontrakHistory = [
-    {
-      no: 1,
-      tanggalKontrak: '15/03/2021',
-      selesaiKontrak: '15/03/2022',
-      durasi: '1 Tahun',
-      terakhirDiperbaharui: '15/03/2021',
-      status: 'Selesai',
-    },
-    {
-      no: 2,
-      tanggalKontrak: '15/03/2022',
-      selesaiKontrak: '15/03/2023',
-      durasi: '1 Tahun',
-      terakhirDiperbaharui: '10/03/2022',
-      status: 'Selesai',
-    },
-    {
-      no: 3,
-      tanggalKontrak: '15/03/2023',
-      selesaiKontrak: '15/03/2024',
-      durasi: '1 Tahun',
-      terakhirDiperbaharui: '08/03/2023',
-      status: 'Selesai',
-    },
-    {
-      no: 4,
-      tanggalKontrak: '15/03/2024',
-      selesaiKontrak: '15/03/2027',
-      durasi: '3 Tahun',
-      terakhirDiperbaharui: '10/03/2024',
-      status: 'Aktif',
-    },
-  ];
+  const formatDate = (date?: string | null) => {
+    if (!date) return '-';
+
+    const [year, month, day] = date.split('-');
+
+    if (!year || !month || !day) return date;
+
+    return `${day}/${month}/${year}`;
+  };
+
+  const getDuration = (startDate?: string | null, endDate?: string | null) => {
+    if (!startDate || !endDate) return '-';
+
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const diffDays = Math.max(0, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
+
+    if (diffDays >= 365) return `${Math.round(diffDays / 365)} Tahun`;
+    if (diffDays >= 30) return `${Math.round(diffDays / 30)} Bulan`;
+
+    return `${diffDays} Hari`;
+  };
+
+  const getStatus = (endDate?: string | null) => {
+    if (!endDate) return '-';
+
+    return new Date(endDate) >= new Date() ? 'Aktif' : 'Selesai';
+  };
+
+  const kontrakHistory = (data?.riwayatKontrak ?? []).map((kontrak: any, index: number) => ({
+    no: index + 1,
+    tanggalKontrak: formatDate(kontrak.start_date),
+    selesaiKontrak: formatDate(kontrak.end_date),
+    durasi: getDuration(kontrak.start_date, kontrak.end_date),
+    terakhirDiperbaharui: formatDate(kontrak.updated_at?.split('T')[0]),
+    status: getStatus(kontrak.end_date),
+  }));
+  const activeContractEndDate = kontrakHistory.find(k => k.status === 'Aktif')?.selesaiKontrak;
 
   return (
     <Card className="bg-white">
@@ -75,7 +78,15 @@ const TabRiwayatKontrakKerja = ({ data }: any) => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {kontrakHistory.map((kontrak, index) => (
+              {kontrakHistory.length === 0 && (
+                <TableRow>
+                  <TableCell colSpan={6} className="text-center py-4 text-gray-500">
+                    Tidak ada data kontrak
+                  </TableCell>
+                </TableRow>
+              )}
+
+              {kontrakHistory.map((kontrak) => (
                 <TableRow
                   key={kontrak.no}
                   className="hover:bg-gray-50"
@@ -111,7 +122,8 @@ const TabRiwayatKontrakKerja = ({ data }: any) => {
         </div>
 
         {/* Summary Info */}
-        <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
+        {kontrakHistory.length > 0 && (
+          <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-md">
           <div className="flex items-start gap-3">
             <div className="w-2 h-2 mt-2 rounded-full bg-[#1E40AF] shrink-0" />
             <div>
@@ -119,11 +131,14 @@ const TabRiwayatKontrakKerja = ({ data }: any) => {
                 Total Riwayat Kontrak: {kontrakHistory.length} kali
               </p>
               <p className="text-sm text-blue-700 mt-1">
-                Kontrak aktif saat ini berlaku hingga {kontrakHistory.find(k => k.status === 'Aktif')?.selesaiKontrak}
+                {activeContractEndDate
+                  ? `Kontrak aktif saat ini berlaku hingga ${activeContractEndDate}`
+                  : 'Tidak ada kontrak aktif saat ini'}
               </p>
             </div>
           </div>
-        </div>
+          </div>
+        )}
       </CardContent>
     </Card>
   );

@@ -104,6 +104,13 @@ export interface EmployeeListResponse {
 
 }
 
+export interface EmployeeDetailResponse {
+    success: boolean;
+    code: number;
+    message: string;
+    data: any;
+}
+
 
 //========= create & update
 export interface EmployeePostRequest {

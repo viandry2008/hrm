@@ -305,8 +305,7 @@ export const DataKaryawanPage = () => {
   };
 
   const handleViewDetail = (id: number) => {
-    // navigate(`/detail-karyawan/${id}`);
-    navigate(`/detail-karyawan/K001`);
+    navigate(`/detail-karyawan/${id}`);
   };
 
   const openUploadModal = () => {
