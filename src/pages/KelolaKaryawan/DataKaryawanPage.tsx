@@ -508,7 +508,6 @@ export const DataKaryawanPage = () => {
                 <TableHead className="text-white border border-gray-200 whitespace-nowrap">Kategori</TableHead>
                 <TableHead className="text-white border border-gray-200 whitespace-nowrap">Tgl Kontrak</TableHead>
                 <TableHead className="text-white border border-gray-200 whitespace-nowrap">Selesai Kontrak</TableHead>
-                <TableHead className="text-white border border-gray-200 whitespace-nowrap">Status Kerja</TableHead>
                 <TableHead className="text-white border border-gray-200 whitespace-nowrap">Status Akun</TableHead>
                 <TableHead className="text-white border border-gray-200 whitespace-nowrap">Pengingat Kontrak</TableHead>
                 <TableHead className="text-white border border-gray-200 whitespace-nowrap">Aksi</TableHead>
@@ -559,10 +558,7 @@ export const DataKaryawanPage = () => {
                     {k.latest_contract ? formatTanggal(k.latest_contract.end_date) : "-"}
                   </TableCell>
                   <TableCell className="border border-gray-200">
-                    <StatusLabel status={k.employment_status} />
-                  </TableCell>
-                  <TableCell className="border border-gray-200">
-                    <StatusLabel status={k.employment_status} />
+                    <StatusLabel status={k.user.status} />
                   </TableCell>
                   <TableCell className="border border-gray-200">
                     {k.latest_contract ? <ReminderLabel text="Kontrak akan habis" endDate={k.latest_contract?.end_date} /> : "-"}

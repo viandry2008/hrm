@@ -89,13 +89,8 @@ const DataKepegawaianSection = ({ updateForm, formData, errors }: DataKepegawaia
   }));
 
   const accountStatusOptions = [
-    { value: "Aktif", label: "Aktif" },
-    { value: "Tidak Aktif", label: "Tidak Aktif" },
-  ];
-
-  const workStatusOptions = [
-    { value: "Aktif", label: "Aktif" },
-    { value: "Tidak Aktif", label: "Tidak Aktif" },
+    { value: "active", label: "Aktif" },
+    { value: "inactive", label: "Tidak Aktif" },
   ];
 
   return (
@@ -250,17 +245,6 @@ const DataKepegawaianSection = ({ updateForm, formData, errors }: DataKepegawaia
         error={errors?.akun}
         onValueChange={(value) => updateForm("akun", value)}
         options={accountStatusOptions}
-      />
-
-      <FormSelect
-        label="Status Kerja"
-        required
-        placeholder="-- Pilih Status Kerja --"
-        value={formData.statusKerja || ""}
-        id="field-statusKerja"
-        error={errors?.statusKerja}
-        onValueChange={(value) => updateForm("statusKerja", value)}
-        options={workStatusOptions}
       />
 
     </FormSection>

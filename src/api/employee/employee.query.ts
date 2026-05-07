@@ -67,7 +67,10 @@ export const useCreateEmployee = (onSuccessReset?: () => void) => {
         },
 
         onError: (err: any) => {
-            Swal.fire("Gagal", err.response?.data?.message || "Gagal menambahkan karyawan", "error");
+            console.error("Employee creation error:", err);
+            console.error("Error response:", err.response?.data);
+            const errorMessage = err.response?.data?.message || err.message || "Gagal menambahkan karyawan";
+            Swal.fire("Gagal", errorMessage, "error");
         },
     });
 };

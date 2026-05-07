@@ -28,7 +28,6 @@ const TabDataKepegawaian = ({ data }: any) => {
     referensi: '',
     noSIO: '',
     statusAkun: '',
-    statusKerja: '',
   });
   const [isEditing, setIsEditing] = useState(false);
   const [originalData, setOriginalData] = useState(formData);
@@ -54,7 +53,6 @@ const TabDataKepegawaian = ({ data }: any) => {
         referensi: data.referensi || '',
         noSIO: data.noSIO || '',
         statusAkun: data.statusAkun || '',
-        statusKerja: data.statusKerja || '',
       };
       setFormData(initialData);
       setOriginalData(initialData);
@@ -86,7 +84,7 @@ const TabDataKepegawaian = ({ data }: any) => {
     <Card className="bg-white">
       <CardContent className="p-6 bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
+
           {/* ID Karyawan */}
           <div className="space-y-2">
             <Label htmlFor="idKaryawan" className="text-sm font-medium">
@@ -228,7 +226,7 @@ const TabDataKepegawaian = ({ data }: any) => {
                 className="bg-white disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all pr-10 [&::-webkit-calendar-picker-indicator]:hidden"
               />
               {isEditing && (
-                <Calendar 
+                <Calendar
                   className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 cursor-pointer hover:text-gray-600"
                   onClick={() => openDatePicker(tanggalBergabungRef)}
                 />
@@ -252,7 +250,7 @@ const TabDataKepegawaian = ({ data }: any) => {
                 className="bg-white disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all pr-10 [&::-webkit-calendar-picker-indicator]:hidden"
               />
               {isEditing && (
-                <Calendar 
+                <Calendar
                   className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 cursor-pointer hover:text-gray-600"
                   onClick={() => openDatePicker(tanggalKontrakRef)}
                 />
@@ -276,7 +274,7 @@ const TabDataKepegawaian = ({ data }: any) => {
                 className="bg-white disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all pr-10 [&::-webkit-calendar-picker-indicator]:hidden"
               />
               {isEditing && (
-                <Calendar 
+                <Calendar
                   className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 cursor-pointer hover:text-gray-600"
                   onClick={() => openDatePicker(selesaiKontrakRef)}
                 />
@@ -338,7 +336,7 @@ const TabDataKepegawaian = ({ data }: any) => {
             )}
           </div>
 
-                    {/* Status Marital */}
+          {/* Status Marital */}
           <div className="space-y-2">
             <Label htmlFor="statusMarital" className="text-sm font-medium">
               Status Marital <span className="text-red-500">*</span>
@@ -422,33 +420,6 @@ const TabDataKepegawaian = ({ data }: any) => {
             ) : (
               <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
                 {formData.statusAkun || '-- Pilih Status Akun --'}
-              </div>
-            )}
-          </div>
-
-          {/* Status Kerja */}
-          <div className="space-y-2">
-            <Label htmlFor="statusKerja" className="text-sm font-medium">
-              Status Kerja <span className="text-red-500">*</span>
-            </Label>
-            {isEditing ? (
-              <Select
-                value={formData.statusKerja}
-                onValueChange={(value) => handleInputChange('statusKerja', value)}
-              >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="-- Pilih Status Kerja --" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Aktif">Aktif</SelectItem>
-                  <SelectItem value="Cuti">Cuti</SelectItem>
-                  <SelectItem value="Nonaktif">Nonaktif</SelectItem>
-                  <SelectItem value="Resign">Resign</SelectItem>
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {formData.statusKerja || '-- Pilih Status Kerja --'}
               </div>
             )}
           </div>

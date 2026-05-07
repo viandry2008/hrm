@@ -39,9 +39,12 @@ const DokumenSection = ({ formData, updateForm, errors }: DokumenSectionProps) =
 
       <FormInput
         label="Nomor KTP"
+        required
         placeholder="32xxxxxx"
         value={formData.nomorKTP || ""}
         onChange={(value) => updateForm("nomorKTP", value)}
+        id="field-nomorKTP"
+        error={errors?.nomorKTP}
       />
 
       <FormFileSimple

@@ -40,13 +40,17 @@ const BankSection = ({ formData, updateForm, errors }: BankSectionProps) => {
     >
       <FormInput
         label="Nama Pemilik Rekening"
+        required
         placeholder="Masukkan nama lengkap"
         value={formData.namaPemilik || ""}
         onChange={(value) => updateForm("namaPemilik", value)}
+        id="field-namaPemilik"
+        error={errors?.namaPemilik}
       />
 
       <FormInput
         label="Nomor Rekening"
+        required
         placeholder="1234-5678-9012-3456"
         value={formData.nomorRekening || ""}
         onChange={(value) => {
@@ -54,10 +58,13 @@ const BankSection = ({ formData, updateForm, errors }: BankSectionProps) => {
           const masked = maskRekening(raw);
           updateForm("nomorRekening", masked);
         }}
+        id="field-nomorRekening"
+        error={errors?.nomorRekening}
       />
 
       <FormCombobox
         label="Bank"
+        required
         placeholder="-- Pilih Bank --"
         value={formData?.bank || ""}
         onValueChange={(value) => {
@@ -69,7 +76,13 @@ const BankSection = ({ formData, updateForm, errors }: BankSectionProps) => {
         loading={isLoadingBanks}
         emptyMessage="Tidak ada data bank"
         options={bankOptions}
+        className="relative"
       />
+      {errors?.bank && (
+        <p className="text-sm text-red-600 mt-1" id="field-bank">
+          {errors.bank}
+        </p>
+      )}
     </FormSection>
   );
 };

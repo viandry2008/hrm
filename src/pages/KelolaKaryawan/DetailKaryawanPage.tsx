@@ -50,7 +50,6 @@ const mockData: any = {
     tanggalBergabung: '2021-03-15',
     tanggalKontrak: '2021-03-15',
     selesaiKontrak: '2024-03-15',
-    statusKerja: 'Aktif',
     pengingat: 'Kontrak akan habis dalam 90 hari',
     foto: 'https://randomuser.me/api/portraits/men/19.jpg',
     email: 'andi.prasetyo@example.com',

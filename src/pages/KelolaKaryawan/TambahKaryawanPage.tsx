@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { useCreateEmployee } from "@/api/employee/employee.query";
+import { useNavigate } from "react-router-dom";
 import AkunSection from "@/components/KelolaKaryawan/Sections/AkunSection";
 import DataPribadiSection from "@/components/KelolaKaryawan/Sections/DataPribadiSection";
 import DataKepegawaianSection from "@/components/KelolaKaryawan/Sections/DataKepegawaianSection";
@@ -9,7 +10,6 @@ import BankSection from "@/components/KelolaKaryawan/Sections/BankSection";
 import KontakSection from "@/components/KelolaKaryawan/Sections/KontakSection";
 import KendaraanSection from "@/components/KelolaKaryawan/Sections/KendaraanSection";
 import InformasiGajiSection from "@/components/KelolaKaryawan/Sections/InformasiGajiSection";
-import Swal from "sweetalert2";
 
 interface FormData {
     // Akun fields
@@ -50,7 +50,6 @@ interface FormData {
     referensi?: string;
     noSio?: string;
     akun?: string;
-    statusKerja?: string;
     punyaNPWP?: string;
 
     // Bank fields
@@ -99,13 +98,21 @@ interface FormData {
 const TambahKaryawanPage = () => {
     const [formData, setFormData] = useState<FormData>({});
     const [errors, setErrors] = useState<Record<string, string>>({});
+    const navigate = useNavigate();
 
     const createEmployeeMutation = useCreateEmployee(() => {
         setFormData({});
+        navigate('/kelola-karyawan');
     });
 
     const updateForm = (key: keyof FormData, value: any) => {
         setFormData((prev) => ({ ...prev, [key]: value }));
+        setErrors((prev) => {
+            if (!prev[key as string]) return prev;
+            const nextErrors = { ...prev };
+            delete nextErrors[key as string];
+            return nextErrors;
+        });
     };
 
     const buildFormDataPayload = (data: FormData) => {
@@ -143,6 +150,8 @@ const TambahKaryawanPage = () => {
         appendIfValue("position_id", parseIntString(data.jabatan));
         appendIfValue("company_id", 1);
         appendIfValue("grade_id", parseIntString(data.kategori));
+        appendIfValue("contract_category_id", parseIntString(data.kategori));
+        appendIfValue("status", data.akun);
         appendIfValue("bank_id", parseIntString(data.bank));
         appendIfValue("bank_name", data.bankName);
         appendIfValue("bank_account_number", cleanNumber(data.nomorRekening));
@@ -151,11 +160,14 @@ const TambahKaryawanPage = () => {
         appendIfValue("family_card_number", data.noKartuKeluarga);
         appendIfValue("address_ktp", data.alamatKTP);
         appendIfValue("address_domicile", data.alamatDomisili);
-        appendIfValue("employment_status", data.statusKerja ? statusMap[data.statusKerja] ?? data.statusKerja : undefined);
         appendIfValue("employee_type", "Permanent");
         appendIfValue("join_date", data.tanggalBergabung);
         appendIfValue("birth_date", data.tanggallahir);
         appendIfValue("birth_place", data.tempatLahir);
+        appendIfValue("contract_start_date", data.tanggalKontrak);
+        appendIfValue("contract_end_date", data.selesaiKontrak);
+        appendIfValue("start_date", data.tanggalKontrak);
+        appendIfValue("end_date", data.selesaiKontrak);
         appendIfValue("spouse_name", data.namaSuamiIstri);
         appendIfValue("children_names", data.namaAnak);
         appendIfValue("father_name", data.namaBapak);
@@ -189,6 +201,7 @@ const TambahKaryawanPage = () => {
     };
 
     const handleSubmit = () => {
+        console.log("Submitting form with data:", formData);
         const newErrors: Record<string, string> = {};
 
         // Required fields mapping to error messages
@@ -217,8 +230,11 @@ const TambahKaryawanPage = () => {
             selesaiKontrak: "Selesai Kontrak wajib diisi",
             kategori: "Kategori Karyawan wajib diisi",
             marital: "Status Marital wajib diisi",
+            nomorKTP: "Nomor KTP wajib diisi",
             akun: "Status Akun wajib diisi",
-            statusKerja: "Status Kerja wajib diisi",
+            namaPemilik: "Nama pemilik rekening wajib diisi",
+            nomorRekening: "Nomor rekening wajib diisi",
+            bank: "Bank wajib dipilih",
             gaji_pokok: "Gaji Pokok wajib diisi",
         };
 
@@ -229,8 +245,19 @@ const TambahKaryawanPage = () => {
             }
         });
 
+        if (!newErrors.email && formData.email) {
+            const emailValue = formData.email.trim();
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailValue)) {
+                newErrors.email = "Email tidak valid";
+            }
+        }
+
         setErrors(newErrors);
+        console.log("Validation errors:", newErrors);
+
         if (Object.keys(newErrors).length > 0) {
+            console.warn("Form has validation errors, stopping submission");
             const firstErrorKey = Object.keys(newErrors)[0];
             const errorElement = document.getElementById(`field-${firstErrorKey}`);
             if (errorElement) {
@@ -239,7 +266,9 @@ const TambahKaryawanPage = () => {
             return;
         }
 
+        console.log("Validation passed, building payload and submitting...");
         const payload = buildFormDataPayload(formData);
+        console.log("Payload created, submitting to API");
         createEmployeeMutation.mutate(payload);
     };
 
