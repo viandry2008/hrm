@@ -40,7 +40,7 @@ import { useNavigate } from 'react-router-dom';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { TableCard } from '@/components/ui/table-card';
-import { FormSelect } from '@/components/ui';
+import { FormInput, FormSelect } from '@/components/ui';
 import { useGetCategories } from '@/api/category/category.query';
 
 // Komponen Label Status
@@ -750,51 +750,35 @@ export const DataKaryawanPage = () => {
             <h2 className="text-xl font-bold mb-2">Perbarui Kontrak</h2>
 
             {/* CONTRACT TYPE */}
-            {/* <div className="space-y-2">
-              <label className="text-sm font-medium">Jenis Kontrak</label>
-              <Select value={contractType} onValueChange={setContractType}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Pilih jenis kontrak" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="PKWT">PKWT</SelectItem>
-                  <SelectItem value="PKWTT">PKWTT</SelectItem>
-                  <SelectItem value="Internship">Magang</SelectItem>
-                </SelectContent>
-              </Select>
-            </div> */}
             <FormSelect
               label="Kategori Karyawan"
               required
               placeholder="-- Pilih Kategori --"
               value={contractType}
               id="field-kategori"
-              // error={errors?.kategori}
               onValueChange={setContractType}
               loading={isLoadingCategories}
               emptyMessage="Tidak ada data kategori"
               options={categoryOptions}
             />
 
-            {/* START DATE */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Tanggal Mulai</label>
-              <Input
-                type="date"
-                value={contractStart}
-                onChange={(e) => setContractStart(e.target.value)}
-              />
-            </div>
+            <FormInput
+              label="Tanggal Mulai"
+              required
+              type="date"
+              value={contractStart}
+              id="field-tanggalKontrak"
+              onChange={setContractStart}
+            />
 
-            {/* END DATE */}
-            <div className="space-y-2">
-              <label className="text-sm font-medium">Tanggal Berakhir</label>
-              <Input
-                type="date"
-                value={contractEnd}
-                onChange={(e) => setContractEnd(e.target.value)}
-              />
-            </div>
+            <FormInput
+              label="Selesai Berakhir"
+              required
+              type="date"
+              value={contractEnd}
+              id="field-selesaiKontrak"
+              onChange={setContractEnd}
+            />
 
             {/* NOTES */}
             <div className="space-y-2">
