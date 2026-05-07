@@ -49,14 +49,14 @@ const StatusLabel = ({ status }: { status: string }) => {
 
   return isAktif ? (
     <Badge
-      className="bg-green-100 text-green-700 rounded-sm px-3 py-1 flex items-center gap-1.5 w-fit mx-auto font-medium hover:bg-green-100"
+      className="bg-green-100 text-green-700 rounded-sm px-3 py-1 flex items-center gap-1.5 w-fit mx-auto font-medium hover:bg-green-100 whitespace-nowrap"
     >
       <Check className="w-3.5 h-3.5" />
       Aktif
     </Badge>
   ) : (
     <Badge
-      className="bg-red-100 text-red-600 rounded-sm px-3 py-1 flex items-center gap-1.5 w-fit mx-auto font-medium hover:bg-red-100"
+      className="bg-red-100 text-red-600 rounded-sm px-3 py-1 flex items-center gap-1.5 w-fit mx-auto font-medium hover:bg-red-100 whitespace-nowrap"
     >
       <X className="w-3.5 h-3.5" />
       Tidak Aktif
