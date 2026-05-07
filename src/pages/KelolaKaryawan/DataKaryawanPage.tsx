@@ -40,6 +40,8 @@ import { useNavigate } from 'react-router-dom';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { TableCard } from '@/components/ui/table-card';
+import { FormSelect } from '@/components/ui';
+import { useGetCategories } from '@/api/category/category.query';
 
 // Komponen Label Status
 const StatusLabel = ({ status }: { status: string }) => {
@@ -68,7 +70,7 @@ const formatTanggal = (tanggal: string): string => {
 };
 
 const ReminderLabel = ({ text, endDate }: { text?: string; endDate?: string }) => {
-  const today = new Date("2026-04-20");
+  const today = new Date();
 
   let displayText = text;
   if (endDate && text?.toLowerCase().includes("kontrak")) {
@@ -282,7 +284,7 @@ export const DataKaryawanPage = () => {
     updateContractMutation.mutate(
       {
         ids: selectedIds,
-        contract_type: contractType,
+        contract_category_id: parseInt(contractType),
         start_date: contractStart,
         end_date: contractEnd,
         notes: contractNotes,
@@ -354,6 +356,19 @@ export const DataKaryawanPage = () => {
 
     closeUploadModal();
   };
+
+  const { data: categoriesData, isLoading: isLoadingCategories } = useGetCategories({
+    search: "",
+    page: 1,
+    limit: 100,
+  });
+
+  const categories = categoriesData?.data ?? [];
+
+  const categoryOptions = categories.map((cat) => ({
+    value: cat.id.toString(),
+    label: cat.name,
+  }));
 
   return (
     <div className="p-6 space-y-6 bg-[#F8FAFC] min-h-screen">
@@ -550,7 +565,7 @@ export const DataKaryawanPage = () => {
                   <TableCell className="border border-gray-200">{k.department.name}</TableCell>
                   <TableCell className="border border-gray-200">{k.position.name}</TableCell>
                   <TableCell className="border border-gray-200">{formatTanggal(k.join_date)}</TableCell>
-                  <TableCell className="border border-gray-200">{k.employee_type}</TableCell>
+                  <TableCell className="border border-gray-200">{k.latest_contract ? k.latest_contract.category.name : "-"}</TableCell>
                   <TableCell className="border border-gray-200">
                     {k.latest_contract ? formatTanggal(k.latest_contract.start_date) : "-"}
                   </TableCell>
@@ -736,7 +751,7 @@ export const DataKaryawanPage = () => {
             <h2 className="text-xl font-bold mb-2">Perbarui Kontrak</h2>
 
             {/* CONTRACT TYPE */}
-            <div className="space-y-2">
+            {/* <div className="space-y-2">
               <label className="text-sm font-medium">Jenis Kontrak</label>
               <Select value={contractType} onValueChange={setContractType}>
                 <SelectTrigger>
@@ -748,7 +763,19 @@ export const DataKaryawanPage = () => {
                   <SelectItem value="Internship">Magang</SelectItem>
                 </SelectContent>
               </Select>
-            </div>
+            </div> */}
+            <FormSelect
+              label="Kategori Karyawan"
+              required
+              placeholder="-- Pilih Kategori --"
+              value={contractType}
+              id="field-kategori"
+              // error={errors?.kategori}
+              onValueChange={setContractType}
+              loading={isLoadingCategories}
+              emptyMessage="Tidak ada data kategori"
+              options={categoryOptions}
+            />
 
             {/* START DATE */}
             <div className="space-y-2">

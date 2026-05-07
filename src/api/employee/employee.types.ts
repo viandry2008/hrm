@@ -41,6 +41,11 @@ export interface LatestItem {
     contract_number: string,
     start_date: string,
     end_date: string
+    category: {
+        id: number;
+        name: string;
+    };
+
 }
 
 export interface EmployeeItem {
@@ -171,7 +176,7 @@ export interface EmployeeMultipleChangeRequest {
 //========= multiple change contract employees
 export interface EmployeeMultipleContractRequest {
     ids: number[];
-    contract_type: string;
+    contract_category_id: number;
     start_date: string;
     end_date: string;
     notes: string;
