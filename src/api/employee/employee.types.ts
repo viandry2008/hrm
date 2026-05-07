@@ -159,6 +159,7 @@ export interface EmployeeSummaryResponse {
         total: number;
         active: number;
         inactive: number;
+        expired: number;
     };
 }
 

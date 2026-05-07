@@ -78,7 +78,7 @@ const ReminderLabel = ({ text, endDate }: { text?: string; endDate?: string }) =
     const diffTime = end.getTime() - today.getTime();
     const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays > 0 && diffDays <= 90) {
+    if (diffDays > 0 && diffDays <= 30) {
       displayText = `Kontrak akan habis dalam ${diffDays} hari`;
     } else if (diffDays <= 0) {
       displayText = "Kontrak telah habis";
@@ -392,8 +392,7 @@ export const DataKaryawanPage = () => {
 
         <StatCard
           title="Total Karyawan Segera Berakhir"
-          // value={dataSummary?.data?.expiring ?? 0}
-          value={dataSummary?.data?.inactive ?? 0}
+          value={dataSummary?.data?.expired ?? 0}
           subtitle="Kontrak hampir habis"
           icon={Calendar}
           borderColor="yellow"
