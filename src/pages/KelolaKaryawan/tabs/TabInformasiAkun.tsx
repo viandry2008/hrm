@@ -11,8 +11,38 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Check, X, Edit } from 'lucide-react';
+import { useGetRoles } from '@/api/role/role.query';
+
+const withCurrentOption = (
+  options: Array<{ value: string; label: string }>,
+  value: string,
+  label: string
+) => {
+  if (!value || options.some((option) => option.value === value)) return options;
+  return [{ value, label: label || value }, ...options];
+};
+
+const getOptionLabel = (
+  options: Array<{ value: string; label: string }>,
+  value: string,
+  fallback: string
+) => options.find((option) => option.value === value)?.label || fallback;
 
 const TabInformasiAkun = ({ data }: any) => {
+  const { data: roleData, isLoading: isLoadingRoles } = useGetRoles({
+    search: '',
+    page: 1,
+    limit: 1000,
+  });
+  const roleOptions = withCurrentOption(
+    (roleData?.data ?? []).map((role: any) => ({
+      value: role.id.toString(),
+      label: role.name_role,
+    })),
+    data?.roleId || '',
+    data?.role || ''
+  );
+
   const [formData, setFormData] = useState({
     username: '',
     email: '',
@@ -28,7 +58,7 @@ const TabInformasiAkun = ({ data }: any) => {
         username: data.username || '',
         email: data.email || '',
         password: '',
-        role: 'Employee',
+        role: data.roleId || '',
       };
       setFormData(initialData);
       setOriginalData(initialData);
@@ -124,15 +154,22 @@ const TabInformasiAkun = ({ data }: any) => {
                   <SelectValue placeholder="-- Pilih Role --" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Employee">Employee</SelectItem>
-                  <SelectItem value="Manager">Manager</SelectItem>
-                  <SelectItem value="Admin">Admin</SelectItem>
-                  <SelectItem value="HR">HR</SelectItem>
+                  {isLoadingRoles ? (
+                    <SelectItem value="loading" disabled>Memuat role...</SelectItem>
+                  ) : roleOptions.length ? (
+                    roleOptions.map((role) => (
+                      <SelectItem key={role.value} value={role.value}>
+                        {role.label}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="empty" disabled>Tidak ada data role</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             ) : (
               <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {formData.role || '-- Pilih Role --'}
+                {getOptionLabel(roleOptions, formData.role, data?.role || '') || '-- Pilih Role --'}
               </div>
             )}
           </div>

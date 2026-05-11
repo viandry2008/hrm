@@ -111,7 +111,7 @@ const getContractReminder = (endDate?: string | null): string => {
 };
 
 const normalizeGender = (gender?: string | null): string => {
-  if (gender === 'Male') return 'Laki-laki';
+  if (gender === 'Male') return 'Laki - Laki';
   if (gender === 'Female') return 'Perempuan';
 
   return gender || '';
@@ -132,10 +132,14 @@ const normalizeEmployeeDetail = (employee: any) => {
     employeeId: employee.id,
     nama: employee.full_name || employee.user?.name || '',
     divisi: employee.department?.name || '',
+    divisiId: employee.department_id ? String(employee.department_id) : employee.department?.id ? String(employee.department.id) : '',
     jabatan: employee.position?.name || '',
+    jabatanId: employee.position_id ? String(employee.position_id) : employee.position?.id ? String(employee.position.id) : '',
     bagian: employee.section?.name || '',
+    bagianId: employee.section_id ? String(employee.section_id) : employee.section?.id ? String(employee.section.id) : '',
     lokasiKerja: employee.company?.name || employee.company?.city || '',
     kategori: latestContract?.category?.name || '',
+    kategoriId: latestContract?.category?.id ? String(latestContract.category.id) : employee.grade_id ? String(employee.grade_id) : '',
     tanggalBergabung: employee.join_date || '',
     tanggalKontrak: latestContract?.start_date || '',
     selesaiKontrak: latestContract?.end_date || '',
@@ -144,6 +148,8 @@ const normalizeEmployeeDetail = (employee: any) => {
     email: employee.user?.email || '',
     nomorHandphone: employee.phone_number || '',
     username: employee.user?.username || '',
+    role: employee.user?.role?.name_role || employee.user?.role?.name || '',
+    roleId: employee.user?.role_id ? String(employee.user.role_id) : employee.user?.role?.id ? String(employee.user.role.id) : '',
     statusAkun: employee.user?.status || '',
     tempatLahir: employee.birth_place || '',
     tanggalLahir: employee.birth_date || '',
@@ -151,17 +157,20 @@ const normalizeEmployeeDetail = (employee: any) => {
     alamatKTP: employee.address_ktp || '',
     alamatDomisili: employee.address_domicile || '',
     pendidikan: employee.education || '',
-    agama: employee.religion || '',
+    agama: typeof employee.religion === 'object' ? employee.religion?.name || '' : employee.religion || '',
+    agamaId: employee.religion_id ? String(employee.religion_id) : typeof employee.religion === 'object' && employee.religion?.id ? String(employee.religion.id) : '',
     namaSuamiIstri: spouse?.name || '',
     namaAnak: children.map((child: any) => child.name).join(', '),
     jumlahAnak: children.length ? String(children.length) : '',
     grup: employee.group || '',
     statusMarital: employee.marital_status?.name || '',
+    statusMaritalId: employee.marital_status_id ? String(employee.marital_status_id) : employee.marital_status?.id ? String(employee.marital_status.id) : '',
     referensi: employee.referensi || '',
     noSIO: employee.sio_number || '',
     namaPemilikRekening: bankAccount?.account_holder_name || '',
     nomorRekening: bankAccount?.account_number || '',
     bank: bankAccount?.bank?.name || (bankAccount?.bank_id ? `Bank ID ${bankAccount.bank_id}` : ''),
+    bankId: bankAccount?.bank_id ? String(bankAccount.bank_id) : bankAccount?.bank?.id ? String(bankAccount.bank.id) : '',
     namaKontakDarurat: emergencyContact?.contact_name === 'null' ? '' : emergencyContact?.contact_name || '',
     hubungan: emergencyContact?.relationship || '',
     nomorTeleponDarurat: emergencyContact?.phone_number || '',

@@ -11,8 +11,112 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Check, X, Edit, Calendar } from 'lucide-react';
+import { useGetPositions } from '@/api/position/position.query';
+import { useGetDepartments } from '@/api/division/division.query';
+import { useGetSections } from '@/api/section/section.query';
+import { useGetCategories } from '@/api/category/category.query';
+import { useGetMaritals } from '@/api/marital/marital.query';
+
+const withCurrentOption = (
+  options: Array<{ value: string; label: string }>,
+  value: string,
+  label: string
+) => {
+  if (!value || options.some((option) => option.value === value)) return options;
+  return [{ value, label: label || value }, ...options];
+};
+
+const getOptionLabel = (
+  options: Array<{ value: string; label: string }>,
+  value: string,
+  fallback: string
+) => options.find((option) => option.value === value)?.label || fallback;
 
 const TabDataKepegawaian = ({ data }: any) => {
+  const { data: positionData, isLoading: isLoadingPositions } = useGetPositions({
+    search: '',
+    page: 1,
+    limit: 100,
+  });
+  const { data: departmentData, isLoading: isLoadingDepartments } = useGetDepartments({
+    search: '',
+    page: 1,
+    limit: 100,
+  });
+  const { data: sectionsData, isLoading: isLoadingSections } = useGetSections({
+    search: '',
+    page: 1,
+    limit: 100,
+  });
+  const { data: categoriesData, isLoading: isLoadingCategories } = useGetCategories({
+    search: '',
+    page: 1,
+    limit: 100,
+  });
+  const { data: maritalsData, isLoading: isLoadingMaritals } = useGetMaritals({
+    search: '',
+    page: 1,
+    limit: 100,
+  });
+
+  const departmentOptions = withCurrentOption(
+    (departmentData?.data ?? []).map((department: any) => ({
+      value: department.id.toString(),
+      label: department.name,
+    })),
+    data?.divisiId || '',
+    data?.divisi || ''
+  );
+  const positionOptions = withCurrentOption(
+    (positionData?.data ?? []).map((position: any) => ({
+      value: position.id.toString(),
+      label: position.name,
+    })),
+    data?.jabatanId || '',
+    data?.jabatan || ''
+  );
+  const sectionOptions = withCurrentOption(
+    (sectionsData?.data ?? []).map((section: any) => ({
+      value: section.id.toString(),
+      label: section.name,
+    })),
+    data?.bagianId || '',
+    data?.bagian || ''
+  );
+  const locationOptions = withCurrentOption(
+    [{ value: 'PT Proven Force Indonesia', label: 'PT Proven Force Indonesia' }],
+    data?.lokasiKerja || '',
+    data?.lokasiKerja || ''
+  );
+  const categoryOptions = withCurrentOption(
+    (categoriesData?.data ?? []).map((category: any) => ({
+      value: category.id.toString(),
+      label: category.name,
+    })),
+    data?.kategoriId || '',
+    data?.kategori || ''
+  );
+  const maritalOptions = withCurrentOption(
+    (maritalsData?.data ?? []).map((marital: any) => ({
+      value: marital.id.toString(),
+      label: `${marital.name} - Rp ${parseFloat(marital.amount).toLocaleString('id-ID')}`,
+    })),
+    data?.statusMaritalId || '',
+    data?.statusMarital || ''
+  );
+  const groupOptions = [
+    { value: 'A', label: 'A' },
+    { value: 'B', label: 'B' },
+  ];
+  const accountStatusOptions = withCurrentOption(
+    [
+      { value: 'active', label: 'Aktif' },
+      { value: 'inactive', label: 'Tidak Aktif' },
+    ],
+    data?.statusAkun || '',
+    data?.statusAkun || ''
+  );
+
   const [formData, setFormData] = useState({
     idKaryawan: '',
     divisi: '',
@@ -40,16 +144,16 @@ const TabDataKepegawaian = ({ data }: any) => {
     if (data) {
       const initialData = {
         idKaryawan: data.id || '',
-        divisi: data.divisi || '',
-        jabatan: data.jabatan || '',
-        bagian: data.bagian || '',
+        divisi: data.divisiId || '',
+        jabatan: data.jabatanId || '',
+        bagian: data.bagianId || '',
         lokasiKerja: data.lokasiKerja || '',
         tanggalBergabung: data.tanggalBergabung || '',
         tanggalKontrak: data.tanggalKontrak || '',
         selesaiKontrak: data.selesaiKontrak || '',
-        kategoriKaryawan: data.kategori || '',
+        kategoriKaryawan: data.kategoriId || '',
         grup: data.grup || '',
-        statusMarital: data.statusMarital || '',
+        statusMarital: data.statusMaritalId || '',
         referensi: data.referensi || '',
         noSIO: data.noSIO || '',
         statusAkun: data.statusAkun || '',
@@ -113,16 +217,22 @@ const TabDataKepegawaian = ({ data }: any) => {
                   <SelectValue placeholder="-- Pilih Divisi --" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="IT">IT</SelectItem>
-                  <SelectItem value="HR">HR</SelectItem>
-                  <SelectItem value="Finance">Finance</SelectItem>
-                  <SelectItem value="Marketing">Marketing</SelectItem>
-                  <SelectItem value="Operations">Operations</SelectItem>
+                  {isLoadingDepartments ? (
+                    <SelectItem value="loading" disabled>Memuat divisi...</SelectItem>
+                  ) : departmentOptions.length ? (
+                    departmentOptions.map((department) => (
+                      <SelectItem key={department.value} value={department.value}>
+                        {department.label}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="empty" disabled>Tidak ada data divisi</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             ) : (
               <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {formData.divisi || '-- Pilih Divisi --'}
+                {getOptionLabel(departmentOptions, formData.divisi, data?.divisi || '') || '-- Pilih Divisi --'}
               </div>
             )}
           </div>
@@ -141,16 +251,22 @@ const TabDataKepegawaian = ({ data }: any) => {
                   <SelectValue placeholder="-- Pilih Jabatan --" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Staff">Staff</SelectItem>
-                  <SelectItem value="Senior Staff">Senior Staff</SelectItem>
-                  <SelectItem value="Supervisor">Supervisor</SelectItem>
-                  <SelectItem value="Manager">Manager</SelectItem>
-                  <SelectItem value="Senior Manager">Senior Manager</SelectItem>
+                  {isLoadingPositions ? (
+                    <SelectItem value="loading" disabled>Memuat jabatan...</SelectItem>
+                  ) : positionOptions.length ? (
+                    positionOptions.map((position) => (
+                      <SelectItem key={position.value} value={position.value}>
+                        {position.label}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="empty" disabled>Tidak ada data jabatan</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             ) : (
               <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {formData.jabatan || '-- Pilih Jabatan --'}
+                {getOptionLabel(positionOptions, formData.jabatan, data?.jabatan || '') || '-- Pilih Jabatan --'}
               </div>
             )}
           </div>
@@ -169,15 +285,22 @@ const TabDataKepegawaian = ({ data }: any) => {
                   <SelectValue placeholder="-- Pilih Bagian --" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Development">Development</SelectItem>
-                  <SelectItem value="Infrastructure">Infrastructure</SelectItem>
-                  <SelectItem value="Support">Support</SelectItem>
-                  <SelectItem value="QA">QA</SelectItem>
+                  {isLoadingSections ? (
+                    <SelectItem value="loading" disabled>Memuat bagian...</SelectItem>
+                  ) : sectionOptions.length ? (
+                    sectionOptions.map((section) => (
+                      <SelectItem key={section.value} value={section.value}>
+                        {section.label}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="empty" disabled>Tidak ada data bagian</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             ) : (
               <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {formData.bagian || '-- Pilih Bagian --'}
+                {getOptionLabel(sectionOptions, formData.bagian, data?.bagian || '') || '-- Pilih Bagian --'}
               </div>
             )}
           </div>
@@ -196,16 +319,16 @@ const TabDataKepegawaian = ({ data }: any) => {
                   <SelectValue placeholder="-- Pilih Lokasi --" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Jakarta">Jakarta</SelectItem>
-                  <SelectItem value="Bandung">Bandung</SelectItem>
-                  <SelectItem value="Surabaya">Surabaya</SelectItem>
-                  <SelectItem value="Medan">Medan</SelectItem>
-                  <SelectItem value="Makassar">Makassar</SelectItem>
+                  {locationOptions.map((location) => (
+                    <SelectItem key={location.value} value={location.value}>
+                      {location.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             ) : (
               <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {formData.lokasiKerja || '-- Pilih Lokasi --'}
+                {getOptionLabel(locationOptions, formData.lokasiKerja, data?.lokasiKerja || '') || '-- Pilih Lokasi --'}
               </div>
             )}
           </div>
@@ -296,16 +419,22 @@ const TabDataKepegawaian = ({ data }: any) => {
                   <SelectValue placeholder="-- Pilih Kategori --" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Full Time">Full Time</SelectItem>
-                  <SelectItem value="Part Time">Part Time</SelectItem>
-                  <SelectItem value="Contract">Contract</SelectItem>
-                  <SelectItem value="Internship">Internship</SelectItem>
-                  <SelectItem value="Freelance">Freelance</SelectItem>
+                  {isLoadingCategories ? (
+                    <SelectItem value="loading" disabled>Memuat kategori...</SelectItem>
+                  ) : categoryOptions.length ? (
+                    categoryOptions.map((category) => (
+                      <SelectItem key={category.value} value={category.value}>
+                        {category.label}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="empty" disabled>Tidak ada data kategori</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             ) : (
               <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {formData.kategoriKaryawan || '-- Pilih Kategori --'}
+                {getOptionLabel(categoryOptions, formData.kategoriKaryawan, data?.kategori || '') || '-- Pilih Kategori --'}
               </div>
             )}
           </div>
@@ -324,9 +453,11 @@ const TabDataKepegawaian = ({ data }: any) => {
                   <SelectValue placeholder="-- Pilih Grup --" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="A">A</SelectItem>
-                  <SelectItem value="B">B</SelectItem>
-                  <SelectItem value="C">C</SelectItem>
+                  {groupOptions.map((group) => (
+                    <SelectItem key={group.value} value={group.value}>
+                      {group.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             ) : (
@@ -350,20 +481,22 @@ const TabDataKepegawaian = ({ data }: any) => {
                   <SelectValue placeholder="-- Pilih Status Marital --" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="-- Pilih Status Marital --">-- Pilih Status Marital --</SelectItem>
-                  <SelectItem value="TK/0 - Rp 54.000.000">TK/0 - Rp 54.000.000</SelectItem>
-                  <SelectItem value="TK/1 - Rp 58.500.000">TK/1 - Rp 58.500.000</SelectItem>
-                  <SelectItem value="TK/2 - Rp 63.000.000">TK/2 - Rp 63.000.000</SelectItem>
-                  <SelectItem value="TK/3 - Rp 67.500.000">TK/3 - Rp 67.500.000</SelectItem>
-                  <SelectItem value="K/0 - Rp 58.500.000">K/0 - Rp 58.500.000</SelectItem>
-                  <SelectItem value="K/1 - Rp 63.000.000">K/1 - Rp 63.000.000</SelectItem>
-                  <SelectItem value="K/2 - Rp 67.500.000">K/2 - Rp 67.500.000</SelectItem>
-                  <SelectItem value="K/3 - Rp 72.000.000">K/3 - Rp 72.000.000</SelectItem>
+                  {isLoadingMaritals ? (
+                    <SelectItem value="loading" disabled>Memuat status marital...</SelectItem>
+                  ) : maritalOptions.length ? (
+                    maritalOptions.map((marital) => (
+                      <SelectItem key={marital.value} value={marital.value}>
+                        {marital.label}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="empty" disabled>Tidak ada data marital</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             ) : (
               <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {formData.statusMarital || '-- Pilih Status Marital --'}
+                {getOptionLabel(maritalOptions, formData.statusMarital, data?.statusMarital || '') || '-- Pilih Status Marital --'}
               </div>
             )}
           </div>
@@ -412,14 +545,16 @@ const TabDataKepegawaian = ({ data }: any) => {
                   <SelectValue placeholder="-- Pilih Status Akun --" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Aktif">Aktif</SelectItem>
-                  <SelectItem value="Nonaktif">Nonaktif</SelectItem>
-                  <SelectItem value="Suspended">Suspended</SelectItem>
+                  {accountStatusOptions.map((status) => (
+                    <SelectItem key={status.value} value={status.value}>
+                      {status.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             ) : (
               <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {formData.statusAkun || '-- Pilih Status Akun --'}
+                {getOptionLabel(accountStatusOptions, formData.statusAkun, data?.statusAkun || '') || '-- Pilih Status Akun --'}
               </div>
             )}
           </div>

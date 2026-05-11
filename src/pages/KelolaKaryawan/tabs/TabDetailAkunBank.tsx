@@ -11,8 +11,38 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Check, X, Edit } from 'lucide-react';
+import { useGetBanks } from '@/api/bank/bank.query';
+
+const withCurrentOption = (
+  options: Array<{ value: string; label: string }>,
+  value: string,
+  label: string
+) => {
+  if (!value || options.some((option) => option.value === value)) return options;
+  return [{ value, label: label || value }, ...options];
+};
+
+const getOptionLabel = (
+  options: Array<{ value: string; label: string }>,
+  value: string,
+  fallback: string
+) => options.find((option) => option.value === value)?.label || fallback;
 
 const TabDetailAkunBank = ({ data }: any) => {
+  const { data: bankData, isLoading: isLoadingBanks } = useGetBanks({
+    search: '',
+    page: 1,
+    limit: 100,
+  });
+  const bankOptions = withCurrentOption(
+    (bankData?.data ?? []).map((bank: any) => ({
+      value: bank.id.toString(),
+      label: bank.name,
+    })),
+    data?.bankId || '',
+    data?.bank || ''
+  );
+
   const [formData, setFormData] = useState({
     namaPemilik: '',
     nomorRekening: '',
@@ -26,7 +56,7 @@ const TabDetailAkunBank = ({ data }: any) => {
       const initialData = {
         namaPemilik: data.namaPemilikRekening || '',
         nomorRekening: data.nomorRekening || '',
-        bank: data.bank || '',
+        bank: data.bankId || '',
       };
       setFormData(initialData);
       setOriginalData(initialData);
@@ -97,21 +127,22 @@ const TabDetailAkunBank = ({ data }: any) => {
                   <SelectValue placeholder="-- Pilih Bank --" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="BCA">BCA</SelectItem>
-                  <SelectItem value="Mandiri">Mandiri</SelectItem>
-                  <SelectItem value="BNI">BNI</SelectItem>
-                  <SelectItem value="BRI">BRI</SelectItem>
-                  <SelectItem value="CIMB Niaga">CIMB Niaga</SelectItem>
-                  <SelectItem value="Danamon">Danamon</SelectItem>
-                  <SelectItem value="Permata">Permata</SelectItem>
-                  <SelectItem value="BTN">BTN</SelectItem>
-                  <SelectItem value="Bank Syariah Indonesia">Bank Syariah Indonesia</SelectItem>
-                  <SelectItem value="Lainnya">Lainnya</SelectItem>
+                  {isLoadingBanks ? (
+                    <SelectItem value="loading" disabled>Memuat bank...</SelectItem>
+                  ) : bankOptions.length ? (
+                    bankOptions.map((bank) => (
+                      <SelectItem key={bank.value} value={bank.value}>
+                        {bank.label}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="empty" disabled>Tidak ada data bank</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             ) : (
               <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {formData.bank || '-- Pilih Bank --'}
+                {getOptionLabel(bankOptions, formData.bank, data?.bank || '') || '-- Pilih Bank --'}
               </div>
             )}
           </div>

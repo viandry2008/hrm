@@ -12,7 +12,28 @@ import {
 import { Button } from '@/components/ui/button';
 import { Check, X, Edit } from 'lucide-react';
 
+const relationshipOptions = [
+  { value: 'Orang Tua (Ayah)', label: 'Orang Tua (Ayah)' },
+  { value: 'Orang Tua (Ibu)', label: 'Orang Tua (Ibu)' },
+  { value: 'Suami', label: 'Suami' },
+  { value: 'Istri', label: 'Istri' },
+  { value: 'Saudara Kandung', label: 'Saudara Kandung' },
+  { value: 'Saudara Sepupu', label: 'Saudara Sepupu' },
+  { value: 'Teman', label: 'Teman' },
+  { value: 'Lainnya', label: 'Lainnya' },
+];
+
+const withCurrentRelationship = (value: string) => {
+  if (!value || relationshipOptions.some((relationship) => relationship.value === value)) {
+    return relationshipOptions;
+  }
+
+  return [{ value, label: value }, ...relationshipOptions];
+};
+
 const TabKontakDarurat = ({ data }: any) => {
+  const currentRelationshipOptions = withCurrentRelationship(data?.hubungan || '');
+
   const [formData, setFormData] = useState({
     namaLengkap: '',
     hubungan: '',
@@ -82,14 +103,11 @@ const TabKontakDarurat = ({ data }: any) => {
                   <SelectValue placeholder="-- Pilih Hubungan --" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Orang Tua">Orang Tua</SelectItem>
-                  <SelectItem value="Ibu">Ibu</SelectItem>
-                  <SelectItem value="Bapak">Bapak</SelectItem>
-                  <SelectItem value="Saudara">Saudara</SelectItem>
-                  <SelectItem value="Pasangan">Pasangan</SelectItem>
-                  <SelectItem value="Anak">Anak</SelectItem>
-                  <SelectItem value="Teman">Teman</SelectItem>
-                  <SelectItem value="Lainnya">Lainnya</SelectItem>
+                  {currentRelationshipOptions.map((relationship) => (
+                    <SelectItem key={relationship.value} value={relationship.value}>
+                      {relationship.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             ) : (

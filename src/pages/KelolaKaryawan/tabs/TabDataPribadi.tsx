@@ -12,8 +12,61 @@ import {
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Check, X, Edit } from 'lucide-react';
+import { useGetReligions } from '@/api/religion/religion.query';
+
+const withCurrentOption = (
+  options: Array<{ value: string; label: string }>,
+  value: string,
+  label: string
+) => {
+  if (!value || options.some((option) => option.value === value)) return options;
+  return [{ value, label: label || value }, ...options];
+};
+
+const getOptionLabel = (
+  options: Array<{ value: string; label: string }>,
+  value: string,
+  fallback: string
+) => options.find((option) => option.value === value)?.label || fallback;
 
 const TabDataPribadi = ({ data }: any) => {
+  const { data: religionData, isLoading: isLoadingReligions } = useGetReligions({
+    search: '',
+    page: 1,
+    limit: 100,
+  });
+  const religionOptions = withCurrentOption(
+    (religionData?.data ?? []).map((religion: any) => ({
+      value: religion.id.toString(),
+      label: religion.name,
+    })),
+    data?.agamaId || '',
+    data?.agama || ''
+  );
+  const educationOptions = withCurrentOption(
+    [
+      { value: 'SD', label: 'SD' },
+      { value: 'SMP', label: 'SMP' },
+      { value: 'SMA/SMK', label: 'SMA / SMK' },
+      { value: 'D1', label: 'D1' },
+      { value: 'D2', label: 'D2' },
+      { value: 'D3', label: 'D3' },
+      { value: 'S1', label: 'S1' },
+      { value: 'S2', label: 'S2' },
+      { value: 'S3', label: 'S3' },
+    ],
+    data?.pendidikan || '',
+    data?.pendidikan || ''
+  );
+  const genderOptions = withCurrentOption(
+    [
+      { value: 'Laki - Laki', label: 'Laki - Laki' },
+      { value: 'Perempuan', label: 'Perempuan' },
+    ],
+    data?.jenisKelamin || '',
+    data?.jenisKelamin || ''
+  );
+
   const [formData, setFormData] = useState({
     nama: '',
     nomorHandphone: '',
@@ -44,7 +97,7 @@ const TabDataPribadi = ({ data }: any) => {
         alamatKTP: data.alamatKTP || '',
         alamatDomisili: data.alamatDomisili || '',
         pendidikan: data.pendidikan || '',
-        agama: data.agama || '',
+        agama: data.agamaId || '',
         namaSuamiIstri: data.namaSuamiIstri || '',
         namaAnak: data.namaAnak || '',
         jumlahAnak: data.jumlahAnak || '',
@@ -150,8 +203,11 @@ const TabDataPribadi = ({ data }: any) => {
                   <SelectValue placeholder="-- Pilih Jenis Kelamin --" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Laki-laki">Laki-laki</SelectItem>
-                  <SelectItem value="Perempuan">Perempuan</SelectItem>
+                  {genderOptions.map((gender) => (
+                    <SelectItem key={gender.value} value={gender.value}>
+                      {gender.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             ) : (
@@ -175,13 +231,11 @@ const TabDataPribadi = ({ data }: any) => {
                   <SelectValue placeholder="-- Pilih Pendidikan --" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="SD">SD</SelectItem>
-                  <SelectItem value="SMP">SMP</SelectItem>
-                  <SelectItem value="SMA">SMA</SelectItem>
-                  <SelectItem value="D3">D3</SelectItem>
-                  <SelectItem value="S1">S1</SelectItem>
-                  <SelectItem value="S2">S2</SelectItem>
-                  <SelectItem value="S3">S3</SelectItem>
+                  {educationOptions.map((education) => (
+                    <SelectItem key={education.value} value={education.value}>
+                      {education.label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             ) : (
@@ -251,17 +305,22 @@ const TabDataPribadi = ({ data }: any) => {
                   <SelectValue placeholder="-- Pilih Agama --" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="Islam">Islam</SelectItem>
-                  <SelectItem value="Kristen">Kristen</SelectItem>
-                  <SelectItem value="Katolik">Katolik</SelectItem>
-                  <SelectItem value="Hindu">Hindu</SelectItem>
-                  <SelectItem value="Buddha">Buddha</SelectItem>
-                  <SelectItem value="Konghucu">Konghucu</SelectItem>
+                  {isLoadingReligions ? (
+                    <SelectItem value="loading" disabled>Memuat agama...</SelectItem>
+                  ) : religionOptions.length ? (
+                    religionOptions.map((religion) => (
+                      <SelectItem key={religion.value} value={religion.value}>
+                        {religion.label}
+                      </SelectItem>
+                    ))
+                  ) : (
+                    <SelectItem value="empty" disabled>Tidak ada data agama</SelectItem>
+                  )}
                 </SelectContent>
               </Select>
             ) : (
               <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {formData.agama || '-- Pilih Agama --'}
+                {getOptionLabel(religionOptions, formData.agama, data?.agama || '') || '-- Pilih Agama --'}
               </div>
             )}
           </div>
