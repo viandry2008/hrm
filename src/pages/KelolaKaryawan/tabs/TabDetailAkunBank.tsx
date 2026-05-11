@@ -1,17 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Check, X, Edit } from 'lucide-react';
 import { useGetBanks } from '@/api/bank/bank.query';
+import { FormInput } from '@/components/ui/form-input';
+import { FormSelect } from '@/components/ui/form-select';
 
 const withCurrentOption = (
   options: Array<{ value: string; label: string }>,
@@ -21,12 +14,6 @@ const withCurrentOption = (
   if (!value || options.some((option) => option.value === value)) return options;
   return [{ value, label: label || value }, ...options];
 };
-
-const getOptionLabel = (
-  options: Array<{ value: string; label: string }>,
-  value: string,
-  fallback: string
-) => options.find((option) => option.value === value)?.label || fallback;
 
 const TabDetailAkunBank = ({ data }: any) => {
   const { data: bankData, isLoading: isLoadingBanks } = useGetBanks({
@@ -39,7 +26,7 @@ const TabDetailAkunBank = ({ data }: any) => {
       value: bank.id.toString(),
       label: bank.name,
     })),
-    data?.bankId || '',
+    data?.bankId || data?.bank || '',
     data?.bank || ''
   );
 
@@ -56,7 +43,7 @@ const TabDetailAkunBank = ({ data }: any) => {
       const initialData = {
         namaPemilik: data.namaPemilikRekening || '',
         nomorRekening: data.nomorRekening || '',
-        bank: data.bankId || '',
+        bank: data.bankId || data.bank || '',
       };
       setFormData(initialData);
       setOriginalData(initialData);
@@ -83,69 +70,36 @@ const TabDetailAkunBank = ({ data }: any) => {
       <CardContent className="p-6 bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           
-          {/* Nama Pemilik Rekening */}
-          <div className="space-y-2">
-            <Label htmlFor="namaPemilik" className="text-sm font-medium">
-              Nama Pemilik Rekening
-            </Label>
-            <Input
-              id="namaPemilik"
-              placeholder="Masukkan nama lengkap"
-              value={formData.namaPemilik}
-              onChange={(e) => handleInputChange('namaPemilik', e.target.value)}
-              disabled={!isEditing}
-              className="bg-white disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all"
-            />
-          </div>
+          <FormInput
+            label="Nama Pemilik Rekening"
+            id="namaPemilik"
+            placeholder="Masukkan nama lengkap"
+            value={formData.namaPemilik}
+            onChange={(value) => handleInputChange('namaPemilik', value)}
+            disabled={!isEditing}
+          />
 
-          {/* Nomor Rekening */}
-          <div className="space-y-2">
-            <Label htmlFor="nomorRekening" className="text-sm font-medium">
-              Nomor Rekening
-            </Label>
-            <Input
-              id="nomorRekening"
-              placeholder="1234-5678-9012-3456"
-              value={formData.nomorRekening}
-              onChange={(e) => handleInputChange('nomorRekening', e.target.value)}
-              disabled={!isEditing}
-              className="bg-white disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all"
-            />
-          </div>
+          <FormInput
+            label="Nomor Rekening"
+            id="nomorRekening"
+            placeholder="1234-5678-9012-3456"
+            value={formData.nomorRekening}
+            onChange={(value) => handleInputChange('nomorRekening', value)}
+            disabled={!isEditing}
+          />
 
-          {/* Bank */}
-          <div className="space-y-2 md:col-span-2">
-            <Label htmlFor="bank" className="text-sm font-medium">
-              Bank
-            </Label>
-            {isEditing ? (
-              <Select
-                value={formData.bank}
-                onValueChange={(value) => handleInputChange('bank', value)}
-              >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="-- Pilih Bank --" />
-                </SelectTrigger>
-                <SelectContent>
-                  {isLoadingBanks ? (
-                    <SelectItem value="loading" disabled>Memuat bank...</SelectItem>
-                  ) : bankOptions.length ? (
-                    bankOptions.map((bank) => (
-                      <SelectItem key={bank.value} value={bank.value}>
-                        {bank.label}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="empty" disabled>Tidak ada data bank</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {getOptionLabel(bankOptions, formData.bank, data?.bank || '') || '-- Pilih Bank --'}
-              </div>
-            )}
-          </div>
+          <FormSelect
+            label="Bank"
+            id="bank"
+            placeholder="-- Pilih Bank --"
+            value={formData.bank}
+            onValueChange={(value) => handleInputChange('bank', value)}
+            loading={isLoadingBanks}
+            emptyMessage="Tidak ada data bank"
+            options={bankOptions}
+            disabled={!isEditing}
+            className="md:col-span-2"
+          />
 
         </div>
 

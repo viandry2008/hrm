@@ -1,17 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Check, X, Edit } from 'lucide-react';
 import { useGetRoles } from '@/api/role/role.query';
+import { FormInput } from '@/components/ui/form-input';
+import { FormSelect } from '@/components/ui/form-select';
 
 const withCurrentOption = (
   options: Array<{ value: string; label: string }>,
@@ -21,12 +14,6 @@ const withCurrentOption = (
   if (!value || options.some((option) => option.value === value)) return options;
   return [{ value, label: label || value }, ...options];
 };
-
-const getOptionLabel = (
-  options: Array<{ value: string; label: string }>,
-  value: string,
-  fallback: string
-) => options.find((option) => option.value === value)?.label || fallback;
 
 const TabInformasiAkun = ({ data }: any) => {
   const { data: roleData, isLoading: isLoadingRoles } = useGetRoles({
@@ -39,7 +26,7 @@ const TabInformasiAkun = ({ data }: any) => {
       value: role.id.toString(),
       label: role.name_role,
     })),
-    data?.roleId || '',
+    data?.roleId || data?.role || '',
     data?.role || ''
   );
 
@@ -58,7 +45,7 @@ const TabInformasiAkun = ({ data }: any) => {
         username: data.username || '',
         email: data.email || '',
         password: '',
-        role: data.roleId || '',
+        role: data.roleId || data.role || '',
       };
       setFormData(initialData);
       setOriginalData(initialData);
@@ -84,95 +71,50 @@ const TabInformasiAkun = ({ data }: any) => {
     <Card className="bg-white">
       <CardContent className="p-6 bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Username */}
-          <div className="space-y-2">
-            <Label htmlFor="username" className="text-sm font-medium">
-              Username <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="username"
-              placeholder="Masukkan username"
-              value={formData.username}
-              onChange={(e) => handleInputChange('username', e.target.value)}
-              disabled={!isEditing}
-              className={`
-                bg-white disabled:bg-gray-50 disabled:text-gray-500 
-                disabled:cursor-not-allowed transition-all
-              `}
-            />
-          </div>
+          <FormInput
+            label="Username"
+            required
+            id="username"
+            placeholder="Masukkan username"
+            value={formData.username}
+            onChange={(value) => handleInputChange('username', value)}
+            disabled={!isEditing}
+          />
 
-          {/* Email */}
-          <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium">
-              Email <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="Masukkan email"
-              value={formData.email}
-              onChange={(e) => handleInputChange('email', e.target.value)}
-              disabled={!isEditing}
-              className={`
-                bg-white disabled:bg-gray-50 disabled:text-gray-500 
-                disabled:cursor-not-allowed transition-all
-              `}
-            />
-          </div>
+          <FormInput
+            label="Email"
+            required
+            id="email"
+            type="email"
+            placeholder="Masukkan email"
+            value={formData.email}
+            onChange={(value) => handleInputChange('email', value)}
+            disabled={!isEditing}
+          />
 
-          {/* Password */}
-          <div className="space-y-2">
-            <Label htmlFor="password" className="text-sm font-medium">
-              Password <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="password"
-              type="password"
-              placeholder={isEditing ? "Masukkan password baru" : "••••••••"}
-              value={formData.password}
-              onChange={(e) => handleInputChange('password', e.target.value)}
-              disabled={!isEditing}
-              className={`
-                bg-white disabled:bg-gray-50 disabled:text-gray-500 
-                disabled:cursor-not-allowed transition-all
-              `}
-            />
-          </div>
+          <FormInput
+            label="Password"
+            required
+            id="password"
+            type="password"
+            placeholder={isEditing ? 'Masukkan password baru' : '••••••••'}
+            value={formData.password}
+            onChange={(value) => handleInputChange('password', value)}
+            disabled={!isEditing}
+          />
 
-          {/* Role */}
-          <div className="space-y-2">
-            <Label htmlFor="role" className="text-sm font-medium">
-              Role <span className="text-red-500">*</span>
-            </Label>
-            {isEditing ? (
-              <Select
-                value={formData.role}
-                onValueChange={(value) => handleInputChange('role', value)}
-              >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="-- Pilih Role --" />
-                </SelectTrigger>
-                <SelectContent>
-                  {isLoadingRoles ? (
-                    <SelectItem value="loading" disabled>Memuat role...</SelectItem>
-                  ) : roleOptions.length ? (
-                    roleOptions.map((role) => (
-                      <SelectItem key={role.value} value={role.value}>
-                        {role.label}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="empty" disabled>Tidak ada data role</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {getOptionLabel(roleOptions, formData.role, data?.role || '') || '-- Pilih Role --'}
-              </div>
-            )}
-          </div>
+          <FormSelect
+            label="Role"
+            required
+            id="role"
+            placeholder="-- Pilih Role --"
+            value={formData.role}
+            onValueChange={(value) => handleInputChange('role', value)}
+            loading={isLoadingRoles}
+            emptyMessage="Tidak ada data role"
+            options={roleOptions}
+            disabled={!isEditing}
+          />
         </div>
 
         {/* Action Buttons */}

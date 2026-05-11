@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Dialog,
@@ -10,6 +9,27 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Check, X, Edit, Upload, Eye, Trash2, FileText } from 'lucide-react';
+import { FormInput } from '@/components/ui/form-input';
+
+const formatNPWP = (digits: string) => {
+  if (!digits) return '';
+
+  let formatted = '';
+  const separators: Record<number, string> = {
+    1: '.',
+    4: '.',
+    7: '.',
+    8: '-',
+    11: '.',
+  };
+
+  for (let i = 0; i < digits.length; i += 1) {
+    formatted += digits[i];
+    if (separators[i]) formatted += separators[i];
+  }
+
+  return formatted;
+};
 
 const TabManajemenFile = ({ data }: any) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -42,7 +62,7 @@ const TabManajemenFile = ({ data }: any) => {
       const initialData = {
         ktp: { file: null, preview: '', nomor: data.nomorKTP || '' },
         kk: { file: null, preview: '', nomor: data.noKK || '' },
-        npwp: { file: null, preview: '', nomor: data.nomorNPWP || '' },
+        npwp: { file: null, preview: '', nomor: (data.nomorNPWP || '').replace(/\D/g, '').slice(0, 15) },
         kpj: { file: null, preview: '', nomor: data.nomorKPJ || '' },
         jkn: { file: null, preview: '', nomor: data.nomorJKN || '' },
         cv: { file: null, preview: '' },
@@ -156,19 +176,14 @@ const TabManajemenFile = ({ data }: any) => {
             )}
           </div>
 
-          {/* Nomor KTP */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">
-              Nomor KTP <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              placeholder="32xxxxxx"
-              value={formData.ktp.nomor}
-              onChange={(e) => handleNomorChange('ktp', e.target.value)}
-              disabled={!isEditing}
-              className="bg-white disabled:bg-gray-50 disabled:text-gray-500"
-            />
-          </div>
+          <FormInput
+            label="Nomor KTP"
+            required
+            placeholder="32xxxxxx"
+            value={formData.ktp.nomor}
+            onChange={(value) => handleNomorChange('ktp', value)}
+            disabled={!isEditing}
+          />
 
           {/* Upload Kartu Keluarga */}
           <div className="space-y-2">
@@ -228,17 +243,13 @@ const TabManajemenFile = ({ data }: any) => {
             )}
           </div>
 
-          {/* Nomor Kartu Keluarga */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Nomor Kartu Keluarga</Label>
-            <Input
-              placeholder="Masukkan No KK"
-              value={formData.kk.nomor}
-              onChange={(e) => handleNomorChange('kk', e.target.value)}
-              disabled={!isEditing}
-              className="bg-white disabled:bg-gray-50 disabled:text-gray-500"
-            />
-          </div>
+          <FormInput
+            label="Nomor Kartu Keluarga"
+            placeholder="Masukkan No KK"
+            value={formData.kk.nomor}
+            onChange={(value) => handleNomorChange('kk', value)}
+            disabled={!isEditing}
+          />
 
           {/* Upload NPWP */}
           <div className="space-y-2">
@@ -298,33 +309,13 @@ const TabManajemenFile = ({ data }: any) => {
             )}
           </div>
 
-          {/* Nomor NPWP */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Nomor NPWP</Label>
-            {isEditing ? (
-              <NPWPInput
-                value={formData.npwp.nomor}
-                onChange={(value: string) => handleNomorChange('npwp', value)}
-              />
-            ) : (
-              <div className="flex gap-1">
-                {formData.npwp.nomor.split('').map((char: string, idx: number) => (
-                  <div
-                    key={idx}
-                    className="w-8 h-10 border border-gray-300 rounded-md flex items-center justify-center bg-gray-50 text-sm font-medium"
-                  >
-                    {char}
-                  </div>
-                ))}
-                {Array.from({ length: Math.max(0, 20 - formData.npwp.nomor.length) }).map((_, idx) => (
-                  <div
-                    key={`empty-${idx}`}
-                    className="w-8 h-10 border border-gray-200 rounded-md bg-gray-50"
-                  />
-                ))}
-              </div>
-            )}
-          </div>
+          <FormInput
+            label="Nomor NPWP"
+            placeholder="12.345.678.9-012.345"
+            value={formatNPWP(formData.npwp.nomor)}
+            onChange={(value) => handleNomorChange('npwp', value.replace(/\D/g, '').slice(0, 15))}
+            disabled={!isEditing}
+          />
 
           {/* Upload KPJ */}
           <div className="space-y-2">
@@ -384,17 +375,13 @@ const TabManajemenFile = ({ data }: any) => {
             )}
           </div>
 
-          {/* Nomor KPJ */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Nomor KPJ</Label>
-            <Input
-              placeholder="Masukan Nomor KPJ"
-              value={formData.kpj.nomor}
-              onChange={(e) => handleNomorChange('kpj', e.target.value)}
-              disabled={!isEditing}
-              className="bg-white disabled:bg-gray-50 disabled:text-gray-500"
-            />
-          </div>
+          <FormInput
+            label="Nomor KPJ"
+            placeholder="Masukan Nomor KPJ"
+            value={formData.kpj.nomor}
+            onChange={(value) => handleNomorChange('kpj', value)}
+            disabled={!isEditing}
+          />
 
           {/* Upload JKN */}
           <div className="space-y-2">
@@ -454,17 +441,13 @@ const TabManajemenFile = ({ data }: any) => {
             )}
           </div>
 
-          {/* Nomor JKN */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Nomor JKN</Label>
-            <Input
-              placeholder="Masukan Nomor JKN"
-              value={formData.jkn.nomor}
-              onChange={(e) => handleNomorChange('jkn', e.target.value)}
-              disabled={!isEditing}
-              className="bg-white disabled:bg-gray-50 disabled:text-gray-500"
-            />
-          </div>
+          <FormInput
+            label="Nomor JKN"
+            placeholder="Masukan Nomor JKN"
+            value={formData.jkn.nomor}
+            onChange={(value) => handleNomorChange('jkn', value)}
+            disabled={!isEditing}
+          />
 
           {/* Upload CV */}
           <div className="space-y-2">
@@ -646,37 +629,3 @@ const TabManajemenFile = ({ data }: any) => {
 };
 
 export default TabManajemenFile;
-
-// ================= NPWP FORMATTED INPUT =================
-const NPWPInput = ({ value, onChange }: any) => {
-  const formatNPWP = (val: string) => {
-    const numbers = val.replace(/\D/g, '').slice(0, 16);
-    let formatted = '';
-    
-    if (numbers.length > 0) {
-      formatted = numbers.slice(0, 2);
-      if (numbers.length > 2) formatted += '.' + numbers.slice(2, 5);
-      if (numbers.length > 5) formatted += '.' + numbers.slice(5, 8);
-      if (numbers.length > 8) formatted += '.' + numbers.slice(8, 9);
-      if (numbers.length > 9) formatted += '-' + numbers.slice(9, 12);
-      if (numbers.length > 12) formatted += '.' + numbers.slice(12, 16);
-    }
-    
-    return formatted;
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const formatted = formatNPWP(e.target.value);
-    onChange(formatted);
-  };
-
-  return (
-    <Input
-      placeholder="00.000.000.0-000.000"
-      value={value}
-      onChange={handleChange}
-      className="bg-white"
-      maxLength={20}
-    />
-  );
-};

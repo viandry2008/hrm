@@ -11,6 +11,7 @@ interface FormCurrencyProps {
   className?: string;
   id?: string;
   error?: string;
+  disabled?: boolean;
 }
 
 const formatRupiah = (value: any) => {
@@ -36,6 +37,7 @@ export const FormCurrency: React.FC<FormCurrencyProps> = ({
   className = "",
   id,
   error,
+  disabled = false,
 }) => {
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
@@ -53,7 +55,8 @@ export const FormCurrency: React.FC<FormCurrencyProps> = ({
           placeholder={placeholder}
           value={formatRupiah(value)}
           onChange={(e) => onChange(parseNumber(e.target.value))}
-          className={`h-[42px] bg-white text-sm pl-10 ${error ? "border-red-500" : ""}`}
+          disabled={disabled}
+          className={`h-[42px] bg-white text-sm pl-10 disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed ${error ? "border-red-500" : ""}`}
         />
       </div>
       {error && <p className="text-red-500 text-sm">{error}</p>}

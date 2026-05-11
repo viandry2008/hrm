@@ -1,21 +1,14 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
-import { Check, X, Edit, Calendar } from 'lucide-react';
+import { Check, X, Edit } from 'lucide-react';
 import { useGetPositions } from '@/api/position/position.query';
 import { useGetDepartments } from '@/api/division/division.query';
 import { useGetSections } from '@/api/section/section.query';
 import { useGetCategories } from '@/api/category/category.query';
 import { useGetMaritals } from '@/api/marital/marital.query';
+import { FormInput } from '@/components/ui/form-input';
+import { FormSelect } from '@/components/ui/form-select';
 
 const withCurrentOption = (
   options: Array<{ value: string; label: string }>,
@@ -25,12 +18,6 @@ const withCurrentOption = (
   if (!value || options.some((option) => option.value === value)) return options;
   return [{ value, label: label || value }, ...options];
 };
-
-const getOptionLabel = (
-  options: Array<{ value: string; label: string }>,
-  value: string,
-  fallback: string
-) => options.find((option) => option.value === value)?.label || fallback;
 
 const TabDataKepegawaian = ({ data }: any) => {
   const { data: positionData, isLoading: isLoadingPositions } = useGetPositions({
@@ -101,7 +88,7 @@ const TabDataKepegawaian = ({ data }: any) => {
       value: marital.id.toString(),
       label: `${marital.name} - Rp ${parseFloat(marital.amount).toLocaleString('id-ID')}`,
     })),
-    data?.statusMaritalId || '',
+    data?.statusMaritalId || data?.statusMarital || '',
     data?.statusMarital || ''
   );
   const groupOptions = [
@@ -136,10 +123,6 @@ const TabDataKepegawaian = ({ data }: any) => {
   const [isEditing, setIsEditing] = useState(false);
   const [originalData, setOriginalData] = useState(formData);
 
-  const tanggalBergabungRef = useRef<HTMLInputElement>(null);
-  const tanggalKontrakRef = useRef<HTMLInputElement>(null);
-  const selesaiKontrakRef = useRef<HTMLInputElement>(null);
-
   useEffect(() => {
     if (data) {
       const initialData = {
@@ -153,7 +136,7 @@ const TabDataKepegawaian = ({ data }: any) => {
         selesaiKontrak: data.selesaiKontrak || '',
         kategoriKaryawan: data.kategoriId || '',
         grup: data.grup || '',
-        statusMarital: data.statusMaritalId || '',
+        statusMarital: data.statusMaritalId || data.statusMarital || '',
         referensi: data.referensi || '',
         noSIO: data.noSIO || '',
         statusAkun: data.statusAkun || '',
@@ -178,387 +161,24 @@ const TabDataKepegawaian = ({ data }: any) => {
     setIsEditing(false);
   };
 
-  const openDatePicker = (ref: any) => {
-    if (ref.current && isEditing) {
-      ref.current.showPicker();
-    }
-  };
-
   return (
     <Card className="bg-white">
       <CardContent className="p-6 bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-          {/* ID Karyawan */}
-          <div className="space-y-2">
-            <Label htmlFor="idKaryawan" className="text-sm font-medium">
-              ID Karyawan <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              id="idKaryawan"
-              placeholder="ID otomatis"
-              value={formData.idKaryawan}
-              disabled
-              className="bg-gray-50 text-gray-500 cursor-not-allowed"
-            />
-          </div>
-
-          {/* Divisi */}
-          <div className="space-y-2">
-            <Label htmlFor="divisi" className="text-sm font-medium">
-              Divisi <span className="text-red-500">*</span>
-            </Label>
-            {isEditing ? (
-              <Select
-                value={formData.divisi}
-                onValueChange={(value) => handleInputChange('divisi', value)}
-              >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="-- Pilih Divisi --" />
-                </SelectTrigger>
-                <SelectContent>
-                  {isLoadingDepartments ? (
-                    <SelectItem value="loading" disabled>Memuat divisi...</SelectItem>
-                  ) : departmentOptions.length ? (
-                    departmentOptions.map((department) => (
-                      <SelectItem key={department.value} value={department.value}>
-                        {department.label}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="empty" disabled>Tidak ada data divisi</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {getOptionLabel(departmentOptions, formData.divisi, data?.divisi || '') || '-- Pilih Divisi --'}
-              </div>
-            )}
-          </div>
-
-          {/* Jabatan */}
-          <div className="space-y-2">
-            <Label htmlFor="jabatan" className="text-sm font-medium">
-              Jabatan <span className="text-red-500">*</span>
-            </Label>
-            {isEditing ? (
-              <Select
-                value={formData.jabatan}
-                onValueChange={(value) => handleInputChange('jabatan', value)}
-              >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="-- Pilih Jabatan --" />
-                </SelectTrigger>
-                <SelectContent>
-                  {isLoadingPositions ? (
-                    <SelectItem value="loading" disabled>Memuat jabatan...</SelectItem>
-                  ) : positionOptions.length ? (
-                    positionOptions.map((position) => (
-                      <SelectItem key={position.value} value={position.value}>
-                        {position.label}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="empty" disabled>Tidak ada data jabatan</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {getOptionLabel(positionOptions, formData.jabatan, data?.jabatan || '') || '-- Pilih Jabatan --'}
-              </div>
-            )}
-          </div>
-
-          {/* Bagian */}
-          <div className="space-y-2">
-            <Label htmlFor="bagian" className="text-sm font-medium">
-              Bagian <span className="text-red-500">*</span>
-            </Label>
-            {isEditing ? (
-              <Select
-                value={formData.bagian}
-                onValueChange={(value) => handleInputChange('bagian', value)}
-              >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="-- Pilih Bagian --" />
-                </SelectTrigger>
-                <SelectContent>
-                  {isLoadingSections ? (
-                    <SelectItem value="loading" disabled>Memuat bagian...</SelectItem>
-                  ) : sectionOptions.length ? (
-                    sectionOptions.map((section) => (
-                      <SelectItem key={section.value} value={section.value}>
-                        {section.label}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="empty" disabled>Tidak ada data bagian</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {getOptionLabel(sectionOptions, formData.bagian, data?.bagian || '') || '-- Pilih Bagian --'}
-              </div>
-            )}
-          </div>
-
-          {/* Lokasi Kerja */}
-          <div className="space-y-2">
-            <Label htmlFor="lokasiKerja" className="text-sm font-medium">
-              Lokasi Kerja <span className="text-red-500">*</span>
-            </Label>
-            {isEditing ? (
-              <Select
-                value={formData.lokasiKerja}
-                onValueChange={(value) => handleInputChange('lokasiKerja', value)}
-              >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="-- Pilih Lokasi --" />
-                </SelectTrigger>
-                <SelectContent>
-                  {locationOptions.map((location) => (
-                    <SelectItem key={location.value} value={location.value}>
-                      {location.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {getOptionLabel(locationOptions, formData.lokasiKerja, data?.lokasiKerja || '') || '-- Pilih Lokasi --'}
-              </div>
-            )}
-          </div>
-
-          {/* Tanggal Bergabung */}
-          <div className="space-y-2">
-            <Label htmlFor="tanggalBergabung" className="text-sm font-medium">
-              Tanggal Bergabung <span className="text-red-500">*</span>
-            </Label>
-            <div className="relative">
-              <Input
-                ref={tanggalBergabungRef}
-                id="tanggalBergabung"
-                type="date"
-                value={formData.tanggalBergabung}
-                onChange={(e) => handleInputChange('tanggalBergabung', e.target.value)}
-                disabled={!isEditing}
-                className="bg-white disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all pr-10 [&::-webkit-calendar-picker-indicator]:hidden"
-              />
-              {isEditing && (
-                <Calendar
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 cursor-pointer hover:text-gray-600"
-                  onClick={() => openDatePicker(tanggalBergabungRef)}
-                />
-              )}
-            </div>
-          </div>
-
-          {/* Tanggal Kontrak */}
-          <div className="space-y-2">
-            <Label htmlFor="tanggalKontrak" className="text-sm font-medium">
-              Tanggal Kontrak <span className="text-red-500">*</span>
-            </Label>
-            <div className="relative">
-              <Input
-                ref={tanggalKontrakRef}
-                id="tanggalKontrak"
-                type="date"
-                value={formData.tanggalKontrak}
-                onChange={(e) => handleInputChange('tanggalKontrak', e.target.value)}
-                disabled={!isEditing}
-                className="bg-white disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all pr-10 [&::-webkit-calendar-picker-indicator]:hidden"
-              />
-              {isEditing && (
-                <Calendar
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 cursor-pointer hover:text-gray-600"
-                  onClick={() => openDatePicker(tanggalKontrakRef)}
-                />
-              )}
-            </div>
-          </div>
-
-          {/* Selesai Kontrak */}
-          <div className="space-y-2">
-            <Label htmlFor="selesaiKontrak" className="text-sm font-medium">
-              Selesai Kontrak <span className="text-red-500">*</span>
-            </Label>
-            <div className="relative">
-              <Input
-                ref={selesaiKontrakRef}
-                id="selesaiKontrak"
-                type="date"
-                value={formData.selesaiKontrak}
-                onChange={(e) => handleInputChange('selesaiKontrak', e.target.value)}
-                disabled={!isEditing}
-                className="bg-white disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all pr-10 [&::-webkit-calendar-picker-indicator]:hidden"
-              />
-              {isEditing && (
-                <Calendar
-                  className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 cursor-pointer hover:text-gray-600"
-                  onClick={() => openDatePicker(selesaiKontrakRef)}
-                />
-              )}
-            </div>
-          </div>
-
-          {/* Kategori Karyawan */}
-          <div className="space-y-2">
-            <Label htmlFor="kategoriKaryawan" className="text-sm font-medium">
-              Kategori Karyawan <span className="text-red-500">*</span>
-            </Label>
-            {isEditing ? (
-              <Select
-                value={formData.kategoriKaryawan}
-                onValueChange={(value) => handleInputChange('kategoriKaryawan', value)}
-              >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="-- Pilih Kategori --" />
-                </SelectTrigger>
-                <SelectContent>
-                  {isLoadingCategories ? (
-                    <SelectItem value="loading" disabled>Memuat kategori...</SelectItem>
-                  ) : categoryOptions.length ? (
-                    categoryOptions.map((category) => (
-                      <SelectItem key={category.value} value={category.value}>
-                        {category.label}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="empty" disabled>Tidak ada data kategori</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {getOptionLabel(categoryOptions, formData.kategoriKaryawan, data?.kategori || '') || '-- Pilih Kategori --'}
-              </div>
-            )}
-          </div>
-
-          {/* Grup */}
-          <div className="space-y-2">
-            <Label htmlFor="grup" className="text-sm font-medium">
-              Grup
-            </Label>
-            {isEditing ? (
-              <Select
-                value={formData.grup}
-                onValueChange={(value) => handleInputChange('grup', value)}
-              >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="-- Pilih Grup --" />
-                </SelectTrigger>
-                <SelectContent>
-                  {groupOptions.map((group) => (
-                    <SelectItem key={group.value} value={group.value}>
-                      {group.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {formData.grup || '-- Pilih Grup --'}
-              </div>
-            )}
-          </div>
-
-          {/* Status Marital */}
-          <div className="space-y-2">
-            <Label htmlFor="statusMarital" className="text-sm font-medium">
-              Status Marital <span className="text-red-500">*</span>
-            </Label>
-            {isEditing ? (
-              <Select
-                value={formData.statusMarital}
-                onValueChange={(value) => handleInputChange('statusMarital', value)}
-              >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="-- Pilih Status Marital --" />
-                </SelectTrigger>
-                <SelectContent>
-                  {isLoadingMaritals ? (
-                    <SelectItem value="loading" disabled>Memuat status marital...</SelectItem>
-                  ) : maritalOptions.length ? (
-                    maritalOptions.map((marital) => (
-                      <SelectItem key={marital.value} value={marital.value}>
-                        {marital.label}
-                      </SelectItem>
-                    ))
-                  ) : (
-                    <SelectItem value="empty" disabled>Tidak ada data marital</SelectItem>
-                  )}
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {getOptionLabel(maritalOptions, formData.statusMarital, data?.statusMarital || '') || '-- Pilih Status Marital --'}
-              </div>
-            )}
-          </div>
-
-          {/* Referensi */}
-          <div className="space-y-2">
-            <Label htmlFor="referensi" className="text-sm font-medium">
-              Referensi
-            </Label>
-            <Input
-              id="referensi"
-              placeholder="Referensi"
-              value={formData.referensi}
-              onChange={(e) => handleInputChange('referensi', e.target.value)}
-              disabled={!isEditing}
-              className="bg-white disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all"
-            />
-          </div>
-
-          {/* No SIO */}
-          <div className="space-y-2">
-            <Label htmlFor="noSIO" className="text-sm font-medium">
-              No SIO
-            </Label>
-            <Input
-              id="noSIO"
-              placeholder="32xxxxx"
-              value={formData.noSIO}
-              onChange={(e) => handleInputChange('noSIO', e.target.value)}
-              disabled={!isEditing}
-              className="bg-white disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all"
-            />
-          </div>
-
-          {/* Status Akun */}
-          <div className="space-y-2">
-            <Label htmlFor="statusAkun" className="text-sm font-medium">
-              Status Akun <span className="text-red-500">*</span>
-            </Label>
-            {isEditing ? (
-              <Select
-                value={formData.statusAkun}
-                onValueChange={(value) => handleInputChange('statusAkun', value)}
-              >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="-- Pilih Status Akun --" />
-                </SelectTrigger>
-                <SelectContent>
-                  {accountStatusOptions.map((status) => (
-                    <SelectItem key={status.value} value={status.value}>
-                      {status.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {getOptionLabel(accountStatusOptions, formData.statusAkun, data?.statusAkun || '') || '-- Pilih Status Akun --'}
-              </div>
-            )}
-          </div>
-
+          <FormInput label="ID Karyawan" required id="idKaryawan" placeholder="ID otomatis" value={formData.idKaryawan} onChange={(value) => handleInputChange('idKaryawan', value)} disabled />
+          <FormSelect label="Divisi" required id="divisi" placeholder="-- Pilih Divisi --" value={formData.divisi} onValueChange={(value) => handleInputChange('divisi', value)} loading={isLoadingDepartments} emptyMessage="Tidak ada data divisi" options={departmentOptions} disabled={!isEditing} />
+          <FormSelect label="Jabatan" required id="jabatan" placeholder="-- Pilih Jabatan --" value={formData.jabatan} onValueChange={(value) => handleInputChange('jabatan', value)} loading={isLoadingPositions} emptyMessage="Tidak ada data jabatan" options={positionOptions} disabled={!isEditing} />
+          <FormSelect label="Bagian" required id="bagian" placeholder="-- Pilih Bagian --" value={formData.bagian} onValueChange={(value) => handleInputChange('bagian', value)} loading={isLoadingSections} emptyMessage="Tidak ada data bagian" options={sectionOptions} disabled={!isEditing} />
+          <FormSelect label="Lokasi Kerja" required id="lokasiKerja" placeholder="-- Pilih Lokasi --" value={formData.lokasiKerja} onValueChange={(value) => handleInputChange('lokasiKerja', value)} options={locationOptions} disabled={!isEditing} />
+          <FormInput label="Tanggal Bergabung" required id="tanggalBergabung" type="date" value={formData.tanggalBergabung} onChange={(value) => handleInputChange('tanggalBergabung', value)} disabled={!isEditing} />
+          <FormInput label="Tanggal Kontrak" required id="tanggalKontrak" type="date" value={formData.tanggalKontrak} onChange={(value) => handleInputChange('tanggalKontrak', value)} disabled={!isEditing} />
+          <FormInput label="Selesai Kontrak" required id="selesaiKontrak" type="date" value={formData.selesaiKontrak} onChange={(value) => handleInputChange('selesaiKontrak', value)} disabled={!isEditing} />
+          <FormSelect label="Kategori Karyawan" required id="kategoriKaryawan" placeholder="-- Pilih Kategori --" value={formData.kategoriKaryawan} onValueChange={(value) => handleInputChange('kategoriKaryawan', value)} loading={isLoadingCategories} emptyMessage="Tidak ada data kategori" options={categoryOptions} disabled={!isEditing} />
+          <FormSelect label="Grup" id="grup" placeholder="-- Pilih Grup --" value={formData.grup} onValueChange={(value) => handleInputChange('grup', value)} options={groupOptions} disabled={!isEditing} />
+          <FormSelect label="Status Marital" required id="statusMarital" placeholder="-- Pilih Status Marital --" value={formData.statusMarital} onValueChange={(value) => handleInputChange('statusMarital', value)} loading={isLoadingMaritals} emptyMessage="Tidak ada data marital" options={maritalOptions} disabled={!isEditing} />
+          <FormInput label="Referensi" id="referensi" placeholder="Referensi" value={formData.referensi} onChange={(value) => handleInputChange('referensi', value)} disabled={!isEditing} />
+          <FormInput label="No SIO" id="noSIO" placeholder="32xxxxx" value={formData.noSIO} onChange={(value) => handleInputChange('noSIO', value)} disabled={!isEditing} />
+          <FormSelect label="Status Akun" required id="statusAkun" placeholder="-- Pilih Status Akun --" value={formData.statusAkun} onValueChange={(value) => handleInputChange('statusAkun', value)} options={accountStatusOptions} disabled={!isEditing} />
         </div>
 
         {/* Action Buttons */}

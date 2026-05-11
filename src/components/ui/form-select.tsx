@@ -14,6 +14,7 @@ interface FormSelectProps {
   className?: string;
   id?: string;
   error?: string;
+  disabled?: boolean;
 }
 
 export const FormSelect: React.FC<FormSelectProps> = ({
@@ -28,6 +29,7 @@ export const FormSelect: React.FC<FormSelectProps> = ({
   className = "",
   id,
   error,
+  disabled = false,
 }) => {
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
@@ -38,8 +40,9 @@ export const FormSelect: React.FC<FormSelectProps> = ({
       <Select
         onValueChange={onValueChange}
         value={value}
+        disabled={disabled}
       >
-        <SelectTrigger id={id} className={`h-[42px] bg-white text-sm ${error ? "border-red-500" : ""}`}>
+        <SelectTrigger id={id} className={`h-[42px] bg-white text-sm disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed ${error ? "border-red-500" : ""}`}>
           <SelectValue placeholder={loading ? "Loading..." : placeholder} />
         </SelectTrigger>
         <SelectContent className="text-sm">

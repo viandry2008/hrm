@@ -1,7 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
   Dialog,
@@ -10,6 +9,7 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Check, X, Edit, Upload, Eye, Trash2, FileText } from 'lucide-react';
+import { FormInput } from '@/components/ui/form-input';
 
 const TabIdentitasKendaraan = ({ data }: any) => {
   const [isEditing, setIsEditing] = useState(false);
@@ -198,17 +198,13 @@ const TabIdentitasKendaraan = ({ data }: any) => {
             )}
           </div>
 
-          {/* Nomor SIM */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Nomor SIM</Label>
-            <Input
-              placeholder="Nomor SIM"
-              value={formData.sim.nomor}
-              onChange={(e) => handleNomorChange('sim', e.target.value)}
-              disabled={!isEditing}
-              className="bg-white disabled:bg-gray-50 disabled:text-gray-500"
-            />
-          </div>
+          <FormInput
+            label="Nomor SIM"
+            placeholder="Nomor SIM"
+            value={formData.sim.nomor}
+            onChange={(value) => handleNomorChange('sim', value)}
+            disabled={!isEditing}
+          />
 
           {/* Upload STNK */}
           <div className="space-y-2">
@@ -268,17 +264,13 @@ const TabIdentitasKendaraan = ({ data }: any) => {
             )}
           </div>
 
-          {/* Nomor STNK */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Nomor STNK</Label>
-            <Input
-              placeholder="Nomor STNK"
-              value={formData.stnk.nomor}
-              onChange={(e) => handleNomorChange('stnk', e.target.value)}
-              disabled={!isEditing}
-              className="bg-white disabled:bg-gray-50 disabled:text-gray-500"
-            />
-          </div>
+          <FormInput
+            label="Nomor STNK"
+            placeholder="Nomor STNK"
+            value={formData.stnk.nomor}
+            onChange={(value) => handleNomorChange('stnk', value)}
+            disabled={!isEditing}
+          />
 
           {/* Upload Gambar Kendaraan Depan */}
           <div className="space-y-2">

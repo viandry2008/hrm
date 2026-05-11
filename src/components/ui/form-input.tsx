@@ -12,6 +12,7 @@ interface FormInputProps {
   className?: string;
   id?: string;
   error?: string;
+  disabled?: boolean;
 }
 
 export const FormInput: React.FC<FormInputProps> = ({
@@ -24,6 +25,7 @@ export const FormInput: React.FC<FormInputProps> = ({
   className = "",
   id,
   error,
+  disabled = false,
 }) => {
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
@@ -37,7 +39,8 @@ export const FormInput: React.FC<FormInputProps> = ({
         placeholder={placeholder}
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className={`h-[42px] bg-white ${error ? "border-red-500" : ""}`}
+        disabled={disabled}
+        className={`h-[42px] bg-white disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed ${error ? "border-red-500" : ""}`}
       />
       {error && <p className="text-red-500 text-sm">{error}</p>}
     </div>

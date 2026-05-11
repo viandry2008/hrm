@@ -1,16 +1,9 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { Check, X, Edit } from 'lucide-react';
+import { FormInput } from '@/components/ui/form-input';
+import { FormSelect } from '@/components/ui/form-select';
 
 const relationshipOptions = [
   { value: 'Orang Tua (Ayah)', label: 'Orang Tua (Ayah)' },
@@ -74,63 +67,33 @@ const TabKontakDarurat = ({ data }: any) => {
       <CardContent className="p-6 bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          {/* Nama Lengkap */}
-          <div className="space-y-2">
-            <Label htmlFor="namaLengkap" className="text-sm font-medium">
-              Nama Lengkap
-            </Label>
-            <Input
-              id="namaLengkap"
-              placeholder="Nama kontak"
-              value={formData.namaLengkap}
-              onChange={(e) => handleInputChange('namaLengkap', e.target.value)}
-              disabled={!isEditing}
-              className="bg-white disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all"
-            />
-          </div>
+          <FormInput
+            label="Nama Lengkap"
+            id="namaLengkap"
+            placeholder="Nama kontak"
+            value={formData.namaLengkap}
+            onChange={(value) => handleInputChange('namaLengkap', value)}
+            disabled={!isEditing}
+          />
 
-          {/* Hubungan */}
-          <div className="space-y-2">
-            <Label htmlFor="hubungan" className="text-sm font-medium">
-              Hubungan
-            </Label>
-            {isEditing ? (
-              <Select
-                value={formData.hubungan}
-                onValueChange={(value) => handleInputChange('hubungan', value)}
-              >
-                <SelectTrigger className="bg-white">
-                  <SelectValue placeholder="-- Pilih Hubungan --" />
-                </SelectTrigger>
-                <SelectContent>
-                  {currentRelationshipOptions.map((relationship) => (
-                    <SelectItem key={relationship.value} value={relationship.value}>
-                      {relationship.label}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            ) : (
-              <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-gray-500 text-sm">
-                {formData.hubungan || '-- Pilih Hubungan --'}
-              </div>
-            )}
-          </div>
+          <FormSelect
+            label="Hubungan"
+            id="hubungan"
+            placeholder="-- Pilih Hubungan --"
+            value={formData.hubungan}
+            onValueChange={(value) => handleInputChange('hubungan', value)}
+            options={currentRelationshipOptions}
+            disabled={!isEditing}
+          />
 
-          {/* Nomor Telepon */}
-          <div className="space-y-2">
-            <Label htmlFor="nomorTelepon" className="text-sm font-medium">
-              Nomor Telepon
-            </Label>
-            <Input
-              id="nomorTelepon"
-              placeholder="08xxx"
-              value={formData.nomorTelepon}
-              onChange={(e) => handleInputChange('nomorTelepon', e.target.value)}
-              disabled={!isEditing}
-              className="bg-white disabled:bg-gray-50 disabled:text-gray-500 disabled:cursor-not-allowed transition-all"
-            />
-          </div>
+          <FormInput
+            label="Nomor Telepon"
+            id="nomorTelepon"
+            placeholder="08xxx"
+            value={formData.nomorTelepon}
+            onChange={(value) => handleInputChange('nomorTelepon', value)}
+            disabled={!isEditing}
+          />
 
         </div>
 

@@ -123,6 +123,7 @@ const normalizeEmployeeDetail = (employee: any) => {
   const vehicle = employee.vehicles?.[0];
   const salary = employee.salary;
   const latestContract = employee.latest_contract;
+  const maritalStatus = employee.marital_status;
   const spouse = employee.families?.find((family: any) => family.relationship === 'Spouse');
   const children = employee.families?.filter((family: any) => family.relationship === 'Child') ?? [];
 
@@ -156,6 +157,11 @@ const normalizeEmployeeDetail = (employee: any) => {
     jenisKelamin: normalizeGender(employee.gender),
     alamatKTP: employee.address_ktp || '',
     alamatDomisili: employee.address_domicile || '',
+    nomorKTP: employee.national_id || '',
+    noKK: employee.family_card_number || '',
+    nomorNPWP: employee.tax_number || '',
+    nomorKPJ: employee.bpjstk_number || '',
+    nomorJKN: employee.bpjs_number || '',
     pendidikan: employee.education || '',
     agama: typeof employee.religion === 'object' ? employee.religion?.name || '' : employee.religion || '',
     agamaId: employee.religion_id ? String(employee.religion_id) : typeof employee.religion === 'object' && employee.religion?.id ? String(employee.religion.id) : '',
@@ -163,8 +169,8 @@ const normalizeEmployeeDetail = (employee: any) => {
     namaAnak: children.map((child: any) => child.name).join(', '),
     jumlahAnak: children.length ? String(children.length) : '',
     grup: employee.group || '',
-    statusMarital: employee.marital_status?.name || '',
-    statusMaritalId: employee.marital_status_id ? String(employee.marital_status_id) : employee.marital_status?.id ? String(employee.marital_status.id) : '',
+    statusMarital: typeof maritalStatus === 'object' ? maritalStatus?.name || '' : maritalStatus || '',
+    statusMaritalId: employee.marital_status_id ? String(employee.marital_status_id) : typeof maritalStatus === 'object' && maritalStatus?.id ? String(maritalStatus.id) : '',
     referensi: employee.referensi || '',
     noSIO: employee.sio_number || '',
     namaPemilikRekening: bankAccount?.account_holder_name || '',
@@ -350,7 +356,7 @@ const DetailKaryawanPage = () => {
                   transition-all duration-200
                   hover:text-gray-900
                   hover:bg-gray-50
-                  data-[state=active]:bg-gradient-to-r data-[state=active]:from-[#1E3A8A] data-[state=active]:to-[#1E40AF]
+                  data-[state=active]:bg-primary
                   data-[state=active]:text-white
                   data-[state=active]:border-[#1E40AF]
                   data-[state=active]:rounded-t-sm

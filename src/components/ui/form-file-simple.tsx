@@ -8,6 +8,7 @@ interface FormFileSimpleProps {
   value: File | null;
   onChange: (file: File | null) => void;
   className?: string;
+  disabled?: boolean;
 }
 
 export const FormFileSimple: React.FC<FormFileSimpleProps> = ({
@@ -17,6 +18,7 @@ export const FormFileSimple: React.FC<FormFileSimpleProps> = ({
   value,
   onChange,
   className = "",
+  disabled = false,
 }) => {
   return (
     <div className={`flex flex-col gap-2 ${className}`}>
@@ -29,12 +31,13 @@ export const FormFileSimple: React.FC<FormFileSimpleProps> = ({
           type="file"
           onChange={(e) => onChange(e.target.files?.[0] || null)}
           accept={accept}
+          disabled={disabled}
           className="hidden"
           id={`upload-${label.toLowerCase().replace(/\s+/g, '-')}`}
         />
         <label
           htmlFor={`upload-${label.toLowerCase().replace(/\s+/g, '-')}`}
-          className="border border-gray-300 p-2 rounded-l-md bg-gray-100 text-sm text-gray-700 cursor-pointer whitespace-nowrap hover:bg-gray-200 transition-colors"
+          className={`border border-gray-300 p-2 rounded-l-md bg-gray-100 text-sm text-gray-700 whitespace-nowrap transition-colors ${disabled ? "cursor-not-allowed opacity-70" : "cursor-pointer hover:bg-gray-200"}`}
         >
           Pilih File
         </label>
