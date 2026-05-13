@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check, X, Edit } from 'lucide-react';
+import { Check, X, Edit, Loader2 } from 'lucide-react';
 import { FormInput } from '@/components/ui/form-input';
 import { FormSelect } from '@/components/ui/form-select';
+import { useUpdateEmployee } from '@/api/employee/employee.query';
 
 const relationshipOptions = [
   { value: 'Orang Tua (Ayah)', label: 'Orang Tua (Ayah)' },
@@ -17,10 +18,7 @@ const relationshipOptions = [
 ];
 
 const withCurrentRelationship = (value: string) => {
-  if (!value || relationshipOptions.some((relationship) => relationship.value === value)) {
-    return relationshipOptions;
-  }
-
+  if (!value || relationshipOptions.some((r) => r.value === value)) return relationshipOptions;
   return [{ value, label: value }, ...relationshipOptions];
 };
 
@@ -34,6 +32,8 @@ const TabKontakDarurat = ({ data }: any) => {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [originalData, setOriginalData] = useState(formData);
+
+  const { mutate: updateEmployee, isPending } = useUpdateEmployee(data?.employeeId);
 
   useEffect(() => {
     if (data) {
@@ -52,9 +52,17 @@ const TabKontakDarurat = ({ data }: any) => {
   };
 
   const handleSave = () => {
-    console.log('Saving ', formData);
-    setOriginalData(formData);
-    setIsEditing(false);
+    const payload = new FormData();
+    payload.append('emergency_name', formData.namaLengkap);
+    payload.append('emergency_relation', formData.hubungan);
+    payload.append('emergency_phone', formData.nomorTelepon);
+
+    updateEmployee(payload, {
+      onSuccess: () => {
+        setOriginalData(formData);
+        setIsEditing(false);
+      },
+    });
   };
 
   const handleCancel = () => {
@@ -66,7 +74,6 @@ const TabKontakDarurat = ({ data }: any) => {
     <Card className="bg-white">
       <CardContent className="p-6 bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
           <FormInput
             label="Nama Lengkap"
             id="namaLengkap"
@@ -75,7 +82,6 @@ const TabKontakDarurat = ({ data }: any) => {
             onChange={(value) => handleInputChange('namaLengkap', value)}
             disabled={!isEditing}
           />
-
           <FormSelect
             label="Hubungan"
             id="hubungan"
@@ -85,7 +91,6 @@ const TabKontakDarurat = ({ data }: any) => {
             options={currentRelationshipOptions}
             disabled={!isEditing}
           />
-
           <FormInput
             label="Nomor Telepon"
             id="nomorTelepon"
@@ -94,40 +99,22 @@ const TabKontakDarurat = ({ data }: any) => {
             onChange={(value) => handleInputChange('nomorTelepon', value)}
             disabled={!isEditing}
           />
-
         </div>
 
-        {/* Action Buttons */}
-        {isEditing && (
+        {isEditing ? (
           <div className="flex justify-end gap-2 mt-6 pt-6 border-t">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCancel}
-              className="gap-2"
-            >
+            <Button variant="outline" size="sm" onClick={handleCancel} className="gap-2" disabled={isPending}>
               <X className="w-4 h-4" />
               Batal
             </Button>
-            <Button
-              size="sm"
-              onClick={handleSave}
-              className="gap-2 bg-blue-600 hover:bg-blue-700"
-            >
-              <Check className="w-4 h-4" />
+            <Button size="sm" onClick={handleSave} className="gap-2 bg-blue-600 hover:bg-blue-700" disabled={isPending}>
+              {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
               Simpan
             </Button>
           </div>
-        )}
-
-        {/* Edit Button */}
-        {!isEditing && (
+        ) : (
           <div className="flex justify-end mt-6 pt-6 border-t">
-            <Button
-              size="sm"
-              onClick={() => setIsEditing(true)}
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
-            >
+            <Button size="sm" onClick={() => setIsEditing(true)} className="gap-2 bg-blue-600 hover:bg-blue-700 text-white">
               <Edit className="w-4 h-4" />
               Edit
             </Button>

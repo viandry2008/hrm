@@ -1,6 +1,6 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
-import { createEmployeeApi, deleteEmployeeApi, deleteMultipleEmployeeApi, getEmployeeApi, getEmployeesApi, getSummaryEmployeeApi, updateMultipleContractEmployeeApi, updateMultipleStatusEmployeeApi } from "./employee.api";
+import { createEmployeeApi, deleteEmployeeApi, deleteMultipleEmployeeApi, getEmployeeApi, getEmployeesApi, getSummaryEmployeeApi, updateEmployeeApi, updateMultipleContractEmployeeApi, updateMultipleStatusEmployeeApi } from "./employee.api";
 import { EmployeeMultipleChangeRequest, EmployeeMultipleContractRequest } from "./employee.types";
 import { EmployeePostRequest } from "./employee.types";
 
@@ -21,6 +21,40 @@ export const useGetEmployee = (id?: number | string) => {
         queryKey: ["Employee", id],
         queryFn: () => getEmployeeApi(id as number | string),
         enabled: Boolean(id),
+    });
+};
+
+export const useUpdateEmployee = (
+    id?: number | string,
+    onSuccessReset?: () => void
+) => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (payload: FormData) =>
+            updateEmployeeApi(id as number | string, payload),
+
+        onSuccess: async () => {
+            Swal.fire({
+                title: "Berhasil!",
+                text: "Data karyawan berhasil diperbarui.",
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: false,
+            });
+
+            // Invalidate supaya data detail re-fetch otomatis
+            await queryClient.invalidateQueries({ queryKey: ["Employee", id] });
+
+            onSuccessReset?.();
+        },
+
+        onError: (err: any) => {
+            console.error("Update error:", err);
+            const errorMessage =
+                err.response?.data?.message || err.message || "Gagal memperbarui data karyawan";
+            Swal.fire("Gagal", errorMessage, "error");
+        },
     });
 };
 

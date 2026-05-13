@@ -125,7 +125,7 @@ const TambahKaryawanPage = () => {
         };
         const genderMap: Record<string, string> = {
             "Laki - Laki": "Male",
-            Perempuan: "Female",
+            "Perempuan": "Female",
         };
         const statusMap: Record<string, string> = {
             Aktif: "Active",

@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check, X, Edit } from 'lucide-react';
+import { Check, X, Edit, Loader2 } from 'lucide-react';
 import { useGetRoles } from '@/api/role/role.query';
 import { FormInput } from '@/components/ui/form-input';
 import { FormSelect } from '@/components/ui/form-select';
+import { useUpdateEmployee } from '@/api/employee/employee.query';
 
 const withCurrentOption = (
   options: Array<{ value: string; label: string }>,
@@ -21,6 +22,7 @@ const TabInformasiAkun = ({ data }: any) => {
     page: 1,
     limit: 1000,
   });
+
   const roleOptions = withCurrentOption(
     (roleData?.data ?? []).map((role: any) => ({
       value: role.id.toString(),
@@ -38,6 +40,8 @@ const TabInformasiAkun = ({ data }: any) => {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [originalData, setOriginalData] = useState(formData);
+
+  const { mutate: updateEmployee, isPending } = useUpdateEmployee(data?.employeeId);
 
   useEffect(() => {
     if (data) {
@@ -57,9 +61,20 @@ const TabInformasiAkun = ({ data }: any) => {
   };
 
   const handleSave = () => {
-    console.log('Saving ', formData);
-    setOriginalData(formData);
-    setIsEditing(false);
+    const payload = new FormData();
+    payload.append('name', data?.nama || '');
+    payload.append('username', formData.username);
+    payload.append('email', formData.email);
+    if (formData.password) payload.append('password', formData.password);
+    payload.append('role_id', formData.role);
+
+    updateEmployee(payload, {
+      onSuccess: () => {
+        setOriginalData({ ...formData, password: '' });
+        setFormData((prev) => ({ ...prev, password: '' }));
+        setIsEditing(false);
+      },
+    });
   };
 
   const handleCancel = () => {
@@ -80,7 +95,6 @@ const TabInformasiAkun = ({ data }: any) => {
             onChange={(value) => handleInputChange('username', value)}
             disabled={!isEditing}
           />
-
           <FormInput
             label="Email"
             required
@@ -91,18 +105,15 @@ const TabInformasiAkun = ({ data }: any) => {
             onChange={(value) => handleInputChange('email', value)}
             disabled={!isEditing}
           />
-
           <FormInput
             label="Password"
-            required
             id="password"
             type="password"
-            placeholder={isEditing ? 'Masukkan password baru' : '••••••••'}
+            placeholder={isEditing ? 'Masukkan password baru (opsional)' : '••••••••'}
             value={formData.password}
             onChange={(value) => handleInputChange('password', value)}
             disabled={!isEditing}
           />
-
           <FormSelect
             label="Role"
             required
@@ -117,37 +128,20 @@ const TabInformasiAkun = ({ data }: any) => {
           />
         </div>
 
-        {/* Action Buttons */}
-        {isEditing && (
+        {isEditing ? (
           <div className="flex justify-end gap-2 mt-6 pt-6 border-t">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCancel}
-              className="gap-2"
-            >
+            <Button variant="outline" size="sm" onClick={handleCancel} className="gap-2" disabled={isPending}>
               <X className="w-4 h-4" />
               Batal
             </Button>
-            <Button
-              size="sm"
-              onClick={handleSave}
-              className="gap-2 bg-blue-600 hover:bg-blue-700"
-            >
-              <Check className="w-4 h-4" />
+            <Button size="sm" onClick={handleSave} className="gap-2 bg-blue-600 hover:bg-blue-700" disabled={isPending}>
+              {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
               Simpan
             </Button>
           </div>
-        )}
-
-        {/* Edit Button */}
-        {!isEditing && (
+        ) : (
           <div className="flex justify-end mt-6 pt-6 border-t">
-            <Button
-              size="sm"
-              onClick={() => setIsEditing(true)}
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
-            >
+            <Button size="sm" onClick={() => setIsEditing(true)} className="gap-2 bg-blue-600 hover:bg-blue-700 text-white">
               <Edit className="w-4 h-4" />
               Edit
             </Button>

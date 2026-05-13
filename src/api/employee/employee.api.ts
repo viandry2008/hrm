@@ -27,20 +27,17 @@ export const createEmployeeApi = async (
     return data;
 };
 
-// export const createEmployeeApi = async (
-//     payload: EmployeePostRequest
-// ): Promise<EmployeePostResponse> => {
-//     const { data } = await apiClient.post(ENDPOINTS.EMPLOYEES, payload);
-//     return data;
-// };
-
-// export const updateEmployeeApi = async (
-//     id: number,
-//     payload: EmployeePostRequest
-// ): Promise<EmployeePostResponse> => {
-//     const { data } = await apiClient.put(`${ENDPOINTS.EMPLOYEES}/${id}`, payload);
-//     return data;
-// };
+export const updateEmployeeApi = async (
+    id: number | string,
+    payload: FormData
+): Promise<EmployeePostResponse> => {
+    const { data } = await apiClient.post(
+        `${ENDPOINTS.EMPLOYEES}/${id}/update`,
+        payload,
+        { headers: { "Content-Type": "multipart/form-data" } }
+    );
+    return data;
+};
 
 export const deleteEmployeeApi = async (
     id: number

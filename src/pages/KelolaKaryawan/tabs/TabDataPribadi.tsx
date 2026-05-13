@@ -6,6 +6,7 @@ import { useGetReligions } from '@/api/religion/religion.query';
 import { FormInput } from '@/components/ui/form-input';
 import { FormSelect } from '@/components/ui/form-select';
 import { FormTextarea } from '@/components/ui/form-textarea';
+import { useUpdateEmployee } from '@/api/employee/employee.query';
 
 const withCurrentOption = (
   options: Array<{ value: string; label: string }>,
@@ -30,6 +31,7 @@ const TabDataPribadi = ({ data }: any) => {
     data?.agamaId || data?.agama || '',
     data?.agama || ''
   );
+
   const educationOptions = withCurrentOption(
     [
       { value: 'SD', label: 'SD' },
@@ -45,14 +47,11 @@ const TabDataPribadi = ({ data }: any) => {
     data?.pendidikan || '',
     data?.pendidikan || ''
   );
-  const genderOptions = withCurrentOption(
-    [
-      { value: 'Laki - Laki', label: 'Laki - Laki' },
-      { value: 'Perempuan', label: 'Perempuan' },
-    ],
-    data?.jenisKelamin || '',
-    data?.jenisKelamin || ''
-  );
+
+  const genderOptions = [
+    { value: "Laki - Laki", label: "Laki - Laki" },
+    { value: "Perempuan", label: "Perempuan" },
+  ];
 
   const [formData, setFormData] = useState({
     nama: '',
@@ -72,6 +71,8 @@ const TabDataPribadi = ({ data }: any) => {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [originalData, setOriginalData] = useState(formData);
+
+  const { mutate: updateEmployee, isPending } = useUpdateEmployee(data?.employeeId);
 
   useEffect(() => {
     if (data) {
@@ -101,10 +102,36 @@ const TabDataPribadi = ({ data }: any) => {
   };
 
   const handleSave = () => {
-    console.log('Saving ', formData);
-    setOriginalData(formData);
-    setIsEditing(false);
+
+    const genderMap: Record<string, string> = {
+      "Laki - Laki": "Male",
+      "Perempuan": "Female",
+    };
+
+    const payload = new FormData();
+    payload.append('full_name', data?.nama || '');
+    payload.append('phone_number', formData.nomorHandphone || '');
+    payload.append('address_ktp', formData.alamatKTP || '');
+    payload.append('address_domicile', formData.alamatDomisili || '');
+    payload.append('education', formData.pendidikan || '');
+    payload.append('religion_id', formData.agama || '');
+    payload.append('spouse_name', formData.namaSuamiIstri || '');
+    payload.append('children_names', formData.namaAnak || '');
+    payload.append('number_of_children', formData.jumlahAnak || '');
+    payload.append('father_name', formData.namaBapak || '');
+    payload.append('mother_name', formData.namaIbu || '');
+    payload.append('gender', genderMap[formData.jenisKelamin] || '');
+    payload.append('birth_date', formData.tanggalLahir || '');
+    payload.append('birth_place', formData.tempatLahir || '');
+
+    updateEmployee(payload, {
+      onSuccess: () => {
+        setOriginalData(formData);
+        setIsEditing(false);
+      },
+    });
   };
+
 
   const handleCancel = () => {
     setFormData(originalData);

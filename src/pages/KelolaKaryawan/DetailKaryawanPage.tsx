@@ -1,33 +1,16 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
 import {
-  Loader2,
-  Mail,
-  User,
-  Briefcase,
-  Phone,
-  File,
-  CreditCard,
-  Car,
-  History,
-  Wallet,
-  DollarSign,
-  FileText,
-  Building2,
-  CalendarDays,
-  IdCard,
-  AlertTriangle,
-  ChevronRight,
-  Home,
-  Users
+  Loader2, Mail, User, Briefcase, Phone, CreditCard, Car,
+  History, Wallet, DollarSign, FileText, Building2, CalendarDays,
+  IdCard, AlertTriangle, ChevronRight, Users
 } from 'lucide-react';
 import { useGetEmployee } from '@/api/employee/employee.query';
 
-// ================= IMPORT TAB COMPONENTS =================
 import TabInformasiAkun from './tabs/TabInformasiAkun';
 import TabDataPribadi from './tabs/TabDataPribadi';
 import TabDataKepegawaian from './tabs/TabDataKepegawaian';
@@ -39,7 +22,6 @@ import TabManajemenFile from './tabs/TabManajemenFile';
 import TabRiwayatKontrak from './tabs/TabRiwayatKontrakKerja';
 import TabRiwayatPinjaman from './tabs/TabRiwayatPinjaman';
 
-// ================= TABS CONFIG (Shortened labels) =================
 const tabs = [
   { value: 'akun', label: 'Info Akun', icon: Mail },
   { value: 'pribadi', label: 'Data Pribadi', icon: User },
@@ -53,7 +35,6 @@ const tabs = [
   { value: 'pinjaman', label: 'Pinjaman', icon: DollarSign },
 ];
 
-// ================= MAPPING COMPONENT =================
 const tabComponents: any = {
   akun: TabInformasiAkun,
   pribadi: TabDataPribadi,
@@ -67,53 +48,37 @@ const tabComponents: any = {
   pinjaman: TabRiwayatPinjaman,
 };
 
-// Format tanggal ke format Indonesia
 const formatTanggalIndonesia = (tanggal?: string): string => {
   if (!tanggal) return '-';
-
   const bulanIndonesia = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
-    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+    'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
   ];
   const [year, month, day] = tanggal.split('-');
   const monthName = bulanIndonesia[parseInt(month) - 1];
-
   if (!year || !monthName || !day) return tanggal;
-
   return `${day} ${monthName} ${year}`;
 };
 
 const formatRupiah = (value?: string | number | null): string => {
   const numericValue = Number(value ?? 0);
-
   if (Number.isNaN(numericValue)) return '';
-
   return `Rp ${numericValue.toLocaleString('id-ID')}`;
 };
 
 const getContractReminder = (endDate?: string | null): string => {
   if (!endDate) return '';
-
   const today = new Date();
   const end = new Date(endDate);
-  const diffTime = end.getTime() - today.getTime();
-  const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-
-  if (diffDays > 0 && diffDays <= 30) {
-    return `Kontrak akan habis dalam ${diffDays} hari`;
-  }
-
-  if (diffDays <= 0) {
-    return 'Kontrak telah habis';
-  }
-
+  const diffDays = Math.ceil((end.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+  if (diffDays > 0 && diffDays <= 30) return `Kontrak akan habis dalam ${diffDays} hari`;
+  if (diffDays <= 0) return 'Kontrak telah habis';
   return '';
 };
 
 const normalizeGender = (gender?: string | null): string => {
   if (gender === 'Male') return 'Laki - Laki';
   if (gender === 'Female') return 'Perempuan';
-
   return gender || '';
 };
 
@@ -124,8 +89,8 @@ const normalizeEmployeeDetail = (employee: any) => {
   const salary = employee.salary;
   const latestContract = employee.latest_contract;
   const maritalStatus = employee.marital_status;
-  const spouse = employee.families?.find((family: any) => family.relationship === 'Spouse');
-  const children = employee.families?.filter((family: any) => family.relationship === 'Child') ?? [];
+  const spouse = employee.families?.find((f: any) => f.relationship === 'Spouse');
+  const children = employee.families?.filter((f: any) => f.relationship === 'Child') ?? [];
 
   return {
     raw: employee,
@@ -166,8 +131,10 @@ const normalizeEmployeeDetail = (employee: any) => {
     agama: typeof employee.religion === 'object' ? employee.religion?.name || '' : employee.religion || '',
     agamaId: employee.religion_id ? String(employee.religion_id) : typeof employee.religion === 'object' && employee.religion?.id ? String(employee.religion.id) : '',
     namaSuamiIstri: spouse?.name || '',
-    namaAnak: children.map((child: any) => child.name).join(', '),
+    namaAnak: children.map((c: any) => c.name).join(', '),
     jumlahAnak: children.length ? String(children.length) : '',
+    namaBapak: employee.families?.find((f: any) => f.relationship === 'Father')?.name || '',
+    namaIbu: employee.families?.find((f: any) => f.relationship === 'Mother')?.name || '',
     grup: employee.group || '',
     statusMarital: typeof maritalStatus === 'object' ? maritalStatus?.name || '' : maritalStatus || '',
     statusMaritalId: employee.marital_status_id ? String(employee.marital_status_id) : typeof maritalStatus === 'object' && maritalStatus?.id ? String(maritalStatus.id) : '',
@@ -196,10 +163,18 @@ const normalizeEmployeeDetail = (employee: any) => {
 const DetailKaryawanPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: employeeResponse, isLoading, isError } = useGetEmployee(id);
-  const data = employeeResponse?.data ? normalizeEmployeeDetail(employeeResponse.data) : null;
+  const { data: employeeResponse, isLoading, isError, refetch: refetchGetEmployee } = useGetEmployee(id);
 
-  // ===== TAB CONTROL =====
+  const data = employeeResponse?.data
+    ? normalizeEmployeeDetail(employeeResponse.data)
+    : null;
+
+  useEffect(() => {
+    if (data) {
+      refetchGetEmployee();
+    }
+  }, [data]);
+
   const [activeTab, setActiveTab] = useState('akun');
 
   if (isLoading) {
@@ -225,16 +200,8 @@ const DetailKaryawanPage = () => {
   return (
     <div className="p-6 space-y-6">
 
-      {/* ================= BREADCRUMB ================= */}
+      {/* BREADCRUMB */}
       <div className="flex items-center gap-2 text-sm mb-4">
-        {/* <button
-          onClick={() => navigate('/')}
-          className="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
-        >
-          <Home className="w-4 h-4" />
-          <span>Home</span>
-        </button>
-        <ChevronRight className="w-4 h-4 text-gray-400" /> */}
         <button
           onClick={() => navigate('/data-karyawan')}
           className="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
@@ -246,26 +213,15 @@ const DetailKaryawanPage = () => {
         <span className="text-gray-600">Detail Karyawan</span>
       </div>
 
-      {/* ================= HEADER ================= */}
+      {/* HEADER */}
       <Card className="bg-white border border-gray-200">
         <CardContent className="p-6">
           <div className="flex items-start gap-6">
-            {/* Foto Kotak - Square */}
             <div className="w-32 h-32 rounded-md overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-200">
-              <img
-                src={data.foto}
-                alt={data.nama}
-                className="w-full h-full object-cover"
-              />
+              <img src={data.foto} alt={data.nama} className="w-full h-full object-cover" />
             </div>
-
-            {/* Info Karyawan */}
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-primary mb-3">
-                {data.nama}
-              </h1>
-
-              {/* Email dan Phone dengan Divider */}
+              <h1 className="text-2xl font-bold text-primary mb-3">{data.nama}</h1>
               <div className="flex items-center gap-3 text-sm text-gray-600 mb-5">
                 <div className="flex items-center gap-1.5">
                   <Mail className="w-4 h-4 text-primary" />
@@ -277,49 +233,28 @@ const DetailKaryawanPage = () => {
                   <span>{data.nomorHandphone}</span>
                 </div>
               </div>
-
-              {/* Info Cards */}
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                <div className="bg-primary rounded-md p-3">
-                  <div className="flex items-center gap-1.5 text-xs text-white/80 mb-1.5">
-                    <IdCard className="w-3.5 h-3.5 text-white" />
-                    <span>ID Karyawan</span>
+                {[
+                  { icon: IdCard, label: 'ID Karyawan', value: data.id },
+                  { icon: Briefcase, label: 'Jabatan', value: data.jabatan },
+                  { icon: Building2, label: 'Divisi', value: data.divisi },
+                  { icon: CalendarDays, label: 'Tanggal Bergabung', value: formatTanggalIndonesia(data.tanggalBergabung) },
+                ].map(({ icon: Icon, label, value }) => (
+                  <div key={label} className="bg-primary rounded-md p-3">
+                    <div className="flex items-center gap-1.5 text-xs text-white/80 mb-1.5">
+                      <Icon className="w-3.5 h-3.5 text-white" />
+                      <span>{label}</span>
+                    </div>
+                    <p className="text-sm font-semibold text-white">{value}</p>
                   </div>
-                  <p className="text-sm font-semibold text-white">{data.id}</p>
-                </div>
-
-                <div className="bg-primary rounded-md p-3">
-                  <div className="flex items-center gap-1.5 text-xs text-white/80 mb-1.5">
-                    <Briefcase className="w-3.5 h-3.5 text-white" />
-                    <span>Jabatan</span>
-                  </div>
-                  <p className="text-sm font-semibold text-white">{data.jabatan}</p>
-                </div>
-
-                <div className="bg-primary rounded-md p-3">
-                  <div className="flex items-center gap-1.5 text-xs text-white/80 mb-1.5">
-                    <Building2 className="w-3.5 h-3.5 text-white" />
-                    <span>Divisi</span>
-                  </div>
-                  <p className="text-sm font-semibold text-white">{data.divisi}</p>
-                </div>
-
-                <div className="bg-primary rounded-md p-3">
-                  <div className="flex items-center gap-1.5 text-xs text-white/80 mb-1.5">
-                    <CalendarDays className="w-3.5 h-3.5 text-white" />
-                    <span>Tanggal Bergabung</span>
-                  </div>
-                  <p className="text-sm font-semibold text-white">
-                    {formatTanggalIndonesia(data.tanggalBergabung)}
-                  </p>
-                </div>
+                ))}
               </div>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      {/* ================= ALERT ================= */}
+      {/* ALERT */}
       {data.pengingat && data.pengingat !== '-' && (
         <Alert className="bg-red-50 border-red-300">
           <AlertTriangle className="h-4 w-4 text-red-600" />
@@ -328,38 +263,22 @@ const DetailKaryawanPage = () => {
         </Alert>
       )}
 
-      {/* ================= TABS ================= */}
+      {/* TABS */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-
-        {/* ===== TAB HEADER ===== */}
-        <TabsList className="
-          flex
-          bg-white border-b border-gray-200
-          w-full
-          h-auto
-          p-0
-          gap-0
-        ">
+        <TabsList className="flex bg-white border-b border-gray-200 w-full h-auto p-0 gap-0">
           {tabs.map((tab) => {
             const Icon = tab.icon;
-
             return (
               <TabsTrigger
                 key={tab.value}
                 value={tab.value}
                 className="
-                  flex-1
-                  flex items-center justify-center gap-2
-                  px-4 py-3 text-sm font-medium
-                  text-gray-600
-                  border-b-2 border-transparent
-                  transition-all duration-200
-                  hover:text-gray-900
-                  hover:bg-gray-50
-                  data-[state=active]:bg-primary
-                  data-[state=active]:text-white
-                  data-[state=active]:border-[#1E40AF]
-                  data-[state=active]:rounded-t-sm
+                  flex-1 flex items-center justify-center gap-2
+                  px-4 py-3 text-sm font-medium text-gray-600
+                  border-b-2 border-transparent transition-all duration-200
+                  hover:text-gray-900 hover:bg-gray-50
+                  data-[state=active]:bg-primary data-[state=active]:text-white
+                  data-[state=active]:border-[#1E40AF] data-[state=active]:rounded-t-sm
                   data-[state=active]:mb-[-1px]
                 "
               >
@@ -370,25 +289,20 @@ const DetailKaryawanPage = () => {
           })}
         </TabsList>
 
-        {/* ===== TAB CONTENT ===== */}
         {tabs.map((tab) => {
           const Component = tabComponents[tab.value];
-
           return (
             <TabsContent
               key={tab.value}
               value={tab.value}
-              className="
-                mt-6
-                animate-in fade-in-50 slide-in-from-bottom-2
-                duration-300
-              "
+              className="mt-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-300"
             >
-              {Component ? <Component data={data} /> : <div>Coming Soon</div>}
+              {activeTab === tab.value && Component ? (
+                <Component data={data} />
+              ) : null}
             </TabsContent>
           );
         })}
-
       </Tabs>
     </div>
   );

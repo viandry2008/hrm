@@ -8,33 +8,78 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Check, X, Edit, Upload, Eye, Trash2, FileText } from 'lucide-react';
+import { Check, X, Edit, Upload, Eye, Trash2, FileText, Loader2 } from 'lucide-react';
 import { FormInput } from '@/components/ui/form-input';
+import { useUpdateEmployee } from '@/api/employee/employee.query';
 
 const formatNPWP = (digits: string) => {
   if (!digits) return '';
-
   let formatted = '';
-  const separators: Record<number, string> = {
-    1: '.',
-    4: '.',
-    7: '.',
-    8: '-',
-    11: '.',
-  };
-
+  const separators: Record<number, string> = { 1: '.', 4: '.', 7: '.', 8: '-', 11: '.' };
   for (let i = 0; i < digits.length; i += 1) {
     formatted += digits[i];
     if (separators[i]) formatted += separators[i];
   }
-
   return formatted;
 };
 
+// ─── Reusable FileUploadInput ──────────────────────────────────────────────────
+interface FileUploadInputProps {
+  label: string;
+  fieldKey: string;
+  fileData: { file: File | null; preview: string };
+  isEditing: boolean;
+  viewLabel?: string;
+  inputRef: React.RefObject<HTMLInputElement>;
+  onFileChange: (key: string, e: React.ChangeEvent<HTMLInputElement>) => void;
+  onRemove: (key: string) => void;
+  onView: (type: string, preview: string) => void;
+}
+
+const FileUploadInput = ({
+  label, fieldKey, fileData, isEditing, viewLabel,
+  inputRef, onFileChange, onRemove, onView,
+}: FileUploadInputProps) => (
+  <div className="space-y-2">
+    <Label className="text-sm font-medium">{label}</Label>
+    <div className="flex gap-2">
+      <input
+        type="file"
+        ref={inputRef}
+        onChange={(e) => onFileChange(fieldKey, e)}
+        accept="image/*,.pdf"
+        disabled={!isEditing}
+        className="hidden"
+      />
+      <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()} disabled={!isEditing} className="shrink-0">
+        <Upload className="w-4 h-4 mr-2" />
+        Pilih File
+      </Button>
+      <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-500">
+        {fileData.file ? (
+          <><FileText className="w-4 h-4 shrink-0" /><span className="truncate">{fileData.file.name}</span></>
+        ) : 'Tidak ada file yang dipilih'}
+      </div>
+      {isEditing && fileData.file && (
+        <Button type="button" variant="outline" size="sm" onClick={() => onRemove(fieldKey)} className="shrink-0 text-red-600 hover:text-red-700 hover:bg-red-50">
+          <Trash2 className="w-4 h-4" />
+        </Button>
+      )}
+    </div>
+    {fileData.file && (
+      <Button type="button" size="sm" onClick={() => onView(viewLabel ?? label, fileData.preview)} className="bg-blue-600 hover:bg-blue-700 text-white">
+        <Eye className="w-4 h-4 mr-2" />
+        Lihat {viewLabel ?? label}
+      </Button>
+    )}
+  </div>
+);
+
+// ─── Main Component ────────────────────────────────────────────────────────────
 const TabManajemenFile = ({ data }: any) => {
   const [isEditing, setIsEditing] = useState(false);
-  const [viewingDoc, setViewingDoc] = useState<any>(null);
-  
+  const [viewingDoc, setViewingDoc] = useState<{ type: string; preview: string } | null>(null);
+
   const [formData, setFormData] = useState({
     ktp: { file: null as File | null, preview: '', nomor: '' },
     kk: { file: null as File | null, preview: '', nomor: '' },
@@ -44,7 +89,6 @@ const TabManajemenFile = ({ data }: any) => {
     cv: { file: null as File | null, preview: '' },
     lainnya: { file: null as File | null, preview: '' },
   });
-
   const [originalData, setOriginalData] = useState(formData);
 
   const fileInputRefs = {
@@ -56,6 +100,8 @@ const TabManajemenFile = ({ data }: any) => {
     cv: useRef<HTMLInputElement>(null),
     lainnya: useRef<HTMLInputElement>(null),
   };
+
+  const { mutate: updateEmployee, isPending } = useUpdateEmployee(data?.employeeId);
 
   useEffect(() => {
     if (data) {
@@ -76,10 +122,9 @@ const TabManajemenFile = ({ data }: any) => {
   const handleFileChange = (type: string, event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (file) {
-      const preview = URL.createObjectURL(file);
       setFormData((prev) => ({
         ...prev,
-        [type]: { ...prev[type], file, preview },
+        [type]: { ...prev[type], file, preview: URL.createObjectURL(file) },
       }));
     }
   };
@@ -87,25 +132,36 @@ const TabManajemenFile = ({ data }: any) => {
   const handleRemoveFile = (type: string) => {
     setFormData((prev) => ({
       ...prev,
-      [type]: { file: null, preview: '', nomor: prev[type].nomor },
+      [type]: { ...prev[type], file: null, preview: '' },
     }));
   };
 
   const handleNomorChange = (type: string, value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      [type]: { ...prev[type], nomor: value },
-    }));
-  };
-
-  const triggerFileInput = (type: string) => {
-    fileInputRefs[type].current?.click();
+    setFormData((prev) => ({ ...prev, [type]: { ...prev[type], nomor: value } }));
   };
 
   const handleSave = () => {
-    console.log('Saving documents:', formData);
-    setOriginalData(formData);
-    setIsEditing(false);
+    const payload = new FormData();
+
+    // Nomor dokumen — selalu kirim
+    payload.append('document_type', 'ktp');
+    payload.append('document_number', formData.ktp.nomor);
+    payload.append('family_card_number', formData.kk.nomor);
+    payload.append('tax_number', formData.npwp.nomor);
+    payload.append('bpjstk_number', formData.kpj.nomor);
+    payload.append('bpjs_number', formData.jkn.nomor);
+
+    // File — hanya kirim jika ada file baru dipilih
+    if (formData.ktp.file) payload.append('document_file', formData.ktp.file);
+    if (formData.cv.file) payload.append('cv_file', formData.cv.file);
+    if (formData.lainnya.file) payload.append('other_file', formData.lainnya.file);
+
+    updateEmployee(payload, {
+      onSuccess: () => {
+        setOriginalData(formData);
+        setIsEditing(false);
+      },
+    });
   };
 
   const handleCancel = () => {
@@ -117,508 +173,73 @@ const TabManajemenFile = ({ data }: any) => {
     <Card className="bg-white">
       <CardContent className="p-6 bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          
-          {/* Upload KTP */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Upload KTP</Label>
-            <div className="flex gap-2">
-              <input
-                type="file"
-                ref={fileInputRefs.ktp}
-                onChange={(e) => handleFileChange('ktp', e)}
-                accept="image/*,.pdf"
-                disabled={!isEditing}
-                className="hidden"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => triggerFileInput('ktp')}
-                disabled={!isEditing}
-                className="shrink-0"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Pilih File
-              </Button>
-              <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-500">
-                {formData.ktp.file ? (
-                  <>
-                    <FileText className="w-4 h-4 shrink-0" />
-                    <span className="truncate">{formData.ktp.file.name}</span>
-                  </>
-                ) : (
-                  'Tidak ada file yang dipilih'
-                )}
-              </div>
-              {isEditing && formData.ktp.file && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleRemoveFile('ktp')}
-                  className="shrink-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              )}
-            </div>
-            {formData.ktp.file && (
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setViewingDoc({ type: 'KTP', preview: formData.ktp.preview })}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                Lihat KTP
-              </Button>
-            )}
-          </div>
 
-          <FormInput
-            label="Nomor KTP"
-            required
-            placeholder="32xxxxxx"
-            value={formData.ktp.nomor}
-            onChange={(value) => handleNomorChange('ktp', value)}
-            disabled={!isEditing}
-          />
+          <FileUploadInput label="Upload KTP" fieldKey="ktp" fileData={formData.ktp} isEditing={isEditing} viewLabel="KTP"
+            inputRef={fileInputRefs.ktp} onFileChange={handleFileChange} onRemove={handleRemoveFile}
+            onView={(type, preview) => setViewingDoc({ type, preview })} />
+          <FormInput label="Nomor KTP" required placeholder="32xxxxxx" value={formData.ktp.nomor}
+            onChange={(v) => handleNomorChange('ktp', v)} disabled={!isEditing} />
 
-          {/* Upload Kartu Keluarga */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Upload Kartu Keluarga</Label>
-            <div className="flex gap-2">
-              <input
-                type="file"
-                ref={fileInputRefs.kk}
-                onChange={(e) => handleFileChange('kk', e)}
-                accept="image/*,.pdf"
-                disabled={!isEditing}
-                className="hidden"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => triggerFileInput('kk')}
-                disabled={!isEditing}
-                className="shrink-0"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Pilih File
-              </Button>
-              <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-500">
-                {formData.kk.file ? (
-                  <>
-                    <FileText className="w-4 h-4 shrink-0" />
-                    <span className="truncate">{formData.kk.file.name}</span>
-                  </>
-                ) : (
-                  'Tidak ada file yang dipilih'
-                )}
-              </div>
-              {isEditing && formData.kk.file && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleRemoveFile('kk')}
-                  className="shrink-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              )}
-            </div>
-            {formData.kk.file && (
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setViewingDoc({ type: 'Kartu Keluarga', preview: formData.kk.preview })}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                Lihat Kartu Keluarga
-              </Button>
-            )}
-          </div>
+          <FileUploadInput label="Upload Kartu Keluarga" fieldKey="kk" fileData={formData.kk} isEditing={isEditing} viewLabel="Kartu Keluarga"
+            inputRef={fileInputRefs.kk} onFileChange={handleFileChange} onRemove={handleRemoveFile}
+            onView={(type, preview) => setViewingDoc({ type, preview })} />
+          <FormInput label="Nomor Kartu Keluarga" placeholder="Masukkan No KK" value={formData.kk.nomor}
+            onChange={(v) => handleNomorChange('kk', v)} disabled={!isEditing} />
 
-          <FormInput
-            label="Nomor Kartu Keluarga"
-            placeholder="Masukkan No KK"
-            value={formData.kk.nomor}
-            onChange={(value) => handleNomorChange('kk', value)}
-            disabled={!isEditing}
-          />
-
-          {/* Upload NPWP */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Upload NPWP</Label>
-            <div className="flex gap-2">
-              <input
-                type="file"
-                ref={fileInputRefs.npwp}
-                onChange={(e) => handleFileChange('npwp', e)}
-                accept="image/*,.pdf"
-                disabled={!isEditing}
-                className="hidden"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => triggerFileInput('npwp')}
-                disabled={!isEditing}
-                className="shrink-0"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Pilih File
-              </Button>
-              <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-500">
-                {formData.npwp.file ? (
-                  <>
-                    <FileText className="w-4 h-4 shrink-0" />
-                    <span className="truncate">{formData.npwp.file.name}</span>
-                  </>
-                ) : (
-                  'Tidak ada file yang dipilih'
-                )}
-              </div>
-              {isEditing && formData.npwp.file && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleRemoveFile('npwp')}
-                  className="shrink-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              )}
-            </div>
-            {formData.npwp.file && (
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setViewingDoc({ type: 'NPWP', preview: formData.npwp.preview })}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                Lihat NPWP
-              </Button>
-            )}
-          </div>
-
-          <FormInput
-            label="Nomor NPWP"
-            placeholder="12.345.678.9-012.345"
+          <FileUploadInput label="Upload NPWP" fieldKey="npwp" fileData={formData.npwp} isEditing={isEditing} viewLabel="NPWP"
+            inputRef={fileInputRefs.npwp} onFileChange={handleFileChange} onRemove={handleRemoveFile}
+            onView={(type, preview) => setViewingDoc({ type, preview })} />
+          <FormInput label="Nomor NPWP" placeholder="12.345.678.9-012.345"
             value={formatNPWP(formData.npwp.nomor)}
-            onChange={(value) => handleNomorChange('npwp', value.replace(/\D/g, '').slice(0, 15))}
-            disabled={!isEditing}
-          />
+            onChange={(v) => handleNomorChange('npwp', v.replace(/\D/g, '').slice(0, 15))}
+            disabled={!isEditing} />
 
-          {/* Upload KPJ */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Upload KPJ</Label>
-            <div className="flex gap-2">
-              <input
-                type="file"
-                ref={fileInputRefs.kpj}
-                onChange={(e) => handleFileChange('kpj', e)}
-                accept="image/*,.pdf"
-                disabled={!isEditing}
-                className="hidden"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => triggerFileInput('kpj')}
-                disabled={!isEditing}
-                className="shrink-0"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Pilih File
-              </Button>
-              <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-500">
-                {formData.kpj.file ? (
-                  <>
-                    <FileText className="w-4 h-4 shrink-0" />
-                    <span className="truncate">{formData.kpj.file.name}</span>
-                  </>
-                ) : (
-                  'Tidak ada file yang dipilih'
-                )}
-              </div>
-              {isEditing && formData.kpj.file && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleRemoveFile('kpj')}
-                  className="shrink-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              )}
-            </div>
-            {formData.kpj.file && (
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setViewingDoc({ type: 'KPJ', preview: formData.kpj.preview })}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                Lihat KPJ
-              </Button>
-            )}
-          </div>
+          <FileUploadInput label="Upload KPJ" fieldKey="kpj" fileData={formData.kpj} isEditing={isEditing} viewLabel="KPJ"
+            inputRef={fileInputRefs.kpj} onFileChange={handleFileChange} onRemove={handleRemoveFile}
+            onView={(type, preview) => setViewingDoc({ type, preview })} />
+          <FormInput label="Nomor KPJ" placeholder="Masukan Nomor KPJ" value={formData.kpj.nomor}
+            onChange={(v) => handleNomorChange('kpj', v)} disabled={!isEditing} />
 
-          <FormInput
-            label="Nomor KPJ"
-            placeholder="Masukan Nomor KPJ"
-            value={formData.kpj.nomor}
-            onChange={(value) => handleNomorChange('kpj', value)}
-            disabled={!isEditing}
-          />
+          <FileUploadInput label="Upload JKN" fieldKey="jkn" fileData={formData.jkn} isEditing={isEditing} viewLabel="JKN"
+            inputRef={fileInputRefs.jkn} onFileChange={handleFileChange} onRemove={handleRemoveFile}
+            onView={(type, preview) => setViewingDoc({ type, preview })} />
+          <FormInput label="Nomor JKN" placeholder="Masukan Nomor JKN" value={formData.jkn.nomor}
+            onChange={(v) => handleNomorChange('jkn', v)} disabled={!isEditing} />
 
-          {/* Upload JKN */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Upload JKN</Label>
-            <div className="flex gap-2">
-              <input
-                type="file"
-                ref={fileInputRefs.jkn}
-                onChange={(e) => handleFileChange('jkn', e)}
-                accept="image/*,.pdf"
-                disabled={!isEditing}
-                className="hidden"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => triggerFileInput('jkn')}
-                disabled={!isEditing}
-                className="shrink-0"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Pilih File
-              </Button>
-              <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-500">
-                {formData.jkn.file ? (
-                  <>
-                    <FileText className="w-4 h-4 shrink-0" />
-                    <span className="truncate">{formData.jkn.file.name}</span>
-                  </>
-                ) : (
-                  'Tidak ada file yang dipilih'
-                )}
-              </div>
-              {isEditing && formData.jkn.file && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleRemoveFile('jkn')}
-                  className="shrink-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              )}
-            </div>
-            {formData.jkn.file && (
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setViewingDoc({ type: 'JKN', preview: formData.jkn.preview })}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                Lihat JKN
-              </Button>
-            )}
-          </div>
+          <FileUploadInput label="Upload CV" fieldKey="cv" fileData={formData.cv} isEditing={isEditing} viewLabel="CV"
+            inputRef={fileInputRefs.cv} onFileChange={handleFileChange} onRemove={handleRemoveFile}
+            onView={(type, preview) => setViewingDoc({ type, preview })} />
 
-          <FormInput
-            label="Nomor JKN"
-            placeholder="Masukan Nomor JKN"
-            value={formData.jkn.nomor}
-            onChange={(value) => handleNomorChange('jkn', value)}
-            disabled={!isEditing}
-          />
-
-          {/* Upload CV */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Upload CV</Label>
-            <div className="flex gap-2">
-              <input
-                type="file"
-                ref={fileInputRefs.cv}
-                onChange={(e) => handleFileChange('cv', e)}
-                accept="image/*,.pdf"
-                disabled={!isEditing}
-                className="hidden"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => triggerFileInput('cv')}
-                disabled={!isEditing}
-                className="shrink-0"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Pilih File
-              </Button>
-              <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-500">
-                {formData.cv.file ? (
-                  <>
-                    <FileText className="w-4 h-4 shrink-0" />
-                    <span className="truncate">{formData.cv.file.name}</span>
-                  </>
-                ) : (
-                  'Tidak ada file yang dipilih'
-                )}
-              </div>
-              {isEditing && formData.cv.file && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleRemoveFile('cv')}
-                  className="shrink-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              )}
-            </div>
-            {formData.cv.file && (
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setViewingDoc({ type: 'CV', preview: formData.cv.preview })}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                Lihat CV
-              </Button>
-            )}
-          </div>
-
-          {/* Upload Dokumen Lainnya */}
-          <div className="space-y-2">
-            <Label className="text-sm font-medium">Upload Dokumen lainnya</Label>
-            <div className="flex gap-2">
-              <input
-                type="file"
-                ref={fileInputRefs.lainnya}
-                onChange={(e) => handleFileChange('lainnya', e)}
-                accept="image/*,.pdf"
-                disabled={!isEditing}
-                className="hidden"
-              />
-              <Button
-                type="button"
-                variant="outline"
-                size="sm"
-                onClick={() => triggerFileInput('lainnya')}
-                disabled={!isEditing}
-                className="shrink-0"
-              >
-                <Upload className="w-4 h-4 mr-2" />
-                Pilih File
-              </Button>
-              <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-500">
-                {formData.lainnya.file ? (
-                  <>
-                    <FileText className="w-4 h-4 shrink-0" />
-                    <span className="truncate">{formData.lainnya.file.name}</span>
-                  </>
-                ) : (
-                  'Tidak ada file yang dipilih'
-                )}
-              </div>
-              {isEditing && formData.lainnya.file && (
-                <Button
-                  type="button"
-                  variant="outline"
-                  size="sm"
-                  onClick={() => handleRemoveFile('lainnya')}
-                  className="shrink-0 text-red-600 hover:text-red-700 hover:bg-red-50"
-                >
-                  <Trash2 className="w-4 h-4" />
-                </Button>
-              )}
-            </div>
-            {formData.lainnya.file && (
-              <Button
-                type="button"
-                size="sm"
-                onClick={() => setViewingDoc({ type: 'Dokumen Lainnya', preview: formData.lainnya.preview })}
-                className="bg-blue-600 hover:bg-blue-700 text-white"
-              >
-                <Eye className="w-4 h-4 mr-2" />
-                Lihat Dokumen Lainnya
-              </Button>
-            )}
-          </div>
+          <FileUploadInput label="Upload Dokumen Lainnya" fieldKey="lainnya" fileData={formData.lainnya} isEditing={isEditing} viewLabel="Dokumen Lainnya"
+            inputRef={fileInputRefs.lainnya} onFileChange={handleFileChange} onRemove={handleRemoveFile}
+            onView={(type, preview) => setViewingDoc({ type, preview })} />
 
         </div>
 
-        {/* Action Buttons */}
-        {isEditing && (
+        {isEditing ? (
           <div className="flex justify-end gap-2 mt-6 pt-6 border-t">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleCancel}
-              className="gap-2"
-            >
-              <X className="w-4 h-4" />
-              Batal
+            <Button variant="outline" size="sm" onClick={handleCancel} className="gap-2" disabled={isPending}>
+              <X className="w-4 h-4" />Batal
             </Button>
-            <Button
-              size="sm"
-              onClick={handleSave}
-              className="gap-2 bg-blue-600 hover:bg-blue-700"
-            >
-              <Check className="w-4 h-4" />
+            <Button size="sm" onClick={handleSave} className="gap-2 bg-blue-600 hover:bg-blue-700" disabled={isPending}>
+              {isPending ? <Loader2 className="w-4 h-4 animate-spin" /> : <Check className="w-4 h-4" />}
               Simpan
             </Button>
           </div>
-        )}
-
-        {/* Edit Button */}
-        {!isEditing && (
+        ) : (
           <div className="flex justify-end mt-6 pt-6 border-t">
-            <Button
-              size="sm"
-              onClick={() => setIsEditing(true)}
-              className="gap-2 bg-blue-600 hover:bg-blue-700 text-white"
-            >
-              <Edit className="w-4 h-4" />
-              Edit
+            <Button size="sm" onClick={() => setIsEditing(true)} className="gap-2 bg-blue-600 hover:bg-blue-700 text-white">
+              <Edit className="w-4 h-4" />Edit
             </Button>
           </div>
         )}
 
-        {/* View Document Dialog */}
         {viewingDoc && (
           <Dialog open={!!viewingDoc} onOpenChange={() => setViewingDoc(null)}>
             <DialogContent className="max-w-4xl">
-              <DialogHeader>
-                <DialogTitle>Dokumen {viewingDoc.type}</DialogTitle>
-              </DialogHeader>
+              <DialogHeader><DialogTitle>Dokumen {viewingDoc.type}</DialogTitle></DialogHeader>
               <div className="mt-4">
-                {viewingDoc.preview && (
-                  <img
-                    src={viewingDoc.preview}
-                    alt="Document preview"
-                    className="w-full h-auto rounded-md"
-                  />
-                )}
+                <img src={viewingDoc.preview} alt="Document preview" className="w-full h-auto rounded-md" />
               </div>
             </DialogContent>
           </Dialog>

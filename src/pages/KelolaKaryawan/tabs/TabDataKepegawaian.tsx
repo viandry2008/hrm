@@ -9,6 +9,7 @@ import { useGetCategories } from '@/api/category/category.query';
 import { useGetMaritals } from '@/api/marital/marital.query';
 import { FormInput } from '@/components/ui/form-input';
 import { FormSelect } from '@/components/ui/form-select';
+import { useUpdateEmployee } from '@/api/employee/employee.query';
 
 const withCurrentOption = (
   options: Array<{ value: string; label: string }>,
@@ -123,6 +124,8 @@ const TabDataKepegawaian = ({ data }: any) => {
   const [isEditing, setIsEditing] = useState(false);
   const [originalData, setOriginalData] = useState(formData);
 
+  const { mutate: updateEmployee, isPending } = useUpdateEmployee(data?.employeeId);
+
   useEffect(() => {
     if (data) {
       const initialData = {
@@ -151,9 +154,28 @@ const TabDataKepegawaian = ({ data }: any) => {
   };
 
   const handleSave = () => {
-    console.log('Saving ', formData);
-    setOriginalData(formData);
-    setIsEditing(false);
+    const payload = new FormData();
+    payload.append('department_id', formData.divisi);
+    payload.append('section_id', formData.bagian);
+    payload.append('position_id', formData.jabatan);
+    payload.append('company_id', '1');
+    payload.append('grade_id', formData.kategoriKaryawan);
+    payload.append('join_date', formData.tanggalBergabung);
+    payload.append('sio_number', formData.noSIO);
+    payload.append('group', formData.grup);
+    payload.append('referensi', formData.referensi);
+    payload.append('marital_status_id', formData.statusMarital);
+    payload.append('status', formData.statusAkun);
+    payload.append('contract_category_id', formData.kategoriKaryawan);
+    payload.append('start_date', formData.tanggalKontrak);
+    payload.append('end_date', formData.selesaiKontrak);
+
+    updateEmployee(payload, {
+      onSuccess: () => {
+        setOriginalData(formData);
+        setIsEditing(false);
+      },
+    });
   };
 
   const handleCancel = () => {
