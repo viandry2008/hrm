@@ -151,7 +151,7 @@ export const DashboardPage = () => {
         <Card className="bg-[rgb(30,64,175)] text-white p-10 flex flex-col lg:flex-row items-center gap-10 h-full min-h-[280px]">
           <img src="/public/schedule.svg" alt="Ilustrasi Meeting" className="w-36 h-auto" />
           <div className="flex-1 space-y-4 text-center lg:text-left">
-            <h2 className="text-2xl font-semibold">Halo Meida 👋</h2>
+            <h2 className="text-2xl font-semibold">Halo {user.username || "Pengguna"} 👋</h2>
             <p className="text-base leading-relaxed">
               Agendakan jadwal meeting dan konsultasi gratis melalui Zoom Meeting selama 45 menit untuk mendapatkan penjelasan fitur dan harga terbaik.
             </p>
