@@ -63,8 +63,10 @@ const TabIdentitasKendaraan = ({ data }: any) => {
   const [viewingDoc, setViewingDoc] = useState<{ type: string; preview: string } | null>(null);
 
   const emptyState = {
-    sim: { file: null as File | null, preview: '', name: undefined as string | undefined, nomor: '' },
-    stnk: { file: null as File | null, preview: '', name: undefined as string | undefined, nomor: '' },
+    nomorSIM: '',
+    nomorSTNK: '',
+    sim: { file: null as File | null, preview: '', name: undefined as string | undefined },
+    stnk: { file: null as File | null, preview: '', name: undefined as string | undefined },
     kendaraanDepan: { file: null as File | null, preview: '', name: undefined as string | undefined },
     kendaraanBelakang: { file: null as File | null, preview: '', name: undefined as string | undefined },
     kendaraanSamping: { file: null as File | null, preview: '', name: undefined as string | undefined },
@@ -85,12 +87,15 @@ const TabIdentitasKendaraan = ({ data }: any) => {
 
   useEffect(() => {
     if (data) {
+      const vehicle = data.raw?.vehicles?.[0];
       const loaded = {
-        sim: { file: null, preview: '', name: undefined, nomor: data.nomorSIM || '' },
-        stnk: { file: null, preview: '', name: undefined, nomor: data.nomorSTNK || '' },
-        kendaraanDepan: { file: null, preview: '', name: undefined },
-        kendaraanBelakang: { file: null, preview: '', name: undefined },
-        kendaraanSamping: { file: null, preview: '', name: undefined },
+        nomorSIM: data.nomorSIM || data.raw?.sim_number || '',
+        nomorSTNK: data.nomorSTNK || data.raw?.stnk_number || '',
+        sim: { file: null, preview: vehicle?.sim_file || '', name: undefined },
+        stnk: { file: null, preview: vehicle?.stnk_file || '', name: undefined },
+        kendaraanDepan: { file: null, preview: vehicle?.vehicle_front_image || '', name: undefined },
+        kendaraanBelakang: { file: null, preview: vehicle?.vehicle_back_image || '', name: undefined },
+        kendaraanSamping: { file: null, preview: vehicle?.vehicle_side_image || '', name: undefined },
       };
       setFormData(loaded);
       setOriginalData(loaded);
@@ -114,16 +119,16 @@ const TabIdentitasKendaraan = ({ data }: any) => {
     }));
   };
 
-  const handleNomorChange = (type: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [type]: { ...prev[type], nomor: value } }));
+  const handleInputChange = (field: string, value: string) => {
+    setFormData((prev) => ({ ...prev, [field]: value }));
   };
 
   const handleSave = () => {
     const payload = new FormData();
 
-    // Nomor — selalu kirim
-    payload.append('sim_number', formData.sim.nomor);
-    payload.append('stnk_number', formData.stnk.nomor);
+    // Kirim nomor selalu
+    payload.append('sim_number', formData.nomorSIM);
+    payload.append('stnk_number', formData.nomorSTNK);
 
     // File — hanya kirim jika ada file baru
     if (formData.sim.file) payload.append('sim_file', formData.sim.file);
@@ -150,32 +155,84 @@ const TabIdentitasKendaraan = ({ data }: any) => {
       <CardContent className="p-6 bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          <FileUploadInput label="Upload SIM" viewLabel="SIM" fieldKey="sim" fileData={formData.sim}
-            isEditing={isEditing} inputRef={fileInputRefs.sim} onFileChange={handleFileChange}
-            onRemove={handleRemoveFile} onView={(type, preview) => setViewingDoc({ type, preview })} />
-          <FormInput label="Nomor SIM" placeholder="Nomor SIM" value={formData.sim.nomor ?? ''}
-            onChange={(v) => handleNomorChange('sim', v)} disabled={!isEditing} />
+          <FormInput
+            label="Nomor SIM"
+            id="nomorSIM"
+            placeholder="Nomor SIM"
+            value={formData.nomorSIM ?? ''}
+            onChange={(v) => handleInputChange('nomorSIM', v)}
+            disabled={!isEditing}
+          />
 
-          <FileUploadInput label="Upload STNK" viewLabel="STNK" fieldKey="stnk" fileData={formData.stnk}
-            isEditing={isEditing} inputRef={fileInputRefs.stnk} onFileChange={handleFileChange}
-            onRemove={handleRemoveFile} onView={(type, preview) => setViewingDoc({ type, preview })} />
-          <FormInput label="Nomor STNK" placeholder="Nomor STNK" value={formData.stnk.nomor ?? ''}
-            onChange={(v) => handleNomorChange('stnk', v)} disabled={!isEditing} />
+          <FileUploadInput
+            label="Upload SIM"
+            viewLabel="SIM"
+            fieldKey="sim"
+            fileData={formData.sim}
+            isEditing={isEditing}
+            inputRef={fileInputRefs.sim}
+            onFileChange={handleFileChange}
+            onRemove={handleRemoveFile}
+            onView={(type, preview) => setViewingDoc({ type, preview })}
+          />
 
-          <FileUploadInput label="Upload Gambar Kendaraan Depan" viewLabel="Gambar" fieldKey="kendaraanDepan"
-            fileData={formData.kendaraanDepan} isEditing={isEditing} inputRef={fileInputRefs.kendaraanDepan}
-            onFileChange={handleFileChange} onRemove={handleRemoveFile}
-            onView={(type, preview) => setViewingDoc({ type, preview })} />
+          <FormInput
+            label="Nomor STNK"
+            id="nomorSTNK"
+            placeholder="Nomor STNK"
+            value={formData.nomorSTNK ?? ''}
+            onChange={(v) => handleInputChange('nomorSTNK', v)}
+            disabled={!isEditing}
+          />
 
-          <FileUploadInput label="Upload Gambar Kendaraan Belakang" viewLabel="Gambar" fieldKey="kendaraanBelakang"
-            fileData={formData.kendaraanBelakang} isEditing={isEditing} inputRef={fileInputRefs.kendaraanBelakang}
-            onFileChange={handleFileChange} onRemove={handleRemoveFile}
-            onView={(type, preview) => setViewingDoc({ type, preview })} />
+          <FileUploadInput
+            label="Upload STNK"
+            viewLabel="STNK"
+            fieldKey="stnk"
+            fileData={formData.stnk}
+            isEditing={isEditing}
+            inputRef={fileInputRefs.stnk}
+            onFileChange={handleFileChange}
+            onRemove={handleRemoveFile}
+            onView={(type, preview) => setViewingDoc({ type, preview })}
+          />
 
-          <FileUploadInput label="Upload Gambar Kendaraan Samping" viewLabel="Gambar" fieldKey="kendaraanSamping"
-            fileData={formData.kendaraanSamping} isEditing={isEditing} colSpan
-            inputRef={fileInputRefs.kendaraanSamping} onFileChange={handleFileChange}
-            onRemove={handleRemoveFile} onView={(type, preview) => setViewingDoc({ type, preview })} />
+          <FileUploadInput
+            label="Upload Gambar Kendaraan Depan"
+            viewLabel="Gambar Depan"
+            fieldKey="kendaraanDepan"
+            fileData={formData.kendaraanDepan}
+            isEditing={isEditing}
+            inputRef={fileInputRefs.kendaraanDepan}
+            onFileChange={handleFileChange}
+            onRemove={handleRemoveFile}
+            onView={(type, preview) => setViewingDoc({ type, preview })}
+          />
+
+          <FileUploadInput
+            label="Upload Gambar Kendaraan Belakang"
+            viewLabel="Gambar Belakang"
+            fieldKey="kendaraanBelakang"
+            fileData={formData.kendaraanBelakang}
+            isEditing={isEditing}
+            inputRef={fileInputRefs.kendaraanBelakang}
+            onFileChange={handleFileChange}
+            onRemove={handleRemoveFile}
+            onView={(type, preview) => setViewingDoc({ type, preview })}
+          />
+
+          <FileUploadInput
+            label="Upload Gambar Kendaraan Samping"
+            viewLabel="Gambar Samping"
+            fieldKey="kendaraanSamping"
+            fileData={formData.kendaraanSamping}
+            isEditing={isEditing}
+            colSpan
+            inputRef={fileInputRefs.kendaraanSamping}
+            onFileChange={handleFileChange}
+            onRemove={handleRemoveFile}
+            onView={(type, preview) => setViewingDoc({ type, preview })}
+          />
 
         </div>
 

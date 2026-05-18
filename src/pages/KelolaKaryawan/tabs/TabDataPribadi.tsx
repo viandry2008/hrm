@@ -23,6 +23,7 @@ const TabDataPribadi = ({ data }: any) => {
     page: 1,
     limit: 100,
   });
+
   const religionOptions = withCurrentOption(
     (religionData?.data ?? []).map((religion: any) => ({
       value: religion.id.toString(),
@@ -109,7 +110,7 @@ const TabDataPribadi = ({ data }: any) => {
     };
 
     const payload = new FormData();
-    payload.append('full_name', data?.nama || '');
+    payload.append('full_name', formData?.nama || '');
     payload.append('phone_number', formData.nomorHandphone || '');
     payload.append('address_ktp', formData.alamatKTP || '');
     payload.append('address_domicile', formData.alamatDomisili || '');
@@ -123,6 +124,8 @@ const TabDataPribadi = ({ data }: any) => {
     payload.append('gender', genderMap[formData.jenisKelamin] || '');
     payload.append('birth_date', formData.tanggalLahir || '');
     payload.append('birth_place', formData.tempatLahir || '');
+
+    console.log(formData.agama);
 
     updateEmployee(payload, {
       onSuccess: () => {

@@ -182,6 +182,7 @@ const TambahKaryawanPage = () => {
         appendIfValue("transport_allowance", data.tunjangan_transport);
         appendIfValue("other_allowance", data.tunjangan_lain);
         appendIfValue("marital_status_id", parseIntString(data.marital));
+        appendIfValue("religion", parseIntString(data.agama));
 
         if (data.foto) formPayload.append("avatar", data.foto);
         if (data.ktp) {

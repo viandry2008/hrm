@@ -10,6 +10,9 @@ export const ENDPOINTS = {
     TRIAL_REGISTER: "register",
 
     // department / division
+    COMPANIES: "/companies",
+
+    // department / division
     DEPARTMENTS: "/departments",
 
     // position

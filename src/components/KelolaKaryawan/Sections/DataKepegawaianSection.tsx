@@ -9,6 +9,7 @@ import { useGetDepartments } from "@/api/division/division.query";
 import { useGetSections } from "@/api/section/section.query";
 import { useGetCategories } from "@/api/category/category.query";
 import { useGetMaritals } from "@/api/marital/marital.query";
+import { useGetCompanys } from "@/api/company/company.query";
 
 interface DataKepegawaianSectionProps {
   updateForm: (key: string, value: any) => void;
@@ -17,6 +18,13 @@ interface DataKepegawaianSectionProps {
 }
 
 const DataKepegawaianSection = ({ updateForm, formData, errors }: DataKepegawaianSectionProps) => {
+  const { data: companyData, isLoading: isLoadingCompany } = useGetCompanys({
+    search: "",
+    page: 1,
+    limit: 100,
+  });
+
+
   const { data: positionData, isLoading: isLoadingPositions } = useGetPositions({
     search: "",
     page: 1,
@@ -47,12 +55,18 @@ const DataKepegawaianSection = ({ updateForm, formData, errors }: DataKepegawaia
     limit: 100,
   });
 
+  const companies = companyData?.data ?? [];
   const positions = positionData?.data ?? [];
   const departments = departmentData?.data ?? [];
   const sections = sectionsData?.data ?? [];
   const categories = categoriesData?.data ?? [];
 
   const maritals = maritalsData?.data ?? [];
+
+  const companyOptions = companies.map((company) => ({
+    value: company.id.toString(),
+    label: company.name,
+  }));
 
   const positionOptions = positions.map((pos) => ({
     value: pos.id.toString(),
@@ -68,10 +82,6 @@ const DataKepegawaianSection = ({ updateForm, formData, errors }: DataKepegawaia
     value: section.id.toString(),
     label: section.name,
   }));
-
-  const locationOptions = [
-    { value: "PT Proven Force Indonesia", label: "PT Proven Force Indonesia" },
-  ];
 
   const grupOptions = [
     { value: "A", label: "A" },
@@ -155,7 +165,7 @@ const DataKepegawaianSection = ({ updateForm, formData, errors }: DataKepegawaia
         id="field-lokasi"
         error={errors?.lokasi}
         onValueChange={(value) => updateForm("lokasi", value)}
-        options={locationOptions}
+        options={companyOptions}
       />
 
       <FormInput
