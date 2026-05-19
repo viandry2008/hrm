@@ -29,33 +29,43 @@ interface FileUploadInputProps {
 const FileUploadInput = ({
   label, fieldKey, fileData, isEditing, viewLabel, colSpan = false,
   inputRef, onFileChange, onRemove, onView,
-}: FileUploadInputProps) => {
-  const displayName = fileData.file?.name ?? fileData.name ?? null;
-  return (
-    <div className={`space-y-2${colSpan ? ' md:col-span-2' : ''}`}>
-      <Label className="text-sm font-medium">{label}</Label>
-      <div className="flex gap-2">
-        <input type="file" ref={inputRef} onChange={(e) => onFileChange(fieldKey, e)} accept="image/*,.pdf" disabled={!isEditing} className="hidden" />
-        <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()} disabled={!isEditing} className="shrink-0">
-          <Upload className="w-4 h-4 mr-2" />Pilih File
-        </Button>
-        <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-500">
-          {displayName ? <><FileText className="w-4 h-4 shrink-0" /><span className="truncate">{displayName}</span></> : 'Tidak ada file yang dipilih'}
-        </div>
-        {isEditing && displayName && (
-          <Button type="button" variant="outline" size="sm" onClick={() => onRemove(fieldKey)} className="shrink-0 text-red-600 hover:text-red-700 hover:bg-red-50">
-            <Trash2 className="w-4 h-4" />
-          </Button>
-        )}
+}: FileUploadInputProps) => (
+  <div className={`space-y-2${colSpan ? ' md:col-span-2' : ''}`}>
+    <Label className="text-sm font-medium">{label}</Label>
+    <div className="flex gap-2">
+      <input
+        type="file"
+        ref={inputRef}
+        onChange={(e) => onFileChange(fieldKey, e)}
+        accept="image/*,.pdf"
+        disabled={!isEditing}
+        className="hidden"
+      />
+      <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()} disabled={!isEditing} className="shrink-0">
+        <Upload className="w-4 h-4 mr-2" />
+        {fileData.file || fileData.preview ? 'Ubah File' : 'Pilih File'}
+      </Button>
+      <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-500">
+        {fileData.file ? (
+          <><FileText className="w-4 h-4 shrink-0" /><span className="truncate">{fileData.file.name}</span></>
+        ) : fileData.preview ? (
+          <><FileText className="w-4 h-4 shrink-0" /><span className="truncate">{fileData.preview.split('/').pop()}</span></>
+        ) : 'Tidak ada file yang dipilih'}
       </div>
-      {fileData.preview && (
-        <Button type="button" size="sm" onClick={() => onView(viewLabel ?? label, fileData.preview)} className="bg-blue-600 hover:bg-blue-700 text-white">
-          <Eye className="w-4 h-4 mr-2" />Lihat {viewLabel ?? label}
+      {isEditing && fileData.file && (
+        <Button type="button" variant="outline" size="sm" onClick={() => onRemove(fieldKey)} className="shrink-0 text-red-600 hover:text-red-700 hover:bg-red-50">
+          <Trash2 className="w-4 h-4" />
         </Button>
       )}
     </div>
-  );
-};
+    {(fileData.file || fileData.preview) && (
+      <Button type="button" size="sm" onClick={() => onView(viewLabel ?? label, fileData.preview)} className="bg-blue-600 hover:bg-blue-700 text-white">
+        <Eye className="w-4 h-4 mr-2" />
+        Lihat {viewLabel ?? label}
+      </Button>
+    )}
+  </div>
+);
 
 // ─── Main Component ────────────────────────────────────────────────────────────
 const TabIdentitasKendaraan = ({ data }: any) => {
@@ -155,15 +165,6 @@ const TabIdentitasKendaraan = ({ data }: any) => {
       <CardContent className="p-6 bg-white">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-          <FormInput
-            label="Nomor SIM"
-            id="nomorSIM"
-            placeholder="Nomor SIM"
-            value={formData.nomorSIM ?? ''}
-            onChange={(v) => handleInputChange('nomorSIM', v)}
-            disabled={!isEditing}
-          />
-
           <FileUploadInput
             label="Upload SIM"
             viewLabel="SIM"
@@ -177,11 +178,11 @@ const TabIdentitasKendaraan = ({ data }: any) => {
           />
 
           <FormInput
-            label="Nomor STNK"
-            id="nomorSTNK"
-            placeholder="Nomor STNK"
-            value={formData.nomorSTNK ?? ''}
-            onChange={(v) => handleInputChange('nomorSTNK', v)}
+            label="Nomor SIM"
+            id="nomorSIM"
+            placeholder="Nomor SIM"
+            value={formData.nomorSIM ?? ''}
+            onChange={(v) => handleInputChange('nomorSIM', v)}
             disabled={!isEditing}
           />
 
@@ -195,6 +196,15 @@ const TabIdentitasKendaraan = ({ data }: any) => {
             onFileChange={handleFileChange}
             onRemove={handleRemoveFile}
             onView={(type, preview) => setViewingDoc({ type, preview })}
+          />
+
+          <FormInput
+            label="Nomor STNK"
+            id="nomorSTNK"
+            placeholder="Nomor STNK"
+            value={formData.nomorSTNK ?? ''}
+            onChange={(v) => handleInputChange('nomorSTNK', v)}
+            disabled={!isEditing}
           />
 
           <FileUploadInput

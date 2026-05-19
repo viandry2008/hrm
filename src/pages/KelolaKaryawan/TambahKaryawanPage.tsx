@@ -137,6 +137,21 @@ const TambahKaryawanPage = () => {
             }
         };
 
+        const appendDocument = (
+            index: number,
+            type: string,
+            file?: File,
+            number?: string
+        ) => {
+            formPayload.append(`documents[${index}][document_type]`, type);
+            if (number) {
+                formPayload.append(`documents[${index}][document_number]`, String(number));
+            }
+            if (file) {
+                formPayload.append(`documents[${index}][document_file]`, file);
+            }
+        };
+
         appendIfValue("employee_code", data.idKaryawan);
         appendIfValue("full_name", data.nama);
         appendIfValue("name", data.nama);
@@ -185,11 +200,30 @@ const TambahKaryawanPage = () => {
         appendIfValue("religion", parseIntString(data.agama));
 
         if (data.foto) formPayload.append("avatar", data.foto);
-        if (data.ktp) {
-            appendIfValue("document_type", "KTP");
-            formPayload.append("document_file", data.ktp);
-            appendIfValue("document_number", data.nomorKTP);
+
+        let documentIndex = 0;
+        if (data.ktp || data.nomorKTP) {
+            appendDocument(documentIndex++, "ktp", data.ktp, data.nomorKTP);
         }
+        if (data.kartuKeluarga || data.noKartuKeluarga) {
+            appendDocument(documentIndex++, "kk", data.kartuKeluarga, data.noKartuKeluarga);
+        }
+        if (data.npwp) {
+            appendDocument(documentIndex++, "npwp", data.npwp, data.npwpNumber);
+        }
+        if (data.kpj || data.nomorKPJ) {
+            appendDocument(documentIndex++, "kpj", data.kpj, data.nomorKPJ);
+        }
+        if (data.jkn || data.nomorJKN) {
+            appendDocument(documentIndex++, "jkn", data.jkn, data.nomorJKN);
+        }
+        if (data.cv) {
+            appendDocument(documentIndex++, "cv", data.cv);
+        }
+        if (data.pendukungLain) {
+            appendDocument(documentIndex++, "lainnya", data.pendukungLain);
+        }
+
         if (data.sim) formPayload.append("sim_file", data.sim);
         appendIfValue("sim_number", data.nomorSIM);
         if (data.stnk) formPayload.append("stnk_file", data.stnk);

@@ -24,7 +24,6 @@ const DataKepegawaianSection = ({ updateForm, formData, errors }: DataKepegawaia
     limit: 100,
   });
 
-
   const { data: positionData, isLoading: isLoadingPositions } = useGetPositions({
     search: "",
     page: 1,
@@ -165,6 +164,7 @@ const DataKepegawaianSection = ({ updateForm, formData, errors }: DataKepegawaia
         id="field-lokasi"
         error={errors?.lokasi}
         onValueChange={(value) => updateForm("lokasi", value)}
+        loading={isLoadingCompany}
         options={companyOptions}
       />
 

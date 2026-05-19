@@ -53,11 +53,13 @@ const FileUploadInput = ({
       />
       <Button type="button" variant="outline" size="sm" onClick={() => inputRef.current?.click()} disabled={!isEditing} className="shrink-0">
         <Upload className="w-4 h-4 mr-2" />
-        Pilih File
+        {fileData.file || fileData.preview ? 'Ubah File' : 'Pilih File'}
       </Button>
       <div className="flex-1 flex items-center gap-2 px-3 py-2 bg-gray-50 border border-gray-200 rounded-md text-sm text-gray-500">
         {fileData.file ? (
           <><FileText className="w-4 h-4 shrink-0" /><span className="truncate">{fileData.file.name}</span></>
+        ) : fileData.preview ? (
+          <><FileText className="w-4 h-4 shrink-0" /><span className="truncate">{fileData.preview.split('/').pop()}</span></>
         ) : 'Tidak ada file yang dipilih'}
       </div>
       {isEditing && fileData.file && (
@@ -66,7 +68,7 @@ const FileUploadInput = ({
         </Button>
       )}
     </div>
-    {fileData.file && (
+    {(fileData.file || fileData.preview) && (
       <Button type="button" size="sm" onClick={() => onView(viewLabel ?? label, fileData.preview)} className="bg-blue-600 hover:bg-blue-700 text-white">
         <Eye className="w-4 h-4 mr-2" />
         Lihat {viewLabel ?? label}
@@ -81,13 +83,13 @@ const TabManajemenFile = ({ data }: any) => {
   const [viewingDoc, setViewingDoc] = useState<{ type: string; preview: string } | null>(null);
 
   const [formData, setFormData] = useState({
-    ktp: { file: null as File | null, preview: '', nomor: '' },
-    kk: { file: null as File | null, preview: '', nomor: '' },
-    npwp: { file: null as File | null, preview: '', nomor: '' },
-    kpj: { file: null as File | null, preview: '', nomor: '' },
-    jkn: { file: null as File | null, preview: '', nomor: '' },
-    cv: { file: null as File | null, preview: '' },
-    lainnya: { file: null as File | null, preview: '' },
+    ktp: { file: null as File | null, preview: '', name: '', nomor: '' },
+    kk: { file: null as File | null, preview: '', name: '', nomor: '' },
+    npwp: { file: null as File | null, preview: '', name: '', nomor: '' },
+    kpj: { file: null as File | null, preview: '', name: '', nomor: '' },
+    jkn: { file: null as File | null, preview: '', name: '', nomor: '' },
+    cv: { file: null as File | null, preview: '', name: '' },
+    lainnya: { file: null as File | null, preview: '', name: '' },
   });
   const [originalData, setOriginalData] = useState(formData);
 
@@ -106,13 +108,13 @@ const TabManajemenFile = ({ data }: any) => {
   useEffect(() => {
     if (data) {
       const initialData = {
-        ktp: { file: null, preview: '', nomor: data.nomorKTP || '' },
-        kk: { file: null, preview: '', nomor: data.noKK || '' },
-        npwp: { file: null, preview: '', nomor: (data.nomorNPWP || '').replace(/\D/g, '').slice(0, 15) },
-        kpj: { file: null, preview: '', nomor: data.nomorKPJ || '' },
-        jkn: { file: null, preview: '', nomor: data.nomorJKN || '' },
-        cv: { file: null, preview: '' },
-        lainnya: { file: null, preview: '' },
+        ktp: { file: null, preview: data.ktpFile || '', name: data.ktpFile?.split('/').pop() || '', nomor: data.nomorKTP || '' },
+        kk: { file: null, preview: data.kkFile || '', name: data.kkFile?.split('/').pop() || '', nomor: data.noKK || '' },
+        npwp: { file: null, preview: data.npwpFile || '', name: data.npwpFile?.split('/').pop() || '', nomor: (data.nomorNPWP || '').replace(/\D/g, '').slice(0, 15) },
+        kpj: { file: null, preview: data.kpjFile || '', name: data.kpjFile?.split('/').pop() || '', nomor: data.nomorKPJ || '' },
+        jkn: { file: null, preview: data.jknFile || '', name: data.jknFile?.split('/').pop() || '', nomor: data.nomorJKN || '' },
+        cv: { file: null, preview: data.cvFile || '', name: data.cvFile?.split('/').pop() || '' },
+        lainnya: { file: null, preview: data.lainnyaFile || '', name: data.lainnyaFile?.split('/').pop() || '' },
       };
       setFormData(initialData);
       setOriginalData(initialData);
@@ -124,7 +126,7 @@ const TabManajemenFile = ({ data }: any) => {
     if (file) {
       setFormData((prev) => ({
         ...prev,
-        [type]: { ...prev[type], file, preview: URL.createObjectURL(file) },
+        [type]: { ...prev[type], file, preview: URL.createObjectURL(file), name: file.name },
       }));
     }
   };
@@ -142,19 +144,39 @@ const TabManajemenFile = ({ data }: any) => {
 
   const handleSave = () => {
     const payload = new FormData();
+    const appendIfValue = (key: string, value: any) => {
+      if (value !== undefined && value !== null && value !== "") {
+        payload.append(key, String(value));
+      }
+    };
 
-    // Nomor dokumen — selalu kirim
-    payload.append('document_type', 'ktp');
-    payload.append('document_number', formData.ktp.nomor);
-    payload.append('family_card_number', formData.kk.nomor);
-    payload.append('tax_number', formData.npwp.nomor);
-    payload.append('bpjstk_number', formData.kpj.nomor);
-    payload.append('bpjs_number', formData.jkn.nomor);
+    const appendDocument = (index: number, type: string, file?: File | null, number?: string) => {
+      if (!file && !number) return;
+      payload.append(`documents[${index}][document_type]`, type);
+      if (number) {
+        payload.append(`documents[${index}][document_number]`, String(number));
+      }
+      if (file) {
+        payload.append(`documents[${index}][document_file]`, file);
+      }
+    };
 
-    // File — hanya kirim jika ada file baru dipilih
-    if (formData.ktp.file) payload.append('document_file', formData.ktp.file);
-    if (formData.cv.file) payload.append('cv_file', formData.cv.file);
-    if (formData.lainnya.file) payload.append('other_file', formData.lainnya.file);
+    appendIfValue('national_id', formData.ktp.nomor);
+    appendIfValue('family_card_number', formData.kk.nomor);
+    appendIfValue('tax_number', formData.npwp.nomor);
+    appendIfValue('bpjstk_number', formData.kpj.nomor);
+    appendIfValue('bpjs_number', formData.jkn.nomor);
+
+    let documentIndex = 0;
+    appendDocument(documentIndex++, 'ktp', formData.ktp.file, formData.ktp.nomor);
+    appendDocument(documentIndex++, 'kk', formData.kk.file, formData.kk.nomor);
+    appendDocument(documentIndex++, 'npwp', formData.npwp.file, formData.npwp.nomor);
+    appendDocument(documentIndex++, 'kpj', formData.kpj.file, formData.kpj.nomor);
+    appendDocument(documentIndex++, 'jkn', formData.jkn.file, formData.jkn.nomor);
+    appendDocument(documentIndex++, 'cv', formData.cv.file);
+    appendDocument(documentIndex++, 'lainnya', formData.lainnya.file);
+
+    // File — hanya kirim jika ada file baru dipilih (array documents handles update requests)
 
     updateEmployee(payload, {
       onSuccess: () => {

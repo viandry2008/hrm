@@ -39,8 +39,8 @@ const tabComponents: any = {
   akun: TabInformasiAkun,
   pribadi: TabDataPribadi,
   kepegawaian: TabDataKepegawaian,
-  gaji: TabInformasiGaji,
   file: TabManajemenFile,
+  gaji: TabInformasiGaji,
   bank: TabDetailAkunBank,
   darurat: TabKontakDarurat,
   kendaraan: TabIdentitasKendaraan,
@@ -91,6 +91,12 @@ const normalizeEmployeeDetail = (employee: any) => {
   const maritalStatus = employee.marital_status;
   const spouse = employee.families?.find((f: any) => f.relationship === 'Spouse');
   const children = employee.families?.filter((f: any) => f.relationship === 'Child') ?? [];
+  const documentFiles = (employee.documents ?? []).reduce((acc: Record<string, string>, doc: any) => {
+    if (doc.document_type) {
+      acc[doc.document_type] = doc.document_file || '';
+    }
+    return acc;
+  }, {} as Record<string, string>);
 
   return {
     raw: employee,
@@ -103,7 +109,7 @@ const normalizeEmployeeDetail = (employee: any) => {
     jabatanId: employee.position_id ? String(employee.position_id) : employee.position?.id ? String(employee.position.id) : '',
     bagian: employee.section?.name || '',
     bagianId: employee.section_id ? String(employee.section_id) : employee.section?.id ? String(employee.section.id) : '',
-    lokasiKerja: employee.company?.name || employee.company?.city || '',
+    companyId: employee.company_id ? String(employee.company_id) : employee.company?.id ? String(employee.company.id) : '',
     kategori: latestContract?.category?.name || '',
     kategoriId: latestContract?.category?.id ? String(latestContract.category.id) : employee.grade_id ? String(employee.grade_id) : '',
     tanggalBergabung: employee.join_date || '',
@@ -122,11 +128,18 @@ const normalizeEmployeeDetail = (employee: any) => {
     jenisKelamin: normalizeGender(employee.gender),
     alamatKTP: employee.address_ktp || '',
     alamatDomisili: employee.address_domicile || '',
-    nomorKTP: employee.national_id || '',
-    noKK: employee.family_card_number || '',
-    nomorNPWP: employee.tax_number || '',
-    nomorKPJ: employee.bpjstk_number || '',
-    nomorJKN: employee.bpjs_number || '',
+    nomorKTP: employee.documents?.find((f: any) => f.document_type === 'ktp')?.document_number || '',
+    noKK: employee.documents?.find((f: any) => f.document_type === 'kk')?.document_number || '',
+    nomorNPWP: employee.documents?.find((f: any) => f.document_type === 'npwp')?.document_number || '',
+    nomorKPJ: employee.documents?.find((f: any) => f.document_type === 'kpj')?.document_number || '',
+    nomorJKN: employee.documents?.find((f: any) => f.document_type === 'jkn')?.document_number || '',
+    ktpFile: documentFiles.ktp || '',
+    kkFile: documentFiles.kk || '',
+    npwpFile: documentFiles.npwp || '',
+    kpjFile: documentFiles.kpj || '',
+    jknFile: documentFiles.jkn || '',
+    cvFile: documentFiles.cv || '',
+    lainnyaFile: documentFiles.lainnya || '',
     pendidikan: employee.education || '',
     agama: typeof employee.religion === 'object' ? employee.religion?.name || '' : employee.religion || '',
     agamaId: employee.religion_id ? String(employee.religion_id) : typeof employee.religion === 'object' && employee.religion?.id ? String(employee.religion.id) : '',

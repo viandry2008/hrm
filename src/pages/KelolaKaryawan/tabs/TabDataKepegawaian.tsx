@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Check, X, Edit } from 'lucide-react';
+import { useGetCompanys } from '@/api/company/company.query';
 import { useGetPositions } from '@/api/position/position.query';
 import { useGetDepartments } from '@/api/division/division.query';
 import { useGetSections } from '@/api/section/section.query';
@@ -21,6 +22,11 @@ const withCurrentOption = (
 };
 
 const TabDataKepegawaian = ({ data }: any) => {
+  const { data: companyData, isLoading: isLoadingCompany } = useGetCompanys({
+    search: "",
+    page: 1,
+    limit: 100,
+  });
   const { data: positionData, isLoading: isLoadingPositions } = useGetPositions({
     search: '',
     page: 1,
@@ -47,6 +53,14 @@ const TabDataKepegawaian = ({ data }: any) => {
     limit: 100,
   });
 
+  const locationOptions = withCurrentOption(
+    (companyData?.data ?? []).map((company: any) => ({
+      value: company.id.toString(),
+      label: company.name,
+    })),
+    data?.companyId || '',
+    data?.company || ''
+  );
   const departmentOptions = withCurrentOption(
     (departmentData?.data ?? []).map((department: any) => ({
       value: department.id.toString(),
@@ -71,11 +85,6 @@ const TabDataKepegawaian = ({ data }: any) => {
     data?.bagianId || '',
     data?.bagian || ''
   );
-  const locationOptions = withCurrentOption(
-    [{ value: 'PT Proven Force Indonesia', label: 'PT Proven Force Indonesia' }],
-    data?.lokasiKerja || '',
-    data?.lokasiKerja || ''
-  );
   const categoryOptions = withCurrentOption(
     (categoriesData?.data ?? []).map((category: any) => ({
       value: category.id.toString(),
@@ -96,6 +105,7 @@ const TabDataKepegawaian = ({ data }: any) => {
     { value: 'A', label: 'A' },
     { value: 'B', label: 'B' },
   ];
+  const groupOptionsWithCurrent = withCurrentOption(groupOptions, data?.grup || '', data?.grup || '');
   const accountStatusOptions = withCurrentOption(
     [
       { value: 'active', label: 'Aktif' },
@@ -133,7 +143,7 @@ const TabDataKepegawaian = ({ data }: any) => {
         divisi: data.divisiId || '',
         jabatan: data.jabatanId || '',
         bagian: data.bagianId || '',
-        lokasiKerja: data.lokasiKerja || '',
+        lokasiKerja: data.companyId || '',
         tanggalBergabung: data.tanggalBergabung || '',
         tanggalKontrak: data.tanggalKontrak || '',
         selesaiKontrak: data.selesaiKontrak || '',
@@ -155,20 +165,26 @@ const TabDataKepegawaian = ({ data }: any) => {
 
   const handleSave = () => {
     const payload = new FormData();
-    payload.append('department_id', formData.divisi);
-    payload.append('section_id', formData.bagian);
-    payload.append('position_id', formData.jabatan);
-    payload.append('company_id', '1');
-    payload.append('grade_id', formData.kategoriKaryawan);
-    payload.append('join_date', formData.tanggalBergabung);
-    payload.append('sio_number', formData.noSIO);
-    payload.append('group', formData.grup);
-    payload.append('referensi', formData.referensi);
-    payload.append('marital_status_id', formData.statusMarital);
-    payload.append('status', formData.statusAkun);
-    payload.append('contract_category_id', formData.kategoriKaryawan);
-    payload.append('start_date', formData.tanggalKontrak);
-    payload.append('end_date', formData.selesaiKontrak);
+    const appendIfValue = (key: string, value: any) => {
+      if (value !== undefined && value !== null && value !== "") {
+        payload.append(key, String(value));
+      }
+    };
+
+    appendIfValue('department_id', formData.divisi);
+    appendIfValue('section_id', formData.bagian);
+    appendIfValue('position_id', formData.jabatan);
+    appendIfValue('company_id', formData.lokasiKerja);
+    appendIfValue('grade_id', formData.kategoriKaryawan);
+    appendIfValue('contract_category_id', formData.kategoriKaryawan);
+    appendIfValue('join_date', formData.tanggalBergabung);
+    appendIfValue('start_date', formData.tanggalKontrak);
+    appendIfValue('end_date', formData.selesaiKontrak);
+    appendIfValue('sio_number', formData.noSIO);
+    appendIfValue('group', formData.grup);
+    appendIfValue('referensi', formData.referensi);
+    appendIfValue('marital_status_id', formData.statusMarital);
+    appendIfValue('status', formData.statusAkun);
 
     updateEmployee(payload, {
       onSuccess: () => {
@@ -191,12 +207,12 @@ const TabDataKepegawaian = ({ data }: any) => {
           <FormSelect label="Divisi" required id="divisi" placeholder="-- Pilih Divisi --" value={formData.divisi} onValueChange={(value) => handleInputChange('divisi', value)} loading={isLoadingDepartments} emptyMessage="Tidak ada data divisi" options={departmentOptions} disabled={!isEditing} />
           <FormSelect label="Jabatan" required id="jabatan" placeholder="-- Pilih Jabatan --" value={formData.jabatan} onValueChange={(value) => handleInputChange('jabatan', value)} loading={isLoadingPositions} emptyMessage="Tidak ada data jabatan" options={positionOptions} disabled={!isEditing} />
           <FormSelect label="Bagian" required id="bagian" placeholder="-- Pilih Bagian --" value={formData.bagian} onValueChange={(value) => handleInputChange('bagian', value)} loading={isLoadingSections} emptyMessage="Tidak ada data bagian" options={sectionOptions} disabled={!isEditing} />
-          <FormSelect label="Lokasi Kerja" required id="lokasiKerja" placeholder="-- Pilih Lokasi --" value={formData.lokasiKerja} onValueChange={(value) => handleInputChange('lokasiKerja', value)} options={locationOptions} disabled={!isEditing} />
+          <FormSelect label="Lokasi Kerja" required id="lokasiKerja" placeholder="-- Pilih Lokasi --" value={formData.lokasiKerja} onValueChange={(value) => handleInputChange('lokasiKerja', value)} loading={isLoadingCompany} emptyMessage="Tidak ada data lokasi kerja" options={locationOptions} disabled={!isEditing} />
           <FormInput label="Tanggal Bergabung" required id="tanggalBergabung" type="date" value={formData.tanggalBergabung} onChange={(value) => handleInputChange('tanggalBergabung', value)} disabled={!isEditing} />
           <FormInput label="Tanggal Kontrak" required id="tanggalKontrak" type="date" value={formData.tanggalKontrak} onChange={(value) => handleInputChange('tanggalKontrak', value)} disabled={!isEditing} />
           <FormInput label="Selesai Kontrak" required id="selesaiKontrak" type="date" value={formData.selesaiKontrak} onChange={(value) => handleInputChange('selesaiKontrak', value)} disabled={!isEditing} />
           <FormSelect label="Kategori Karyawan" required id="kategoriKaryawan" placeholder="-- Pilih Kategori --" value={formData.kategoriKaryawan} onValueChange={(value) => handleInputChange('kategoriKaryawan', value)} loading={isLoadingCategories} emptyMessage="Tidak ada data kategori" options={categoryOptions} disabled={!isEditing} />
-          <FormSelect label="Grup" id="grup" placeholder="-- Pilih Grup --" value={formData.grup} onValueChange={(value) => handleInputChange('grup', value)} options={groupOptions} disabled={!isEditing} />
+          <FormSelect label="Grup" id="grup" placeholder="-- Pilih Grup --" value={formData.grup} onValueChange={(value) => handleInputChange('grup', value)} options={groupOptionsWithCurrent} disabled={!isEditing} />
           <FormSelect label="Status Marital" required id="statusMarital" placeholder="-- Pilih Status Marital --" value={formData.statusMarital} onValueChange={(value) => handleInputChange('statusMarital', value)} loading={isLoadingMaritals} emptyMessage="Tidak ada data marital" options={maritalOptions} disabled={!isEditing} />
           <FormInput label="Referensi" id="referensi" placeholder="Referensi" value={formData.referensi} onChange={(value) => handleInputChange('referensi', value)} disabled={!isEditing} />
           <FormInput label="No SIO" id="noSIO" placeholder="32xxxxx" value={formData.noSIO} onChange={(value) => handleInputChange('noSIO', value)} disabled={!isEditing} />
