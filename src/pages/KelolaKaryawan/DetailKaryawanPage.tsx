@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
@@ -176,17 +175,11 @@ const normalizeEmployeeDetail = (employee: any) => {
 const DetailKaryawanPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data: employeeResponse, isLoading, isError, refetch: refetchGetEmployee } = useGetEmployee(id);
+  const { data: employeeResponse, isLoading, isError } = useGetEmployee(id);
 
   const data = employeeResponse?.data
     ? normalizeEmployeeDetail(employeeResponse.data)
     : null;
-
-  useEffect(() => {
-    if (data) {
-      refetchGetEmployee();
-    }
-  }, [data]);
 
   const [activeTab, setActiveTab] = useState('akun');
 
@@ -278,7 +271,7 @@ const DetailKaryawanPage = () => {
 
       {/* TABS */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="flex bg-white border-b border-gray-200 w-full h-auto p-0 gap-0">
+        <TabsList className="bg-white border border-gray-200 rounded-lg p-1">
           {tabs.map((tab) => {
             const Icon = tab.icon;
             return (
@@ -286,17 +279,12 @@ const DetailKaryawanPage = () => {
                 key={tab.value}
                 value={tab.value}
                 className="
-                  flex-1 flex items-center justify-center gap-2
-                  px-4 py-3 text-sm font-medium text-gray-600
-                  border-b-2 border-transparent transition-all duration-200
-                  hover:text-gray-900 hover:bg-gray-50
-                  data-[state=active]:bg-primary data-[state=active]:text-white
-                  data-[state=active]:border-[#1E40AF] data-[state=active]:rounded-t-sm
-                  data-[state=active]:mb-[-1px]
-                "
+    min-w-[140px]
+    lg:min-w-0
+  "
               >
                 <Icon className="w-4 h-4 flex-shrink-0" />
-                <span className="truncate">{tab.label}</span>
+                <span>{tab.label}</span>
               </TabsTrigger>
             );
           })}

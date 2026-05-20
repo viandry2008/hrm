@@ -76,7 +76,7 @@ const TabDataPribadi = ({ data }: any) => {
   const { mutate: updateEmployee, isPending } = useUpdateEmployee(data?.employeeId);
 
   useEffect(() => {
-    if (data) {
+    if (data && !isEditing) {
       const initialData = {
         nama: data.nama || '',
         nomorHandphone: data.nomorHandphone || '',
@@ -93,10 +93,11 @@ const TabDataPribadi = ({ data }: any) => {
         namaBapak: data.namaBapak || '',
         namaIbu: data.namaIbu || '',
       };
+
       setFormData(initialData);
       setOriginalData(initialData);
     }
-  }, [data]);
+  }, [data, isEditing]);
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));

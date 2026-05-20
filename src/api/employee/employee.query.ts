@@ -44,7 +44,12 @@ export const useUpdateEmployee = (
             });
 
             // Invalidate supaya data detail re-fetch otomatis
-            await queryClient.invalidateQueries({ queryKey: ["Employee", id] });
+            const normalizedId = String(id);
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ["Employee", id] }),
+                queryClient.invalidateQueries({ queryKey: ["Employee", normalizedId] }),
+                queryClient.invalidateQueries({ queryKey: ["Employees"] }),
+            ]);
 
             onSuccessReset?.();
         },
