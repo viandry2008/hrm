@@ -50,7 +50,6 @@ const DataPribadiSection = ({ formData, updateForm, errors }: DataPribadiSection
     >
       <FormFile
         label="File Foto Profile"
-        required
         accept="image/*"
         value={formData.foto || null}
         id="field-foto"

@@ -245,7 +245,6 @@ const TambahKaryawanPage = () => {
             email: "Email wajib diisi",
             password: "Password wajib diisi",
             role: "Role wajib diisi",
-            foto: "File Foto Profile wajib diisi",
             nama: "Nama wajib diisi",
             telepon: "Nomor Telepon wajib diisi",
             tempatLahir: "Tempat Lahir wajib diisi",
