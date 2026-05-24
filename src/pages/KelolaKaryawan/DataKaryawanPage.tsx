@@ -35,7 +35,8 @@ import {
   CheckCircle,
   XCircle,
 } from 'lucide-react';
-import { useDeleteEmployee, useDeleteMultipleEmployee, useGetEmployees, useGetEmployeeSummary, useUpdateMultipleContractEmployee, useUpdateMultipleStatusEmployee } from '@/api/employee/employee.query';
+import { useDeleteEmployee, useDeleteMultipleEmployee, useGetEmployees, useGetEmployeeSummary, useImportEmployees, useUpdateMultipleContractEmployee, useUpdateMultipleStatusEmployee } from '@/api/employee/employee.query';
+import { exportEmployeesApi, templateEmployeesApi } from '@/api/employee/employee.api';
 import { useNavigate } from 'react-router-dom';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
@@ -124,6 +125,8 @@ export const DataKaryawanPage = () => {
 
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isDownloadingData, setIsDownloadingData] = useState(false);
+  const [isDownloadingTemplate, setIsDownloadingTemplate] = useState(false);
 
   const { data, isLoading, refetch } = useGetEmployees({
     search: searchTerm,
@@ -150,6 +153,13 @@ export const DataKaryawanPage = () => {
   const deleteMultiple = useDeleteMultipleEmployee(() => {
     setSelectedIds([]);
     setSelectAll(false);
+    refetch();
+    refetchSummary();
+  });
+
+  const importMutation = useImportEmployees(() => {
+    closeUploadModal();
+    setSelectedFile(null);
     refetch();
     refetchSummary();
   });
@@ -340,20 +350,45 @@ export const DataKaryawanPage = () => {
       return;
     }
 
-    Swal.fire({
-      title: 'Berhasil!',
-      text: `File "${selectedFile.name}" berhasil diunggah.`,
-      icon: 'success',
-      timer: 2000,
-      showConfirmButton: false,
-      background: '#3b82f6',
-      color: '#ffffff',
-      customClass: {
-        popup: 'bg-blue-500 text-white',
-      },
-    });
+    const formData = new FormData();
+    formData.append('file', selectedFile);
 
-    closeUploadModal();
+    importMutation.mutate(formData);
+  };
+
+  const downloadFile = (blob: Blob, filename: string) => {
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = filename;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownloadData = async () => {
+    try {
+      setIsDownloadingData(true);
+      const blob = await exportEmployeesApi();
+      downloadFile(blob, 'employee-data.xlsx');
+    } catch (err: any) {
+      Swal.fire('Gagal', err?.response?.data?.message || 'Gagal mengunduh data karyawan', 'error');
+    } finally {
+      setIsDownloadingData(false);
+    }
+  };
+
+  const handleDownloadTemplate = async () => {
+    try {
+      setIsDownloadingTemplate(true);
+      const blob = await templateEmployeesApi();
+      downloadFile(blob, 'employee-template.xlsx');
+    } catch (err: any) {
+      Swal.fire('Gagal', err?.response?.data?.message || 'Gagal mengunduh template Excel', 'error');
+    } finally {
+      setIsDownloadingTemplate(false);
+    }
   };
 
   const { data: categoriesData, isLoading: isLoadingCategories } = useGetCategories({
@@ -484,14 +519,16 @@ export const DataKaryawanPage = () => {
               <Upload className="w-4 h-4" />
               Unggah Data
             </Button>
-            {/* 🟢 Tombol Download Data berwarna hijau */}
             <Button
               variant="outline"
               className="bg-green-500 hover:bg-green-600 text-white flex items-center gap-1"
+              onClick={handleDownloadData}
+              disabled={isDownloadingData}
             >
               <Download className="w-4 h-4" />
-              Download Data
+              {isDownloadingData ? 'Mengunduh...' : 'Download Data'}
             </Button>
+            {/* 🟢 Tombol Download Data berwarna hijau */}
             <Button
               className="bg-[#1E4F85] text-white hover:bg-[#1E4F85]"
               onClick={() => navigate('/tambah-karyawan')}
@@ -647,9 +684,14 @@ export const DataKaryawanPage = () => {
                   {selectedFile ? selectedFile.name : "Tidak ada file yang dipilih"}
                 </div>
               </div>
-              <a href="#" className="text-blue-600 hover:text-blue-800 text-sm mt-2 inline-block">
-                Download Template disini
-              </a>
+              <button
+                type="button"
+                onClick={handleDownloadTemplate}
+                className="text-blue-600 hover:text-blue-800 text-sm mt-2 inline-block"
+                disabled={isDownloadingTemplate}
+              >
+                {isDownloadingTemplate ? 'Mengunduh template...' : 'Download Template disini'}
+              </button>
             </div>
 
             {/* Panduan Pengisian */}
@@ -706,8 +748,9 @@ export const DataKaryawanPage = () => {
               <Button
                 className="bg-blue-600 text-white hover:bg-blue-700"
                 onClick={handleUpload}
+                disabled={importMutation.isPending}
               >
-                Upload
+                {importMutation.isPending ? 'Mengunggah...' : 'Upload'}
               </Button>
             </div>
           </Dialog.Content>

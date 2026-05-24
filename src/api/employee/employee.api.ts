@@ -72,3 +72,28 @@ export const updateMultipleContractEmployeeApi = async (
     const { data } = await apiClient.post(`${ENDPOINTS.MULTIPLE_CONTRACT_EMPLOYEE}`, payload);
     return data;
 };
+
+export const exportEmployeesApi = async (): Promise<Blob> => {
+    const response = await apiClient.get(ENDPOINTS.EMPLOYEES_EXPORT, {
+        responseType: "blob",
+    });
+    return response.data;
+};
+
+export const templateEmployeesApi = async (): Promise<Blob> => {
+    const response = await apiClient.get(ENDPOINTS.EMPLOYEES_TEMPLATE, {
+        responseType: "blob",
+    });
+    return response.data;
+};
+
+export const importEmployeesApi = async (
+    payload: FormData
+): Promise<EmployeeMessageResponse> => {
+    const { data } = await apiClient.post(ENDPOINTS.EMPLOYEES_IMPORT, payload, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+    return data;
+};

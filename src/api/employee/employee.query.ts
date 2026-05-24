@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
-import { createEmployeeApi, deleteEmployeeApi, deleteMultipleEmployeeApi, getEmployeeApi, getEmployeesApi, getSummaryEmployeeApi, updateEmployeeApi, updateMultipleContractEmployeeApi, updateMultipleStatusEmployeeApi } from "./employee.api";
+import { createEmployeeApi, deleteEmployeeApi, deleteMultipleEmployeeApi, getEmployeeApi, getEmployeesApi, getSummaryEmployeeApi, updateEmployeeApi, updateMultipleContractEmployeeApi, updateMultipleStatusEmployeeApi, importEmployeesApi } from "./employee.api";
 import { EmployeeMultipleChangeRequest, EmployeeMultipleContractRequest } from "./employee.types";
 import { EmployeePostRequest } from "./employee.types";
 
@@ -118,6 +118,28 @@ export const useCreateEmployee = (onSuccessReset?: () => void) => {
             console.error("Error response:", err.response?.data);
             const errorMessage = err.response?.data?.message || err.message || "Gagal menambahkan karyawan";
             Swal.fire("Gagal", errorMessage, "error");
+        },
+    });
+};
+
+export const useImportEmployees = (onSuccessReset?: () => void) => {
+    return useMutation({
+        mutationFn: (payload: FormData) => importEmployeesApi(payload),
+
+        onSuccess: async () => {
+            Swal.fire({
+                title: 'Berhasil!',
+                text: 'File Excel berhasil diunggah.',
+                icon: 'success',
+                timer: 1500,
+                showConfirmButton: false,
+            });
+            onSuccessReset?.();
+        },
+
+        onError: (err: any) => {
+            const errorMessage = err.response?.data?.message || err.message || 'Gagal mengunggah file Excel';
+            Swal.fire('Gagal', errorMessage, 'error');
         },
     });
 };

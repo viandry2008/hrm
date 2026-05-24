@@ -24,6 +24,9 @@ export const ENDPOINTS = {
     // employee
     EMPLOYEES: "/employees",
     EMPLOYEES_SUMMARY: "/employees/summary",
+    EMPLOYEES_EXPORT: "/employees/export",
+    EMPLOYEES_TEMPLATE: "/employees/template",
+    EMPLOYEES_IMPORT: "/employees/import",
     MULTIPLE_DELETE_EMPLOYEE: "/employees/delete-multiple",
     MULTIPLE_STATUS_EMPLOYEE: "/employees/toggle-status",
     MULTIPLE_CONTRACT_EMPLOYEE: "/employees/renew-contract",
