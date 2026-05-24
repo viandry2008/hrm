@@ -167,14 +167,6 @@ const DataPribadiSection = ({ formData, updateForm, errors }: DataPribadiSection
       />
 
       <FormInput
-        label="Jumlah Anak"
-        type="number"
-        placeholder="Total jumlah anak"
-        value={formData.jumlahAnak || ""}
-        onChange={(value) => updateForm("jumlahAnak", value)}
-      />
-
-      <FormInput
         label="Nama Bapak"
         placeholder="Nama Bapak"
         value={formData.namaBapak || ""}

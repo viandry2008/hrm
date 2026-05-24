@@ -82,8 +82,8 @@ const normalizeGender = (gender?: string | null): string => {
 };
 
 const normalizeEmployeeDetail = (employee: any) => {
-  const bankAccount = employee.bank_accounts?.[0];
-  const emergencyContact = employee.emergency_contacts?.[0];
+  const bankAccount = employee.bank_accounts;
+  const emergencyContact = employee.emergency_contacts;
   const vehicle = employee.vehicles?.[0];
   const salary = employee.salary;
   const latestContract = employee.latest_contract;

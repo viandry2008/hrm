@@ -31,7 +31,6 @@ interface FormData {
     agama?: string;
     namaSuamiIstri?: string;
     namaAnak?: string;
-    // jumlahAnak?: string;
     namaBapak?: string;
     namaIbu?: string;
 
