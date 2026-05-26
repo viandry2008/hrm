@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import Swal from "sweetalert2";
 import { motion } from "framer-motion";
 import { useForgot, useReset, useVerify } from "@/api/auth/auth.query";
+import { SwalError } from "@/lib/swal.helper";
 
 export const ForgotPasswordPage = () => {
   const [step, setStep] = useState<"email" | "verify" | "reset">("email");
@@ -43,14 +44,7 @@ export const ForgotPasswordPage = () => {
 
     const otp = code.join("");
     if (otp.length < 6) {
-      Swal.fire({
-        title: "<span style='color:white'>Kode belum lengkap</span>",
-        text: "Silakan isi semua 6 digit kode verifikasi.",
-        icon: "warning",
-        background: "#d11a2a",
-        color: "white",
-        confirmButtonColor: "#ffffff",
-      });
+      SwalError("Gagal", "Kode verifikasi tidak lengkap");
       return;
     }
 
@@ -65,12 +59,12 @@ export const ForgotPasswordPage = () => {
     e.preventDefault();
 
     if (password.length < 8) {
-      Swal.fire("Gagal", "Kata sandi minimal 8 karakter", "error");
+      SwalError("Gagal", "Kata sandi minimal 8 karakter");
       return;
     }
 
     if (password !== confirm) {
-      Swal.fire("Gagal", "Kata sandi tidak cocok", "error");
+      SwalError("Gagal", "Kata sandi tidak cocok");
       return;
     }
 
@@ -155,7 +149,7 @@ export const ForgotPasswordPage = () => {
             <Card className="w-full max-w-md bg-white rounded-2xl shadow-2xl p-6 sm:p-8">
               {/* Judul berubah sesuai step */}
               <CardHeader className="text-center pb-4">
-                <CardTitle className="text-2xl sm:text-3xl font-bold text-black">
+                <CardTitle className="text-2xl sm:text-3xl font-bold text-primary">
                   {step === "email"
                     ? "Reset Password"
                     : step === "verify"
@@ -198,7 +192,7 @@ export const ForgotPasswordPage = () => {
                       disabled={forgotMutation.isPending}
                       className={`w-full h-11 ${forgotMutation.isPending
                         ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-blue-600 hover:bg-blue-700"
+                        : "bg-primary hover:bg-primary"
                         } text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 text-sm sm:text-base`}
                     >
                       {forgotMutation.isPending ? "Mengirim..." : "Submit"}
@@ -232,7 +226,7 @@ export const ForgotPasswordPage = () => {
                       type="submit"
                       className={`w-full h-11 ${verifyMutation.isPending
                         ? "bg-gray-400 cursor-not-allowed"
-                        : "bg-blue-600 hover:bg-blue-700"
+                        : "bg-primary hover:bg-primary"
                         } text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 text-sm sm:text-base`}
                     >
                       {verifyMutation.isPending ? "Loading..." : "Submit"}
@@ -270,7 +264,7 @@ export const ForgotPasswordPage = () => {
 
                     <Button
                       type="submit"
-                      className="w-full h-11 bg-green-500 hover:bg-green-600 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
+                      className="w-full h-11 bg-primary hover:bg-primary text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200"
                     >
                       Simpan
                     </Button>

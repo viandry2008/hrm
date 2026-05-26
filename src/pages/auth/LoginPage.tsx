@@ -34,33 +34,11 @@ export const LoginPage = () => {
       return;
     }
 
-    try {
-      await loginMutation.mutateAsync({ username, password, is_management: role === "management" });
-
-      await Swal.fire({
-        title: '<span style="color: white">Berhasil Masuk!</span>',
-        text: "Selamat Datang di SMART HRM",
-        icon: "success",
-        background: "#0F2A4D",
-        color: "white",
-        confirmButtonColor: "#ffffff",
-        confirmButtonText:
-          '<span style="color: #0F2A4D; font-weight: bold;">OK</span>',
-        customClass: {
-          popup: "rounded-xl",
-          title: "text-xl",
-          confirmButton: "text-sm px-6 py-2 rounded-lg",
-        },
-      });
-
-      navigate("/dashboard", { replace: true });
-    } catch (err: any) {
-      Swal.fire(
-        "Gagal",
-        err?.response?.data?.message || "Login gagal",
-        "error"
-      );
-    }
+    loginMutation.mutate({
+      username,
+      password,
+      is_management: role === "management",
+    });
   };
 
   return (
@@ -78,7 +56,7 @@ export const LoginPage = () => {
             <Card className="w-full max-w-full sm:max-w-md bg-white rounded-2xl shadow-2xl p-4 sm:p-8">
               <CardHeader className="space-y-1 text-center pb-4 sm:pb-6">
                 <div className="flex items-center justify-center space-x-2">
-                  <CardTitle className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-600">
+                  <CardTitle className="text-xl sm:text-2xl md:text-3xl font-bold text-primary">
                     SMART HRM
                   </CardTitle>
                 </div>
@@ -99,8 +77,8 @@ export const LoginPage = () => {
                         type="button"
                         onClick={() => setRole("management")}
                         className={`px-2 sm:px-3 py-1 sm:py-1.5 font-medium rounded-full flex items-center gap-1 transition ${role === "management"
-                          ? "bg-[#0F2A4D] text-white shadow"
-                          : "text-gray-500 hover:text-blue-600"
+                          ? "bg-primary text-white shadow"
+                          : "text-gray-500 hover:text-primary"
                           }`}
                       >
                         <Briefcase
@@ -115,8 +93,8 @@ export const LoginPage = () => {
                         type="button"
                         onClick={() => setRole("employee")}
                         className={`px-2 sm:px-3 py-1 sm:py-1.5 font-medium rounded-full flex items-center gap-1 transition ${role === "employee"
-                          ? "bg-[#0F2A4D] text-white shadow"
-                          : "text-gray-500 hover:text-blue-600"
+                          ? "bg-primary text-white shadow"
+                          : "text-gray-500 hover:text-primary"
                           }`}
                       >
                         <UserCircle
@@ -215,7 +193,7 @@ export const LoginPage = () => {
                       </div>
                       <a
                         onClick={() => navigate("/forgot-password")}
-                        className="text-blue-600 hover:text-blue-800 font-medium ml-auto cursor-pointer"
+                        className="text-primary hover:text-primary font-medium ml-auto cursor-pointer"
                       >
                         Lupa password?
                       </a>
@@ -225,7 +203,7 @@ export const LoginPage = () => {
                   {/* Tombol Masuk */}
                   <Button
                     type="submit"
-                    className="w-full h-10 sm:h-11 md:h-12 bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 text-sm sm:text-base md:text-base"
+                    className="w-full h-10 sm:h-11 md:h-12 bg-primary text-white font-semibold rounded-lg shadow-lg transform hover:scale-105 transition-all duration-200 text-sm sm:text-base md:text-base"
                   >
                     <LogIn className="w-4 sm:w-5 md:w-6 h-4 sm:h-5 md:h-6 mr-2" />
                     Masuk

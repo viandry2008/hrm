@@ -2,19 +2,24 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import { loginApi, getProfileApi, forgotPasswordApi, verifyOtpApi, resetPasswordApi, logoutApi } from "./auth.api";
 import { useAuthStore } from "./auth.store";
 import { ForgotRequest, LoginRequest, ResetPasswordRequest, VerifyOtpRequest } from "./auth.types";
-import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import { SwalSuccess, SwalError } from "@/lib/swal.helper";
 
 export const useLogin = () => {
     const setAuth = useAuthStore((s) => s.setAuth);
+    const navigate = useNavigate();
 
     return useMutation({
         mutationFn: (payload: LoginRequest) => loginApi(payload),
+
         onSuccess: async (data, variables) => {
             setAuth(data, variables.is_management);
+            await SwalSuccess("Berhasil Masuk!", "Selamat Datang di SMART HRM");
+            navigate("/dashboard", { replace: true });
         },
+
         onError: (err: any) => {
-            Swal.fire("Gagal", err.response?.data?.message || "Login gagal", "error");
+            SwalError("Login Gagal", err.response?.data?.message || "Gagal masuk ke akun");
         },
     });
 };
@@ -22,28 +27,14 @@ export const useLogin = () => {
 export const useForgot = (setStep: (v: "email" | "verify" | "reset") => void) => {
     return useMutation({
         mutationFn: (payload: ForgotRequest) => forgotPasswordApi(payload),
-        onSuccess: async (data) => {
-            await Swal.fire({
-                title: '<span style="color: white">Kode Terkirim!</span>',
-                text: "Kode verifikasi telah dikirim ke email Anda.",
-                icon: "success",
-                background: "#2794eb",
-                color: "white",
-                confirmButtonColor: "#ffffff",
-                confirmButtonText:
-                    '<span style="color:#2794eb;font-weight:bold;">OK</span>',
-                customClass: {
-                    popup: "rounded-xl",
-                    title: "text-xl",
-                    confirmButton: "text-sm px-6 py-2 rounded-lg",
-                },
-            });
 
-            // ✅ Pindah ke langkah verifikasi
+        onSuccess: async () => {
+            await SwalSuccess("Kode Terkirim!", "Kode verifikasi telah dikirim ke email Anda.");
             setStep("verify");
         },
+
         onError: (err: any) => {
-            Swal.fire("Gagal", err.response?.data?.message || "Gagal mengirim email", "error");
+            SwalError("Gagal", err.response?.data?.message || "Gagal mengirim email");
         },
     });
 };
@@ -51,20 +42,14 @@ export const useForgot = (setStep: (v: "email" | "verify" | "reset") => void) =>
 export const useVerify = (setStep: (v: "email" | "verify" | "reset") => void) => {
     return useMutation({
         mutationFn: (payload: VerifyOtpRequest) => verifyOtpApi(payload),
-        onSuccess: async (data) => {
-            Swal.fire({
-                title: "<span style='color:white'>Verifikasi Berhasil!</span>",
-                text: "Silakan ubah kata sandi Anda.",
-                icon: "success",
-                background: "#2794eb",
-                color: "white",
-                confirmButtonColor: "#ffffff",
-                confirmButtonText:
-                    "<span style='color:#2794eb;font-weight:bold;'>OK</span>",
-            }).then(() => setStep("reset"));
+
+        onSuccess: async () => {
+            await SwalSuccess("Verifikasi Berhasil!", "Silakan ubah kata sandi Anda.");
+            setStep("reset");
         },
+
         onError: (err: any) => {
-            Swal.fire("Gagal", err.response?.data?.message || "Gagal verifikasi", "error");
+            SwalError("Gagal", err.response?.data?.message || "Gagal verifikasi");
         },
     });
 };
@@ -74,20 +59,31 @@ export const useReset = () => {
 
     return useMutation({
         mutationFn: (payload: ResetPasswordRequest) => resetPasswordApi(payload),
+
         onSuccess: async () => {
-            await Swal.fire({
-                title: "<span style='color:white'>Kata sandi berhasil diubah!</span>",
-                icon: "success",
-                background: "#2794eb",
-                color: "white",
-                confirmButtonColor: "#ffffff",
-                confirmButtonText:
-                    "<span style='color:#2794eb;font-weight:bold;'>OK</span>",
-            });
+            await SwalSuccess("Kata sandi berhasil diubah!");
             navigate("/login");
         },
+
         onError: (err: any) => {
-            Swal.fire("Gagal", err.response?.data?.message || "Gagal mengubah password", "error");
+            SwalError("Gagal", err.response?.data?.message || "Gagal mengubah password");
+        },
+    });
+};
+
+export const useLogout = () => {
+    const { logout: clearSession } = useAuthStore();
+
+    return useMutation({
+        mutationFn: logoutApi,
+
+        onSuccess: async (res) => {
+            await SwalSuccess("Berhasil Logout!", res.message || "Anda telah keluar dari sistem.");
+            clearSession();
+        },
+
+        onError: (err: any) => {
+            SwalError("Gagal", err.response?.data?.message || "Terjadi kesalahan logout");
         },
     });
 };
@@ -99,25 +95,5 @@ export const useProfile = () => {
         queryKey: ["profile"],
         queryFn: getProfileApi,
         enabled: !!token,
-    });
-};
-
-export const useLogout = () => {
-    const { logout: clearSession } = useAuthStore();
-
-    return useMutation({
-        mutationFn: logoutApi,
-        onSuccess: (res) => {
-            Swal.fire({
-                icon: "success",
-                title: "Berhasil Logout",
-                text: res.message || "Anda telah keluar dari sistem.",
-                confirmButtonColor: "#2794eb",
-            });
-            clearSession();
-        },
-        onError: (err: any) => {
-            Swal.fire("Gagal", err.response?.data?.message || "Terjadi kesalahan logout", "error");
-        },
     });
 };
