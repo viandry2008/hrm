@@ -157,6 +157,27 @@ export interface EmployeeMessageResponse {
     message: string;
 }
 
+//========= import response
+export interface EmployeeImportError {
+    field: string;
+    column: string;
+    row: number;
+    type: string;
+    message: string;
+}
+
+export interface EmployeeImportResponse {
+    success: boolean;
+    code: number;
+    message: string;
+    data: {
+        created: number;
+        updated: number;
+        skipped: number;
+        errors: Record<string, EmployeeImportError[]>;
+    };
+}
+
 //========= summary
 export interface EmployeeSummaryResponse {
     success: boolean;
@@ -164,9 +185,18 @@ export interface EmployeeSummaryResponse {
     message: string;
     data: {
         total: number;
-        active: number;
-        inactive: number;
-        expired: number;
+        active: {
+            count: number;
+            diff: string;
+        };
+        inactive: {
+            count: number;
+            diff: string;
+        };
+        expired: {
+            count: number;
+            diff: string;
+        };
     };
 }
 

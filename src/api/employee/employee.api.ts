@@ -1,6 +1,6 @@
 import apiClient from "../client";
 import { ENDPOINTS } from "../endpoints";
-import { EmployeeMessageResponse, EmployeeListResponse, EmployeeMultipleDeleteRequest, EmployeeSummaryResponse, EmployeeMultipleChangeRequest, EmployeeMultipleContractRequest, EmployeePostResponse, EmployeeDetailResponse } from "./employee.types";
+import { EmployeeMessageResponse, EmployeeListResponse, EmployeeMultipleDeleteRequest, EmployeeSummaryResponse, EmployeeMultipleChangeRequest, EmployeeMultipleContractRequest, EmployeePostResponse, EmployeeDetailResponse, EmployeeImportResponse } from "./employee.types";
 
 export const getEmployeesApi = async (
     params: { search?: string; limit?: number; page?: number; status?: string }
@@ -89,7 +89,7 @@ export const templateEmployeesApi = async (): Promise<Blob> => {
 
 export const importEmployeesApi = async (
     payload: FormData
-): Promise<EmployeeMessageResponse> => {
+): Promise<EmployeeImportResponse> => {
     const { data } = await apiClient.post(ENDPOINTS.EMPLOYEES_IMPORT, payload, {
         headers: {
             "Content-Type": "multipart/form-data",

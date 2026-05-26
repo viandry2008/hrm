@@ -353,7 +353,11 @@ export const DataKaryawanPage = () => {
     const formData = new FormData();
     formData.append('file', selectedFile);
 
-    importMutation.mutate(formData);
+    // Close the upload modal first so the error/success alert is not blocked
+    closeUploadModal();
+
+    // Small delay to allow modal to close before showing SweetAlert from the mutation
+    setTimeout(() => importMutation.mutate(formData), 150);
   };
 
   const downloadFile = (blob: Blob, filename: string) => {
@@ -410,24 +414,24 @@ export const DataKaryawanPage = () => {
       <StatCardGrid>
         <StatCard
           title="Total Karyawan Aktif"
-          value={dataSummary?.data?.active ?? 0}
-          subtitle="+2 bulan ini"
+          value={dataSummary?.data?.active?.count ?? 0}
+          subtitle={dataSummary?.data?.active?.diff}
           icon={CheckCircle}
           borderColor="green"
         />
 
         <StatCard
           title="Total Karyawan Tidak Aktif"
-          value={dataSummary?.data?.inactive ?? 0}
-          subtitle="-1 bulan ini"
+          value={dataSummary?.data?.inactive?.count ?? 0}
+          subtitle={dataSummary?.data?.inactive?.diff}
           icon={XCircle}
           borderColor="red"
         />
 
         <StatCard
           title="Total Karyawan Segera Berakhir"
-          value={dataSummary?.data?.expired ?? 0}
-          subtitle="Kontrak hampir habis"
+          value={dataSummary?.data?.expired?.count ?? 0}
+          subtitle={dataSummary?.data?.expired?.diff}
           icon={Calendar}
           borderColor="yellow"
         />
