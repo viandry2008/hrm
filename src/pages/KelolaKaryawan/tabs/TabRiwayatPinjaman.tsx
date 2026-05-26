@@ -1,5 +1,3 @@
-import { Card, CardContent } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
 import {
   Table,
   TableBody,
@@ -8,162 +6,48 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { CheckCircle2, XCircle, AlertCircle, Trophy, Calendar } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import {
+  Clock,
+  CalendarDays,
+  Check,
+} from 'lucide-react';
 
 const TabRiwayatPinjaman = ({ data }: any) => {
-  // Dummy data pinjaman - sudah lunas
-  const pinjamanData = {
-    totalPinjaman: 10000000,
-    sisaPinjaman: 0,
-    cicilanPerBulan: 1000000,
-    status: 'Lunas',
-    periodePotong: 'Jan 2024 - Oct 2024',
-    progress: 100,
-    totalCicilan: 10,
-    cicilanTerbayar: 10,
-  };
-
-  const riwayatPotongan = [
+  // Dummy data pinjaman
+  const pinjamanData = [
     {
-      bulan: 'Jan 2024',
+      no: 1,
+      noPinjaman: 'PJN-2024-001234',
       totalPinjaman: 10000000,
-      potonganPinjaman: 1000000,
-      status: 'Dipotong',
-      tanggalPotong: '25 Jan 2024',
+      tanggalPengajuan: 'Senin, 12 Desember 2026, 10:43',
+      durasiPinjaman: '12 Bulan',
+      biayaCicilan: 1000000,
+      terminBerjalan: 4,
+      totalTermin: 12,
+      status: 'Belum Lunas',
     },
     {
-      bulan: 'Feb 2024',
-      totalPinjaman: 9000000,
-      potonganPinjaman: 1000000,
-      status: 'Dipotong',
-      tanggalPotong: '25 Feb 2024',
-    },
-    {
-      bulan: 'Mar 2024',
-      totalPinjaman: 8000000,
-      potonganPinjaman: 0,
-      status: 'Gagal',
-      keterangan: 'Gaji Tidak Cukup',
-      tanggalPotong: '-',
-    },
-    {
-      bulan: 'Apr 2024',
-      totalPinjaman: 8000000,
-      potonganPinjaman: 1500000,
-      status: 'Dipotong',
-      tanggalPotong: '25 Apr 2024',
-    },
-    {
-      bulan: 'Mei 2024',
-      totalPinjaman: 6500000,
-      potonganPinjaman: 1000000,
-      status: 'Dipotong',
-      tanggalPotong: '25 Mei 2024',
-    },
-    {
-      bulan: 'Jun 2024',
-      totalPinjaman: 5500000,
-      potonganPinjaman: 1000000,
-      status: 'Dipotong',
-      tanggalPotong: '25 Jun 2024',
-    },
-    {
-      bulan: 'Jul 2024',
-      totalPinjaman: 4500000,
-      potonganPinjaman: 1000000,
-      status: 'Dipotong',
-      tanggalPotong: '25 Jul 2024',
-    },
-    {
-      bulan: 'Agu 2024',
-      totalPinjaman: 3500000,
-      potonganPinjaman: 1000000,
-      status: 'Dipotong',
-      tanggalPotong: '25 Agu 2024',
-    },
-    {
-      bulan: 'Sep 2024',
-      totalPinjaman: 2500000,
-      potonganPinjaman: 1000000,
-      status: 'Dipotong',
-      tanggalPotong: '25 Sep 2024',
-    },
-    {
-      bulan: 'Oct 2024',
-      totalPinjaman: 1500000,
-      potonganPinjaman: 1500000,
+      no: 2,
+      noPinjaman: 'PJN-2024-001235',
+      totalPinjaman: 5000000,
+      tanggalPengajuan: 'Rabu, 15 Januari 2026, 13:20',
+      durasiPinjaman: '6 Bulan',
+      biayaCicilan: 900000,
+      terminBerjalan: 6,
+      totalTermin: 6,
       status: 'Lunas',
-      tanggalPotong: '25 Oct 2024',
-    },
-  ];
-
-  const aktivitasPinjaman = [
-    {
-      tanggal: '5 Jan 2024',
-      aktivitas: 'Pinjaman Dibuat',
-      jumlah: 10000000,
-      status: 'success',
     },
     {
-      tanggal: '25 Jan 2024',
-      aktivitas: 'Cicilan Januari Dipotong dari Gaji',
-      jumlah: 1000000,
-      status: 'success',
-    },
-    {
-      tanggal: '25 Feb 2024',
-      aktivitas: 'Cicilan Februari Dipotong dari Gaji',
-      jumlah: 1000000,
-      status: 'success',
-    },
-    {
-      tanggal: '25 Mar 2024',
-      aktivitas: 'Potongan Gagal - Gaji Tidak Mencukupi',
-      jumlah: 0,
-      status: 'error',
-    },
-    {
-      tanggal: '25 Apr 2024',
-      aktivitas: 'Cicilan Maret & April Dipotong (Double)',
-      jumlah: 1500000,
-      status: 'success',
-    },
-    {
-      tanggal: '25 Mei 2024',
-      aktivitas: 'Cicilan Mei Dipotong dari Gaji',
-      jumlah: 1000000,
-      status: 'success',
-    },
-    {
-      tanggal: '25 Jun 2024',
-      aktivitas: 'Cicilan Juni Dipotong dari Gaji',
-      jumlah: 1000000,
-      status: 'success',
-    },
-    {
-      tanggal: '25 Jul 2024',
-      aktivitas: 'Cicilan Juli Dipotong dari Gaji',
-      jumlah: 1000000,
-      status: 'success',
-    },
-    {
-      tanggal: '25 Agu 2024',
-      aktivitas: 'Cicilan Agustus Dipotong dari Gaji',
-      jumlah: 1000000,
-      status: 'success',
-    },
-    {
-      tanggal: '25 Sep 2024',
-      aktivitas: 'Cicilan September Dipotong dari Gaji',
-      jumlah: 1000000,
-      status: 'success',
-    },
-    {
-      tanggal: '25 Oct 2024',
-      aktivitas: 'Cicilan Terakhir - PINJAMAN LUNAS',
-      jumlah: 1500000,
-      status: 'success',
-      isLunas: true,
+      no: 3,
+      noPinjaman: 'PJN-2024-001236',
+      totalPinjaman: 15000000,
+      tanggalPengajuan: 'Jumat, 20 Februari 2026, 09:15',
+      durasiPinjaman: '10 Bulan',
+      biayaCicilan: 1650000,
+      terminBerjalan: 3,
+      totalTermin: 10,
+      status: 'Belum Lunas',
     },
   ];
 
@@ -176,225 +60,193 @@ const TabRiwayatPinjaman = ({ data }: any) => {
   };
 
   return (
-    <Card className="bg-white">
-      <CardContent className="p-6 space-y-6">
+    <div className="w-full border-gray-200 bg-white p-5 shadow-sm">
 
-        {/* Summary Section */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          {/* Total Pinjaman - Deep Blue */}
-          <div className="bg-gradient-to-r from-[#1E3A8A] to-[#1E40AF] p-4 rounded-lg text-white">
-            <p className="text-sm text-white/90 mb-1">Total Pinjaman:</p>
-            <p className="text-lg font-bold">
-              {formatRupiah(pinjamanData.totalPinjaman)}
-            </p>
-          </div>
+      {/* Table Container */}
+      <div className="overflow-hidden border-gray-200 bg-white">
+        <Table>
+          <TableHeader>
+            <TableRow className="bg-[#1E40AF] hover:bg-[#1E40AF]">
+              <TableHead className="w-14 border-r border-white/20 text-white font-semibold">
+                No.
+              </TableHead>
 
-          {/* Sisa Pinjaman - Merah/Hijau */}
-          <div className={`${pinjamanData.sisaPinjaman === 0 ? 'bg-green-600' : 'bg-red-600'} p-4 rounded-lg text-white`}>
-            <p className="text-sm text-white/90 mb-1">Sisa Pinjaman</p>
-            <p className="text-lg font-bold">
-              {formatRupiah(pinjamanData.sisaPinjaman)}
-            </p>
-          </div>
+              <TableHead className="min-w-[220px] border-r border-white/20 text-white font-semibold">
+                No. Pinjaman
+              </TableHead>
 
-          {/* Cicilan per Bulan - Hijau */}
-          <div className="bg-green-600 p-4 rounded-lg text-white">
-            <p className="text-sm text-white/90 mb-1">Cicilan per Bulan:</p>
-            <p className="text-lg font-bold">
-              {formatRupiah(pinjamanData.cicilanPerBulan)}
-            </p>
-          </div>
+              <TableHead className="min-w-[220px] border-r border-white/20 text-white font-semibold">
+                Total Pinjaman
+              </TableHead>
 
-          {/* Status */}
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <p className="text-sm text-gray-600 mb-1">Status:</p>
-            {pinjamanData.status === 'Lunas' ? (
-              <Badge className="bg-green-600 hover:bg-green-700 text-white flex items-center gap-1 w-fit">
-                <Trophy className="w-3.5 h-3.5" />
-                {pinjamanData.status}
-              </Badge>
-            ) : (
-              <Badge
-                className={
-                  pinjamanData.status === 'Aktif'
-                    ? 'bg-blue-600 hover:bg-blue-700'
-                    : 'bg-gray-500 hover:bg-gray-600'
-                }
-              >
-                {pinjamanData.status}
-              </Badge>
-            )}
-          </div>
-        </div>
+              <TableHead className="min-w-[260px] border-r border-white/20 text-white font-semibold">
+                Tanggal Pengajuan
+              </TableHead>
 
-        {/* Periode */}
-        <div className="text-left text-sm text-gray-600">
-          Periode Potong: <span className="font-medium">{pinjamanData.periodePotong}</span>
-        </div>
+              <TableHead className="min-w-[180px] border-r border-white/20 text-white font-semibold">
+                Durasi Pinjaman
+              </TableHead>
 
-        {/* Progress Bar */}
-        <div className="bg-gray-50 p-4 rounded-lg">
-          <div className="flex justify-between items-center mb-2">
-            <p className="text-sm font-medium text-gray-700">
-              Progress Pembayaran: <span className="text-green-600 font-bold">{pinjamanData.progress}%</span> Terbayar
-            </p>
-            <p className="text-sm text-gray-600">
-              {pinjamanData.cicilanTerbayar} dari {pinjamanData.totalCicilan} Cicilan
-            </p>
-          </div>
-          <div className="w-full bg-gray-200 rounded-full h-3">
-            <div
-              className={`${pinjamanData.progress === 100 ? 'bg-green-600' : 'bg-gradient-to-r from-[#1E3A8A] to-[#1E40AF]'} h-3 rounded-full transition-all duration-300`}
-              style={{ width: `${pinjamanData.progress}%` }}
-            />
-          </div>
-          {pinjamanData.progress === 100 && (
-            <p className="text-sm text-green-600 font-semibold mt-2 flex items-center gap-1">
-              <Trophy className="w-4 h-4" />
-              Selamat! Pinjaman telah lunas
-            </p>
-          )}
-        </div>
+              <TableHead className="min-w-[170px] border-r border-white/20 text-white font-semibold">
+                Biaya Cicilan
+              </TableHead>
 
-        {/* Keterangan Potongan */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <Calendar className="w-5 h-5 text-[#1E40AF] mt-0.5 shrink-0" />
-            <div>
-              <h4 className="text-sm font-semibold text-blue-900 mb-2">
-                Keterangan Potongan Pinjaman
-              </h4>
-              <p className="text-sm text-blue-700">
-                Pinjaman dipotong otomatis dari gaji setiap tanggal <span className="font-bold">25</span> setiap bulannya.
-                Potongan dilakukan bersamaan dengan proses penggajian.
-              </p>
-              <div className="mt-3 flex flex-wrap gap-2">
-                <Badge variant="outline" className="text-[#1E40AF] border-[#1E40AF] bg-white/50">
-                  <Calendar className="w-3 h-3 mr-1" />
-                  Potong Tanggal 25
-                </Badge>
-                <Badge variant="outline" className="text-[#1E40AF] border-[#1E40AF] bg-white/50">
-                  Otomatis dari Gaji
-                </Badge>
-              </div>
-            </div>
-          </div>
-        </div>
+              <TableHead className="min-w-[170px] border-r border-white/20 text-white font-semibold">
+                Periode Cicilan
+              </TableHead>
 
-        {/* Riwayat Potongan Pinjaman */}
-        <div>
-          <h3 className="text-base font-semibold text-gray-900 mb-4">
-            Riwayat Potongan Pinjaman
-          </h3>
-          <div className="overflow-auto rounded border border-gray-300">
-            <Table className="w-full border border-gray-300 border-collapse">
-              <TableHeader>
-                <TableRow className="bg-brand text-white hover:bg-brand">
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">
-                    Bulan
-                  </TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">
-                    Total Pinjaman
-                  </TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">
-                    Potongan Pinjaman
-                  </TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">
-                    Tanggal Potong
-                  </TableHead>
-                  <TableHead className="text-white border border-gray-200 whitespace-nowrap">
-                    Status
-                  </TableHead>
+              <TableHead className="min-w-[170px] text-white font-semibold">
+                Status
+              </TableHead>
+            </TableRow>
+          </TableHeader>
+
+          <TableBody>
+            {pinjamanData.map((item) => {
+              const sisaTermin =
+                item.totalTermin - item.terminBerjalan;
+
+              return (
+                <TableRow
+                  key={item.noPinjaman}
+                  className="hover:bg-gray-50 transition-colors"
+                >
+                  {/* No */}
+                  <TableCell className="border-r border-b border-gray-200 font-medium">
+                    {item.no}
+                  </TableCell>
+
+                  {/* No Pinjaman */}
+                  <TableCell className="border-r border-b border-gray-200">
+                    <span className="font-mono text-sm text-gray-800">
+                      {item.noPinjaman}
+                    </span>
+                  </TableCell>
+
+                  {/* Total Pinjaman */}
+                  <TableCell className="border-r border-b border-gray-200 font-medium text-gray-800">
+                    {formatRupiah(item.totalPinjaman)}
+                  </TableCell>
+
+                  {/* Tanggal Pengajuan */}
+                  <TableCell className="border-r border-b border-gray-200">
+                    <div className="flex items-start gap-2">
+                      <CalendarDays className="mt-0.5 h-4 w-4 shrink-0 text-[#1E40AF]" />
+
+                      <span className="text-sm leading-relaxed text-gray-700">
+                        {item.tanggalPengajuan}
+                      </span>
+                    </div>
+                  </TableCell>
+
+                  {/* Durasi */}
+                  <TableCell className="border-r border-b border-gray-200">
+                    <span className="text-sm text-gray-700">
+                      {item.durasiPinjaman}
+                    </span>
+                  </TableCell>
+
+                  {/* Cicilan */}
+                  <TableCell className="border-r border-b border-gray-200">
+                    <span className="font-semibold text-green-700">
+                      {formatRupiah(item.biayaCicilan)}
+                    </span>
+                  </TableCell>
+
+                  {/* Progress Cicilan */}
+                  <TableCell className="border-r border-b border-gray-200">
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-semibold text-gray-800">
+                        {item.terminBerjalan}/{item.totalTermin}
+                      </span>
+
+                      {item.status !== 'Lunas' && (
+                        <span className="text-xs text-gray-500">
+                          ({sisaTermin} tersisa)
+                        </span>
+                      )}
+                    </div>
+                  </TableCell>
+
+                  {/* Status */}
+                  <TableCell className="border-b border-gray-200">
+                    {item.status === 'Lunas' ? (
+                      <Badge
+                        className="
+                          bg-green-100
+                          text-green-700
+                          rounded-sm
+                          border
+                          border-green-200
+                          px-3
+                          py-1
+                          flex
+                          items-center
+                          gap-1.5
+                          w-fit
+                          font-medium
+                          hover:bg-green-100
+                        "
+                      >
+                        <Check className="w-3.5 h-3.5" />
+                        {item.status}
+                      </Badge>
+                    ) : (
+                      <Badge
+                        className="
+                          inline-flex
+                          h-7
+                          items-center
+                          gap-1.5
+                          rounded-sm
+                          border
+                          border-amber-300
+                          bg-amber-50
+                          px-2.5
+                          text-xs
+                          font-medium
+                          text-amber-700
+                          hover:bg-amber-50
+                        "
+                      >
+                        <Clock className="h-3 w-3 shrink-0 text-amber-500" />
+                        Belum Lunas
+                      </Badge>
+                    )}
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {riwayatPotongan.map((item, index) => (
-                  <TableRow
-                    key={index}
-                    className={`hover:bg-gray-50 ${item.status === 'Lunas' ? 'bg-green-50' : ''}`}
-                  >
-                    <TableCell className="font-medium border-r border-gray-200 border-b border-gray-200">
-                      {item.bulan}
-                    </TableCell>
-                    <TableCell className="border-r border-gray-200 border-b border-gray-200">
-                      {formatRupiah(item.totalPinjaman)}
-                    </TableCell>
-                    <TableCell className="border-r border-gray-200 border-b border-gray-200">
-                      {formatRupiah(item.potonganPinjaman)}
-                    </TableCell>
-                    <TableCell className="border-r border-gray-200 border-b border-gray-200">
-                      {item.tanggalPotong !== '-' ? (
-                        <div className="flex items-center gap-1 text-gray-600">
-                          <Calendar className="w-3.5 h-3.5 text-[#1E40AF]" />
-                          <span className="text-sm">{item.tanggalPotong}</span>
-                        </div>
-                      ) : (
-                        <span className="text-gray-400">-</span>
-                      )}
-                    </TableCell>
-                    <TableCell className="border-b border-gray-200">
-                      {item.status === 'Dipotong' && (
-                        <div className="flex items-center gap-1.5 text-green-600">
-                          <CheckCircle2 className="w-4 h-4" />
-                          <span className="text-sm font-medium">Dipotong</span>
-                        </div>
-                      )}
-                      {item.status === 'Lunas' && (
-                        <div className="flex items-center gap-1.5 text-green-600 font-semibold">
-                          <Trophy className="w-4 h-4" />
-                          <span className="text-sm font-medium">LUNAS</span>
-                        </div>
-                      )}
-                      {item.status === 'Gagal' && (
-                        <div className="flex items-center gap-1.5 text-red-600">
-                          <AlertCircle className="w-4 h-4" />
-                          <div>
-                            <p className="text-sm font-medium">Gagal Potong</p>
-                            <p className="text-xs">(Gaji Tidak Cukup)</p>
-                          </div>
-                        </div>
-                      )}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+              );
+            })}
+          </TableBody>
+        </Table>
+      </div>
+
+      {/* Information Box */}
+      <div className="mt-4 rounded-sm border border-blue-200 bg-blue-50 p-4">
+        <div className="flex items-start gap-3">
+          <div className="mt-0.5 flex h-5 w-5 items-center justify-center rounded-sm border border-[#1E40AF]">
+            <span className="text-[11px] font-bold text-[#1E40AF]">
+              i
+            </span>
+          </div>
+
+          <div>
+            <h4 className="text-sm font-semibold text-[#1E40AF]">
+              Informasi Status Pinjaman
+            </h4>
+
+            <p className="mt-1 text-sm leading-relaxed text-blue-700">
+              Status{' '}
+              <span className="font-semibold">
+                "Belum Lunas"
+              </span>{' '}
+              menunjukkan pinjaman masih berjalan dan masih
+              terdapat sisa cicilan yang belum dibayarkan.
+            </p>
           </div>
         </div>
-
-        {/* Aktivitas Pinjaman */}
-        <div>
-          <h3 className="text-base font-semibold text-gray-900 mb-4">
-            Aktivitas Pinjaman
-          </h3>
-          <div className="space-y-3">
-            {aktivitasPinjaman.map((item, index) => (
-              <div
-                key={index}
-                className={`flex items-start gap-3 p-3 rounded-lg ${item.isLunas ? 'bg-green-50 border-2 border-green-500' : 'bg-gray-50'}`}
-              >
-                <div className="shrink-0 mt-0.5">
-                  {item.isLunas ? (
-                    <Trophy className="w-5 h-5 text-green-600" />
-                  ) : item.status === 'success' ? (
-                    <CheckCircle2 className="w-5 h-5 text-green-600" />
-                  ) : (
-                    <XCircle className="w-5 h-5 text-red-600" />
-                  )}
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-gray-900">{item.tanggal}</p>
-                  <p className={`text-sm ${item.isLunas ? 'text-green-700 font-semibold' : item.status === 'error' ? 'text-red-600' : 'text-gray-600'}`}>
-                    {item.aktivitas} {item.jumlah > 0 && `- ${formatRupiah(item.jumlah)}`}
-                  </p>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
