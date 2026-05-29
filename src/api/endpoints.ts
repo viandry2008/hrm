@@ -44,4 +44,7 @@ export const ENDPOINTS = {
 
     // maritals
     MARITALS: "/maritals",
+    // shifts & attendances
+    SHIFTS: "/shifts",
+    ATTENDANCES: "/attendances",
 };

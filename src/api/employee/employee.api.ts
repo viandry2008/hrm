@@ -3,7 +3,7 @@ import { ENDPOINTS } from "../endpoints";
 import { EmployeeMessageResponse, EmployeeListResponse, EmployeeMultipleDeleteRequest, EmployeeSummaryResponse, EmployeeMultipleChangeRequest, EmployeeMultipleContractRequest, EmployeePostResponse, EmployeeDetailResponse, EmployeeImportResponse } from "./employee.types";
 
 export const getEmployeesApi = async (
-    params: { search?: string; limit?: number; page?: number; status?: string }
+    params: { search?: string; limit?: number; page?: number }
 ): Promise<EmployeeListResponse> => {
     const { data } = await apiClient.get(ENDPOINTS.EMPLOYEES, { params });
     return data;

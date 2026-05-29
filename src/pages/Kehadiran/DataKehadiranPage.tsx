@@ -1,6 +1,4 @@
 import { useState } from 'react';
-import DatePicker from 'react-datepicker';
-import 'react-datepicker/dist/react-datepicker.css';
 import { Button } from '@/components/ui/button';
 import { TablePagination } from '@/components/ui/table-pagination';
 import { Input } from '@/components/ui/input';
@@ -19,196 +17,79 @@ import {
     SelectTrigger,
     SelectValue,
 } from '@/components/ui/select';
-import { Search, ChevronLeft, ChevronRight, Clock } from 'lucide-react';
+import { Search, Clock } from 'lucide-react';
+import { useGetShifts, useGetAttendances } from '@/api/attendance/attendance.query';
 import { TableCard } from "@/components/ui/table-card";
 
-interface KehadiranData {
-    no: number;
-    idKaryawan: string;
-    nama: string;
-    karyawan: string;
-    divisi: string;
-    jabatan: string;
-    tanggal: string;
-    absenMasuk: {
-        jam: string;
-        lokasi: string;
-        detail: string;
-        catatan: string;
-    };
-    absenPulang: {
-        jam: string;
-        lokasi: string;
-        detail: string;
-        catatan: string;
-    };
-}
-
-const mockData: KehadiranData[] = [
-    {
-        no: 1,
-        idKaryawan: 'EMP001',
-        nama: 'Andi Saputra',
-        karyawan: 'Tetap',
-        divisi: 'IT',
-        jabatan: 'Frontend Developer',
-        tanggal: '08/09/2025',
-        absenMasuk: { jam: '09:30', lokasi: 'Kantor Pusat', detail: 'Jl. Merdeka No.1', catatan: 'Terlambat' },
-        absenPulang: { jam: '18:00', lokasi: 'Kantor Pusat', detail: 'Jl. Merdeka No.1', catatan: '-' },
-    },
-    {
-        no: 2,
-        idKaryawan: 'EMP002',
-        nama: 'Budi Hartono',
-        karyawan: 'Kontrak',
-        divisi: 'Finance',
-        jabatan: 'Accountant',
-        tanggal: '08/09/2025',
-        absenMasuk: { jam: '09:10', lokasi: 'Remote', detail: 'Rumah, Bekasi', catatan: '' },
-        absenPulang: { jam: '17:00', lokasi: 'Remote', detail: 'Rumah, Bekasi', catatan: '' },
-    },
-    {
-        no: 3,
-        idKaryawan: 'EMP003',
-        nama: 'Citra Dewi',
-        karyawan: 'Tetap',
-        divisi: 'HRD',
-        jabatan: 'Recruiter',
-        tanggal: '08/09/2025',
-        absenMasuk: { jam: '09:00', lokasi: 'Kantor Cabang', detail: 'Jl. Gatot Subroto No.20', catatan: '' },
-        absenPulang: { jam: '18:30', lokasi: 'Kantor Cabang', detail: 'Jl. Gatot Subroto No.20', catatan: 'Lembur' },
-    },
-    {
-        no: 4,
-        idKaryawan: 'EMP004',
-        nama: 'Dian Permana',
-        karyawan: 'Magang',
-        divisi: 'IT',
-        jabatan: 'Backend Intern',
-        tanggal: '08/09/2025',
-        absenMasuk: { jam: '09:15', lokasi: 'Kantor Pusat', detail: 'Jl. Merdeka No.1', catatan: '' },
-        absenPulang: { jam: '17:45', lokasi: 'Kantor Pusat', detail: 'Jl. Merdeka No.1', catatan: '' },
-    },
-    {
-        no: 5,
-        idKaryawan: 'EMP005',
-        nama: 'Eka Lestari',
-        karyawan: 'Tetap',
-        divisi: 'Marketing',
-        jabatan: 'Content Strategist',
-        tanggal: '08/09/2025',
-        absenMasuk: { jam: '09:00', lokasi: 'Remote', detail: 'Jl. Cendana No.5', catatan: '' },
-        absenPulang: { jam: '17:15', lokasi: 'Remote', detail: 'Jl. Cendana No.5', catatan: '' },
-    },
-    {
-        no: 6,
-        idKaryawan: 'EMP006',
-        nama: 'Fajar Nugroho',
-        karyawan: 'Tetap',
-        divisi: 'IT',
-        jabatan: 'DevOps Engineer',
-        tanggal: '08/09/2025',
-        absenMasuk: { jam: '08:50', lokasi: 'Kantor Pusat', detail: 'Jl. Merdeka No.1', catatan: '' },
-        absenPulang: { jam: '18:10', lokasi: 'Kantor Pusat', detail: 'Jl. Merdeka No.1', catatan: 'Meeting' },
-    },
-    {
-        no: 7,
-        idKaryawan: 'EMP007',
-        nama: 'Gita Sari',
-        karyawan: 'Kontrak',
-        divisi: 'Customer Service',
-        jabatan: 'CS Online',
-        tanggal: '08/09/2025',
-        absenMasuk: { jam: '09:05', lokasi: 'Remote', detail: 'Bandung', catatan: '' },
-        absenPulang: { jam: '17:00', lokasi: 'Remote', detail: 'Bandung', catatan: '' },
-    },
-    {
-        no: 8,
-        idKaryawan: 'EMP008',
-        nama: 'Hadi Santoso',
-        karyawan: 'Tetap',
-        divisi: 'Logistik',
-        jabatan: 'Driver',
-        tanggal: '08/09/2025',
-        absenMasuk: { jam: '08:00', lokasi: 'Gudang Utama', detail: 'Jl. Raya Cibubur', catatan: '' },
-        absenPulang: { jam: '16:30', lokasi: 'Gudang Utama', detail: 'Jl. Raya Cibubur', catatan: '' },
-    },
-    {
-        no: 9,
-        idKaryawan: 'EMP009',
-        nama: 'Irfan Maulana',
-        karyawan: 'Magang',
-        divisi: 'Design',
-        jabatan: 'UI Intern',
-        tanggal: '08/09/2025',
-        absenMasuk: { jam: '09:20', lokasi: 'Remote', detail: 'Tangerang', catatan: '' },
-        absenPulang: { jam: '17:40', lokasi: 'Remote', detail: 'Tangerang', catatan: '' },
-    },
-    {
-        no: 10,
-        idKaryawan: 'EMP010',
-        nama: 'Joko Widodo',
-        karyawan: 'Tetap',
-        divisi: 'Manajemen',
-        jabatan: 'Direktur',
-        tanggal: '08/09/2025',
-        absenMasuk: { jam: '08:30', lokasi: 'Kantor Pusat', detail: 'Jl. Merdeka No.1', catatan: '' },
-        absenPulang: { jam: '18:30', lokasi: 'Kantor Pusat', detail: 'Jl. Merdeka No.1', catatan: 'Lembur & Rapat' },
-    },
-];
-
 export const DataKehadiranPage = () => {
-    const [startDate, setStartDate] = useState<string>('23/06/2025');
-    const [endDate, setEndDate] = useState<string>('23/06/2025');
-
+    const today = new Date().toLocaleDateString('en-GB').split('/').reverse().join('-'); // format YYYY-MM-DD
+    const [startDate, setStartDate] = useState<string>(today);
+    const [endDate, setEndDate] = useState<string>(today);
     const [searchTerm, setSearchTerm] = useState('');
-    const [data] = useState<KehadiranData[]>(mockData);
     const [currentPage, setCurrentPage] = useState(1);
     const [itemsPerPage, setItemsPerPage] = useState(10);
+    const [shiftFilter, setShiftFilter] = useState<string>('all');
 
     const formatDateToInput = (dateString: string): string => {
-        // Convert DD/MM/YYYY to YYYY-MM-DD for internal input
         const [d, m, y] = dateString.split('/');
         return `${y}-${m}-${d}`;
     };
 
     const formatDateToDisplay = (dateString: string): string => {
-        // Convert YYYY-MM-DD to DD/MM/YYYY for display
         const [y, m, d] = dateString.split('-');
         return `${d}/${m}/${y}`;
     };
 
-    const filteredData = data.filter((item) =>
-        [item.idKaryawan, item.nama, item.divisi, item.jabatan, item.karyawan]
-            .some((field) => field.toLowerCase().includes(searchTerm.toLowerCase()))
-    );
+    const { data: shiftsResp } = useGetShifts({ page: 1, limit: 100 });
+    const shifts = shiftsResp?.data || [];
 
-    const totalPages = Math.ceil(filteredData.length / itemsPerPage);
-    const startIndex = (currentPage - 1) * itemsPerPage;
-    const paginatedData = filteredData.slice(startIndex, startIndex + itemsPerPage);
+    const shiftParam = shiftFilter === 'all'
+        ? undefined
+        : shiftFilter === 'non-shift'
+            ? null
+            : Number(shiftFilter);
+
+    const { data: attendancesResp } = useGetAttendances({
+        search: searchTerm || undefined,
+        shift: shiftParam,
+        start_date: startDate ? startDate.split('/').reverse().join('-') : undefined,
+        end_date: endDate ? endDate.split('/').reverse().join('-') : undefined,
+        page: currentPage,
+        limit: itemsPerPage,
+    });
+
+    const apiItems = attendancesResp?.data || [];
+    const meta = attendancesResp?.meta || {
+        current_page: 1,
+        per_page: itemsPerPage,
+        total: 0,
+        last_page: 1,
+    };
 
     return (
         <div className="p-6 space-y-6">
-
             <TableCard icon={Clock} title="Data Kehadiran">
 
                 {/* Filter Field */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4 mb-6">
 
-                    {/* Filter Kategori Karyawan */}
+                    {/* Filter Shift */}
                     <div>
                         <label className="block text-sm font-medium text-gray-700 mb-1">
-                            Filter berdasarkan kategori pekerja <span className="text-red-500">*</span>
+                            Filter berdasarkan Shift pekerja <span className="text-red-500">*</span>
                         </label>
-                        <Select>
+                        <Select value={shiftFilter} onValueChange={(val) => { setShiftFilter(val); setCurrentPage(1); }}>
                             <SelectTrigger className="border border-gray-400 focus:border-blue-600">
-                                <SelectValue placeholder="-- Semua Karyawan --" />
+                                <SelectValue placeholder="-- Semua Shift --" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="all">-- Semua Karyawan --</SelectItem>
-                                <SelectItem value="tetap">Karyawan Tetap</SelectItem>
-                                <SelectItem value="kontrak">Karyawan Kontrak</SelectItem>
-                                <SelectItem value="magang">Magang</SelectItem>
+                                <SelectItem value="all">-- Semua Shift --</SelectItem>
+                                <SelectItem value="non-shift">Non Shift</SelectItem>
+                                {shifts.map((s: any) => (
+                                    <SelectItem key={s.id} value={String(s.id)}>
+                                        {s.type} {s.to} ({s.start_time} - {s.end_time})
+                                    </SelectItem>
+                                ))}
                             </SelectContent>
                         </Select>
                     </div>
@@ -218,7 +99,6 @@ export const DataKehadiranPage = () => {
                         <label className="block text-sm font-medium text-gray-700 mb-1">Mulai dari tanggal</label>
                         <div className="relative">
                             <Input
-                                id="start-date"
                                 type="text"
                                 value={startDate}
                                 readOnly
@@ -228,10 +108,7 @@ export const DataKehadiranPage = () => {
                             <svg
                                 onClick={() => document.getElementById('hidden-start-date')?.focus()}
                                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 cursor-pointer"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"
                             >
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10m-12 8h14a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
@@ -240,9 +117,7 @@ export const DataKehadiranPage = () => {
                                 type="date"
                                 className="absolute inset-0 opacity-0 cursor-pointer"
                                 defaultValue={formatDateToInput(startDate)}
-                                onChange={(e) => {
-                                    setStartDate(formatDateToDisplay(e.target.value));
-                                }}
+                                onChange={(e) => { setStartDate(formatDateToDisplay(e.target.value)); setCurrentPage(1); }}
                             />
                         </div>
                     </div>
@@ -252,7 +127,6 @@ export const DataKehadiranPage = () => {
                         <label className="block text-sm font-medium text-gray-700 mb-1">Sampai dengan tanggal</label>
                         <div className="relative">
                             <Input
-                                id="end-date"
                                 type="text"
                                 value={endDate}
                                 readOnly
@@ -262,10 +136,7 @@ export const DataKehadiranPage = () => {
                             <svg
                                 onClick={() => document.getElementById('hidden-end-date')?.focus()}
                                 className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4 cursor-pointer"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"
                             >
                                 <path strokeLinecap="round" strokeLinejoin="round" d="M8 7V3m8 4V3m-9 8h10m-12 8h14a2 2 0 002-2V7a2 2 0 00-2-2H6a2 2 0 00-2 2v10a2 2 0 002 2z" />
                             </svg>
@@ -274,9 +145,7 @@ export const DataKehadiranPage = () => {
                                 type="date"
                                 className="absolute inset-0 opacity-0 cursor-pointer"
                                 defaultValue={formatDateToInput(endDate)}
-                                onChange={(e) => {
-                                    setEndDate(formatDateToDisplay(e.target.value));
-                                }}
+                                onChange={(e) => { setEndDate(formatDateToDisplay(e.target.value)); setCurrentPage(1); }}
                             />
                         </div>
                     </div>
@@ -287,7 +156,7 @@ export const DataKehadiranPage = () => {
                     <div className="flex items-center space-x-4">
                         <div className="flex items-center space-x-2">
                             <span className="text-sm text-gray-600">Show</span>
-                            <Select value={itemsPerPage.toString()} onValueChange={(value) => setItemsPerPage(Number(value))}>
+                            <Select value={itemsPerPage.toString()} onValueChange={(value) => { setItemsPerPage(Number(value)); setCurrentPage(1); }}>
                                 <SelectTrigger className="w-[80px] border border-gray-400 hover:border-gray-600 focus:border-blue-600 shadow-sm rounded-md">
                                     <SelectValue />
                                 </SelectTrigger>
@@ -303,10 +172,11 @@ export const DataKehadiranPage = () => {
                         <div className="relative w-80">
                             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
                             <Input
-                                placeholder="Cari ID, nama, divisi, jabatan, atau status..."
+                                placeholder="Cari ID, nama, divisi dan jabatan"
                                 value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="pl-10 pr-4 py-2 border border-gray-400 hover:border-gray-600 focus:border-blue-600 focus:ring-1 focus:ring-blue-500 rounded-md shadow-sm transition-colors" />
+                                onChange={(e) => { setSearchTerm(e.target.value); setCurrentPage(1); }}
+                                className="pl-10 pr-4 py-2 border border-gray-400 hover:border-gray-600 focus:border-blue-600 focus:ring-1 focus:ring-blue-500 rounded-md shadow-sm transition-colors"
+                            />
                         </div>
                     </div>
                 </div>
@@ -319,7 +189,6 @@ export const DataKehadiranPage = () => {
                                 <TableHead className="border text-white whitespace-nowrap">No.</TableHead>
                                 <TableHead className="border text-white whitespace-nowrap">ID Karyawan</TableHead>
                                 <TableHead className="border text-white whitespace-nowrap">Nama Karyawan</TableHead>
-                                <TableHead className="border text-white whitespace-nowrap">Karyawan</TableHead>
                                 <TableHead className="border text-white whitespace-nowrap">Divisi</TableHead>
                                 <TableHead className="border text-white whitespace-nowrap">Jabatan</TableHead>
                                 <TableHead className="border text-white whitespace-nowrap">Tanggal</TableHead>
@@ -334,23 +203,36 @@ export const DataKehadiranPage = () => {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {paginatedData.map((item) => (
-                                <TableRow key={item.no}>
-                                    <TableCell className="border-r">{item.no}</TableCell>
-                                    <TableCell className="font-medium border-r">{item.idKaryawan}</TableCell>
-                                    <TableCell className="border-r">{item.nama}</TableCell>
-                                    <TableCell className="border-r">{item.karyawan}</TableCell>
-                                    <TableCell className="border-r">{item.divisi}</TableCell>
-                                    <TableCell className="border-r">{item.jabatan}</TableCell>
-                                    <TableCell className="border-r">{item.tanggal}</TableCell>
-                                    <TableCell className="border-r">{item.absenMasuk.jam}</TableCell>
-                                    <TableCell className="border-r">{item.absenMasuk.lokasi}</TableCell>
-                                    <TableCell className="border-r">{item.absenMasuk.detail}</TableCell>
-                                    <TableCell className="border-r">{item.absenMasuk.catatan}</TableCell>
-                                    <TableCell className="border-r">{item.absenPulang.jam}</TableCell>
-                                    <TableCell className="border-r">{item.absenPulang.lokasi}</TableCell>
-                                    <TableCell className="border-r">{item.absenPulang.detail}</TableCell>
-                                    <TableCell className="border-r">{item.absenPulang.catatan}</TableCell>
+                            {apiItems.map((it: any, idx: number) => (
+                                <TableRow key={it.id ?? idx}>
+                                    <TableCell className="border-r">
+                                        {(meta.current_page - 1) * meta.per_page + idx + 1}
+                                    </TableCell>
+                                    <TableCell className="font-medium border-r">
+                                        {it.employee?.employee_code ?? '-'}
+                                    </TableCell>
+                                    <TableCell className="border-r">
+                                        {it.employee?.full_name ?? '-'}
+                                    </TableCell>
+                                    <TableCell className="border-r">
+                                        {it.employee?.department?.name ?? '-'}
+                                    </TableCell>
+                                    <TableCell className="border-r">
+                                        {it.employee?.position?.name ?? '-'}
+                                    </TableCell>
+                                    <TableCell className="border-r">
+                                        {it.attendance_date
+                                            ? new Date(it.attendance_date).toLocaleDateString('en-GB')
+                                            : '-'}
+                                    </TableCell>
+                                    <TableCell className="border-r">{it.clock_in ?? '-'}</TableCell>
+                                    <TableCell className="border-r">{it.clock_in_location ?? '-'}</TableCell>
+                                    <TableCell className="border-r">{it.clock_in_location_detail ?? '-'}</TableCell>
+                                    <TableCell className="border-r">{it.notes ?? '-'}</TableCell>
+                                    <TableCell className="border-r">{it.clock_out ?? '-'}</TableCell>
+                                    <TableCell className="border-r">{it.clock_out_location ?? '-'}</TableCell>
+                                    <TableCell className="border-r">{it.clock_out_location_detail ?? '-'}</TableCell>
+                                    <TableCell className="border-r">{it.clock_out_notes ?? '-'}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
@@ -359,14 +241,14 @@ export const DataKehadiranPage = () => {
 
                 <TablePagination
                     pagination={{
-                        current_page: currentPage,
-                        per_page: totalPages,
-                        total: filteredData.length,
-                        last_page: totalPages,
+                        current_page: meta.current_page,
+                        per_page: meta.per_page,
+                        total: meta.total,
+                        last_page: meta.last_page,
                     }}
                     currentPage={currentPage}
                     onPageChange={setCurrentPage}
-                    items={filteredData}
+                    items={apiItems}
                 />
 
             </TableCard>

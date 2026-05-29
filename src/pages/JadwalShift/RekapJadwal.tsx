@@ -46,8 +46,8 @@ export const JadwalShiftPage = () => {
   const [activeTab, setActiveTab] = useState('shift');
 
   const handleEmployeeToggle = (id: string) => {
-    setSelectedEmployees(prev => 
-      prev.map(emp => 
+    setSelectedEmployees(prev =>
+      prev.map(emp =>
         emp.id === id ? { ...emp, selected: !emp.selected } : emp
       )
     );
@@ -55,17 +55,17 @@ export const JadwalShiftPage = () => {
 
   const handleSaveSchedule = () => {
     // Show sweet alert
-    if (window.Swal) {
-      window.Swal.fire({
-        title: 'Berhasil!',
-        text: 'Jadwal berhasil disimpan',
-        icon: 'success',
-        confirmButtonText: 'OK'
-      });
-    } else {
-      alert('Jadwal berhasil disimpan!');
-    }
-    setIsModalOpen(false);
+    // if (window.Swal) {
+    //   window.Swal.fire({
+    //     title: 'Berhasil!',
+    //     text: 'Jadwal berhasil disimpan',
+    //     icon: 'success',
+    //     confirmButtonText: 'OK'
+    //   });
+    // } else {
+    //   alert('Jadwal berhasil disimpan!');
+    // }
+    // setIsModalOpen(false);
   };
 
   const DataTable = ({ data, columns, type }: any) => (
