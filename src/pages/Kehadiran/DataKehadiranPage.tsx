@@ -192,14 +192,15 @@ export const DataKehadiranPage = () => {
                                 <TableHead className="border text-white whitespace-nowrap">Divisi</TableHead>
                                 <TableHead className="border text-white whitespace-nowrap">Jabatan</TableHead>
                                 <TableHead className="border text-white whitespace-nowrap">Tanggal</TableHead>
+                                <TableHead className="border text-white whitespace-nowrap">Shift</TableHead>
                                 <TableHead className="border text-white whitespace-nowrap">Jam Masuk</TableHead>
-                                <TableHead className="border text-white whitespace-nowrap">Lokasi Absen</TableHead>
+                                <TableHead className="border text-white whitespace-nowrap">Lokasi Masuk</TableHead>
                                 <TableHead className="border text-white whitespace-nowrap">Detail Lokasi</TableHead>
-                                <TableHead className="border text-white whitespace-nowrap">Catatan</TableHead>
+                                <TableHead className="border text-white whitespace-nowrap">Catatan Masuk</TableHead>
                                 <TableHead className="border text-white whitespace-nowrap">Jam Pulang</TableHead>
-                                <TableHead className="border text-white whitespace-nowrap">Lokasi Absen</TableHead>
-                                <TableHead className="border text-white whitespace-nowrap">Detail Lokasi</TableHead>
-                                <TableHead className="border text-white whitespace-nowrap">Catatan</TableHead>
+                                <TableHead className="border text-white whitespace-nowrap">Lokasi Pulang</TableHead>
+                                <TableHead className="border text-white whitespace-nowrap">Detail Pulang</TableHead>
+                                <TableHead className="border text-white whitespace-nowrap">Catatan Pulang</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -225,6 +226,7 @@ export const DataKehadiranPage = () => {
                                             ? new Date(it.attendance_date).toLocaleDateString('en-GB')
                                             : '-'}
                                     </TableCell>
+                                    <TableCell className="border-r">{it.shift ? it.shift.type + '-' + it.shift.to : 'Non shift'}</TableCell>
                                     <TableCell className="border-r">{it.clock_in ?? '-'}</TableCell>
                                     <TableCell className="border-r">{it.clock_in_location ?? '-'}</TableCell>
                                     <TableCell className="border-r">{it.clock_in_location_detail ?? '-'}</TableCell>
