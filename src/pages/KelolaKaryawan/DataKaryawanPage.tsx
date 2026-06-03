@@ -13,7 +13,6 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
-import { Card } from '@/components/ui/card';
 import {
   Select,
   SelectContent,
@@ -215,21 +214,12 @@ export const DataKaryawanPage = () => {
 
   const handleDeleteSingle = (id: number) => {
     Swal.fire({
-      title: "Apakah Anda yakin?",
+      title: 'Apakah Anda yakin?',
       text: "Data karyawan ini akan dihapus permanen!",
-      icon: "warning",
+      icon: 'warning',
       showCancelButton: true,
-      confirmButtonText: "Ya, Hapus!",
-      cancelButtonText: "Batal",
-      background: "#3b82f6",
-      color: "#ffffff",
-      customClass: {
-        popup: "bg-blue-500 text-white",
-        title: "text-white",
-        confirmButton: "bg-white text-blue-500 hover:bg-blue-100",
-        cancelButton: "bg-gray-300 text-gray-800 hover:bg-gray-400",
-      },
-      iconColor: "#bfdbfe",
+      confirmButtonText: 'Ya, Hapus!',
+      cancelButtonText: 'Batal',
     }).then((result) => {
       if (result.isConfirmed) {
         deleteSingle.mutate(id);

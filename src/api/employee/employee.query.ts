@@ -2,7 +2,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import { createEmployeeApi, deleteEmployeeApi, deleteMultipleEmployeeApi, getEmployeeApi, getEmployeesApi, getSummaryEmployeeApi, updateEmployeeApi, updateMultipleContractEmployeeApi, updateMultipleStatusEmployeeApi, importEmployeesApi } from "./employee.api";
 import { EmployeeMultipleChangeRequest, EmployeeMultipleContractRequest } from "./employee.types";
-import { EmployeePostRequest } from "./employee.types";
 
 export const useGetEmployees = (params: {
     search?: string;

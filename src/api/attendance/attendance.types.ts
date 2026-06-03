@@ -131,3 +131,54 @@ export interface AttendanceListResponse {
         last_page: number;
     };
 }
+
+export interface AttendanceRecapItem {
+    id: number;
+    periode_absen: string;
+    jumlah_karyawan: number;
+    file_path: string;
+    created_at: string;
+}
+
+export interface AttendanceRecapListResponse {
+    success: boolean;
+    code: number;
+    message: string;
+    data: AttendanceRecapItem[];
+    meta: {
+        current_page: number;
+        per_page: number;
+        total: number;
+        last_page: number;
+    };
+}
+
+export interface AttendanceRecapCreateRequest {
+    category_id: number | null;
+    employee_ids: number[];
+    start_date: string;
+    end_date: string;
+}
+
+export interface AttendanceRecapCreateResponse {
+    success: boolean;
+    code: number;
+    message: string;
+    data: {
+        id: number;
+        category_id: number | null;
+        employee_ids: number[];
+        start_date: string;
+        end_date: string;
+        file_path: string;
+        created_by: number;
+        created_at: string;
+        updated_at: string;
+    };
+}
+
+export interface AttendanceRecapDeleteResponse {
+    success: boolean;
+    code: number;
+    message: string;
+}
