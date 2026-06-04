@@ -1,5 +1,6 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import { loginApi, getProfileApi, forgotPasswordApi, verifyOtpApi, resetPasswordApi, logoutApi } from "./auth.api";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import Swal from "sweetalert2";
+import { loginApi, getProfileApi, updateProfileApi, forgotPasswordApi, verifyOtpApi, resetPasswordApi, logoutApi } from "./auth.api";
 import { useAuthStore } from "./auth.store";
 import { ForgotRequest, LoginRequest, ResetPasswordRequest, VerifyOtpRequest } from "./auth.types";
 import { useNavigate } from "react-router-dom";
@@ -95,5 +96,36 @@ export const useProfile = () => {
         queryKey: ["profile"],
         queryFn: getProfileApi,
         enabled: !!token,
+    });
+};
+
+export const useUpdateProfile = () => {
+    const queryClient = useQueryClient();
+    const setUser = useAuthStore((s) => s.setUser);
+
+    return useMutation({
+        mutationFn: (payload: FormData) => updateProfileApi(payload),
+
+        onSuccess: async (data) => {
+            Swal.fire({
+                title: "Berhasil!",
+                text: "Profil berhasil diperbarui.",
+                icon: "success",
+                timer: 1500,
+                showConfirmButton: false,
+            });
+
+            const profileData = data?.data ?? data;
+            if (profileData && typeof profileData === "object") {
+                setUser(profileData);
+            }
+
+            await queryClient.invalidateQueries({ queryKey: ["profile"] });
+        },
+
+        onError: (err: any) => {
+            const errorMessage = err.response?.data?.message || err.message || "Gagal memperbarui profil";
+            SwalError("Gagal", errorMessage);
+        },
     });
 };

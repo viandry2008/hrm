@@ -23,7 +23,16 @@ export const resetPasswordApi = async (payload: ResetPasswordRequest): Promise<r
 };
 
 export const getProfileApi = async () => {
-    const { data } = await apiClient.get(ENDPOINTS.USER_PROFILE);
+    const { data } = await apiClient.get(ENDPOINTS.PROFILE);
+    return data;
+};
+
+export const updateProfileApi = async (payload: FormData) => {
+    const { data } = await apiClient.put(ENDPOINTS.PROFILE, payload, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
     return data;
 };
 

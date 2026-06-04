@@ -9,6 +9,7 @@ import {
   IdCard, AlertTriangle, ChevronRight, Users
 } from 'lucide-react';
 import { useGetEmployee } from '@/api/employee/employee.query';
+import { useProfile } from '@/api/auth/auth.query';
 
 import TabInformasiAkun from './tabs/TabInformasiAkun';
 import TabDataPribadi from './tabs/TabDataPribadi';
@@ -99,8 +100,8 @@ const normalizeEmployeeDetail = (employee: any) => {
 
   return {
     raw: employee,
-    id: employee.employee_code || String(employee.id),
-    employeeId: employee.id,
+    id: employee.employee_code || String(employee.employee_id || employee.id),
+    employeeId: employee.employee_id || employee.id,
     nama: employee.full_name || employee.user?.name || '',
     divisi: employee.department?.name || '',
     divisiId: employee.department_id ? String(employee.department_id) : employee.department?.id ? String(employee.department.id) : '',
@@ -175,15 +176,21 @@ const normalizeEmployeeDetail = (employee: any) => {
 const DetailKaryawanPage = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { data: profileResponse, isLoading: isProfileLoading, isError: isProfileError } = useProfile();
   const { data: employeeResponse, isLoading, isError } = useGetEmployee(id);
 
+  const isProfilePage = !id;
+  const profile = profileResponse?.data ?? profileResponse;
   const data = employeeResponse?.data
     ? normalizeEmployeeDetail(employeeResponse.data)
     : null;
+  const detailData = isProfilePage && profile ? normalizeEmployeeDetail(profile) : data;
+  const loading = isProfilePage ? isProfileLoading : isLoading;
+  const error = isProfilePage ? isProfileError : isError;
 
   const [activeTab, setActiveTab] = useState('akun');
 
-  if (isLoading) {
+  if (loading) {
     return (
       <div className="p-6 flex items-center gap-2">
         <Loader2 className="animate-spin w-4 h-4" />
@@ -192,7 +199,7 @@ const DetailKaryawanPage = () => {
     );
   }
 
-  if (isError || !data) {
+  if (error || !detailData) {
     return (
       <div className="p-6">
         <Alert variant="destructive">
@@ -208,15 +215,27 @@ const DetailKaryawanPage = () => {
 
       {/* BREADCRUMB */}
       <div className="flex items-center gap-2 text-sm mb-4">
-        <button
-          onClick={() => navigate('/data-karyawan')}
-          className="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
-        >
-          <Users className="w-4 h-4" />
-          <span>Karyawan</span>
-        </button>
-        <ChevronRight className="w-4 h-4 text-gray-400" />
-        <span className="text-gray-600">Detail Karyawan</span>
+        {
+          !isProfilePage ?
+            <button
+              onClick={() => navigate('/data-karyawan')}
+              className="flex items-center gap-1 text-blue-600 hover:text-blue-800 transition-colors"
+            >
+              <Users className="w-4 h-4" />
+              <span>Karyawan</span>
+            </button> :
+            <>
+              <Users className="w-4 h-4" />
+              <span> Profil Saya</span>
+            </>
+        }
+
+        {!isProfilePage && (
+          <>
+            <ChevronRight className="w-4 h-4 text-gray-400" />
+            <span className="text-gray-600">Detail Karyawan</span>
+          </>
+        )}
       </div>
 
       {/* HEADER */}
@@ -224,27 +243,27 @@ const DetailKaryawanPage = () => {
         <CardContent className="p-6">
           <div className="flex items-start gap-6">
             <div className="w-32 h-32 rounded-md overflow-hidden bg-gray-100 flex-shrink-0 border border-gray-200">
-              <img src={data.foto} alt={data.nama} className="w-full h-full object-cover" />
+              <img src={detailData.foto} alt={detailData.nama} className="w-full h-full object-cover" />
             </div>
             <div className="flex-1">
-              <h1 className="text-2xl font-bold text-primary mb-3">{data.nama}</h1>
+              <h1 className="text-2xl font-bold text-primary mb-3">{detailData.nama}</h1>
               <div className="flex items-center gap-3 text-sm text-gray-600 mb-5">
                 <div className="flex items-center gap-1.5">
                   <Mail className="w-4 h-4 text-primary" />
-                  <span>{data.email}</span>
+                  <span>{detailData.email}</span>
                 </div>
                 <div className="w-px h-4 bg-gray-300" />
                 <div className="flex items-center gap-1.5">
                   <Phone className="w-4 h-4 text-primary" />
-                  <span>{data.nomorHandphone}</span>
+                  <span>{detailData.nomorHandphone}</span>
                 </div>
               </div>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                 {[
-                  { icon: IdCard, label: 'ID Karyawan', value: data.id },
-                  { icon: Briefcase, label: 'Jabatan', value: data.jabatan },
-                  { icon: Building2, label: 'Divisi', value: data.divisi },
-                  { icon: CalendarDays, label: 'Tanggal Bergabung', value: formatTanggalIndonesia(data.tanggalBergabung) },
+                  { icon: IdCard, label: 'ID Karyawan', value: detailData.id },
+                  { icon: Briefcase, label: 'Jabatan', value: detailData.jabatan },
+                  { icon: Building2, label: 'Divisi', value: detailData.divisi },
+                  { icon: CalendarDays, label: 'Tanggal Bergabung', value: formatTanggalIndonesia(detailData.tanggalBergabung) },
                 ].map(({ icon: Icon, label, value }) => (
                   <div key={label} className="bg-primary rounded-md p-3">
                     <div className="flex items-center gap-1.5 text-xs text-white/80 mb-1.5">
@@ -261,11 +280,11 @@ const DetailKaryawanPage = () => {
       </Card>
 
       {/* ALERT */}
-      {data.pengingat && data.pengingat !== '-' && (
+      {detailData.pengingat && detailData.pengingat !== '-' && (
         <Alert className="bg-red-50 border-red-300">
           <AlertTriangle className="h-4 w-4 text-red-600" />
           <AlertTitle className="text-red-800 font-semibold">Perhatian</AlertTitle>
-          <AlertDescription className="text-red-700">{data.pengingat}</AlertDescription>
+          <AlertDescription className="text-red-700">{detailData.pengingat}</AlertDescription>
         </Alert>
       )}
 
@@ -299,7 +318,7 @@ const DetailKaryawanPage = () => {
               className="mt-6 animate-in fade-in-50 slide-in-from-bottom-2 duration-300"
             >
               {activeTab === tab.value && Component ? (
-                <Component data={data} />
+                <Component data={detailData} />
               ) : null}
             </TabsContent>
           );

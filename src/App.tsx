@@ -93,6 +93,8 @@ const App = () => (
                   <Route path="paklaring" element={<PaklaringPage />} />
                   <Route path="/detail-karyawan/:id" element={<DetailKaryawanPage />} />
 
+                  <Route path="pengaturan" element={<DetailKaryawanPage />} />
+
                   {/* HR ONLY */}
                   <Route element={<RoleRoute allowedRoles={["HR"]} />}>
                     <Route path="kelola-karyawan" element={<KelolaKaryawanPage />} />

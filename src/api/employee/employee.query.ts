@@ -1,6 +1,8 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import { createEmployeeApi, deleteEmployeeApi, deleteMultipleEmployeeApi, getEmployeeApi, getEmployeesApi, getSummaryEmployeeApi, updateEmployeeApi, updateMultipleContractEmployeeApi, updateMultipleStatusEmployeeApi, importEmployeesApi } from "./employee.api";
+import { updateProfileApi } from "../auth/auth.api";
+import { useAuthStore } from "../auth/auth.store";
 import { EmployeeMultipleChangeRequest, EmployeeMultipleContractRequest } from "./employee.types";
 
 export const useGetEmployees = (params: {
@@ -28,12 +30,13 @@ export const useUpdateEmployee = (
     onSuccessReset?: () => void
 ) => {
     const queryClient = useQueryClient();
+    const setUser = useAuthStore((s) => s.setUser);
 
     return useMutation({
         mutationFn: (payload: FormData) =>
-            updateEmployeeApi(id as number | string, payload),
+            id ? updateEmployeeApi(id as number | string, payload) : updateProfileApi(payload),
 
-        onSuccess: async () => {
+        onSuccess: async (data) => {
             Swal.fire({
                 title: "Berhasil!",
                 text: "Data karyawan berhasil diperbarui.",
@@ -43,12 +46,19 @@ export const useUpdateEmployee = (
             });
 
             // Invalidate supaya data detail re-fetch otomatis
-            const normalizedId = String(id);
+            const normalizedId = id ? String(id) : undefined;
             await Promise.all([
-                queryClient.invalidateQueries({ queryKey: ["Employee", id] }),
-                queryClient.invalidateQueries({ queryKey: ["Employee", normalizedId] }),
+                ...(id ? [queryClient.invalidateQueries({ queryKey: ["Employee", id] }), queryClient.invalidateQueries({ queryKey: ["Employee", normalizedId] })] : []),
                 queryClient.invalidateQueries({ queryKey: ["Employees"] }),
+                queryClient.invalidateQueries({ queryKey: ["profile"] }),
             ]);
+
+            if (!id) {
+                const updatedUser = (data as any)?.data ?? data;
+                if (updatedUser && typeof updatedUser === "object") {
+                    setUser(updatedUser);
+                }
+            }
 
             onSuccessReset?.();
         },

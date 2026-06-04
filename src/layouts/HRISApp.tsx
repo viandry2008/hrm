@@ -1,4 +1,4 @@
-import { Outlet, useLocation } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { Sidebar } from "../components/Sidebar";
 import { useState } from "react";
 import { Bell, Building2 } from "lucide-react";
@@ -12,10 +12,13 @@ import {
 import { APP_CONFIG } from "@/config";
 import { useAuthStore } from "@/api/auth/auth.store";
 import { useLogout } from "@/api/auth/auth.query";
+import { useProfile } from "@/api/auth/auth.query";
 import { showLogoutDialog } from "@/components/ui/confirm-dialog";
 
 export const HRISApp = () => {
   const { isAuthenticated, user } = useAuthStore();
+  const { data: profileResponse } = useProfile();
+  const navigate = useNavigate();
   const logoutMutation = useLogout();
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const location = useLocation();
@@ -61,17 +64,17 @@ export const HRISApp = () => {
               <DropdownMenuTrigger asChild>
                 <div className="flex items-center gap-2 cursor-pointer">
                   <img
-                    src={user?.avatar || "https://randomuser.me/api/portraits/men/19.jpg"}
+                    src={profileResponse?.data?.avatar || "https://randomuser.me/api/portraits/men/19.jpg"}
                     alt="Avatar"
                     className="w-8 h-8 rounded-full object-cover border-2 border-white"
                   />
                   <span className="text-sm font-medium hidden sm:block text-gray-700">
-                    Halo, {user?.name || "Pengguna"}
+                    Halo, {profileResponse?.data?.full_name || "Pengguna"}
                   </span>
                 </div>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="bg-white shadow-md rounded-md mt-2 text-black">
-                <DropdownMenuItem>Profil</DropdownMenuItem>
+                <DropdownMenuItem onClick={() => navigate("/pengaturan")}>Profil</DropdownMenuItem>
                 <DropdownMenuItem className="text-red-600" onClick={async () => {
                   const confirmed = await showLogoutDialog();
                   if (confirmed) logoutMutation.mutate();

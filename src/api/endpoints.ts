@@ -4,7 +4,7 @@ export const ENDPOINTS = {
     VERIFY_OTP: "/verify-otp",
     RESET_PASSWORD: "/reset-password",
     LOGOUT: "/logout",
-    USER_PROFILE: "/me",
+    PROFILE: "/profile",
 
     // trial
     TRIAL_REGISTER: "register",

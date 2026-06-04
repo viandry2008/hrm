@@ -8,6 +8,7 @@ type AuthState = {
     isAuthenticated: boolean;
     isManagement: boolean;
     setAuth: (data: LoginResponse, isManagement?: boolean) => void;
+    setUser: (user: LoginResponse["data"] | null) => void;
     setManagement: (isManagement: boolean) => void;
     logout: () => void;
 };
@@ -48,6 +49,17 @@ export const useAuthStore = create<AuthState>()(
                     isAuthenticated: true,
                     isManagement: managementFlag,
                 });
+            },
+
+            setUser: (user) => {
+                if (user) {
+                    localStorage.setItem("user_id", String(user.id));
+                    localStorage.setItem("username", user.username || "");
+                    localStorage.setItem("user_name", user.name || "");
+                    localStorage.setItem("user_role", user.role?.slug_role || "");
+                    localStorage.setItem("role", user.role?.slug_role || "");
+                }
+                set({ user });
             },
 
             setManagement: (isManagement) => {
