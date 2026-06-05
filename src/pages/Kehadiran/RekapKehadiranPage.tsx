@@ -75,9 +75,6 @@ export const RekapKehadiranPage = () => {
 
             <TableCard icon={Calendar} title="Data Rekap Kehadiran">
                 <TableToolbar
-                    searchValue={search}
-                    onSearchChange={setSearch}
-                    searchPlaceholder="Cari rekap kehadiran..."
                     showEntriesValue={show}
                     onShowEntriesChange={setShow}
                     onAddClick={() => setModalOpen(true)}
