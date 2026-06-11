@@ -193,14 +193,14 @@ export const DataKehadiranPage = () => {
                                 <TableHead className="border text-white whitespace-nowrap">Jabatan</TableHead>
                                 <TableHead className="border text-white whitespace-nowrap">Tanggal</TableHead>
                                 <TableHead className="border text-white whitespace-nowrap">Shift</TableHead>
-                                <TableHead className="border text-white whitespace-nowrap">Jam Masuk</TableHead>
-                                <TableHead className="border text-white whitespace-nowrap">Lokasi Masuk</TableHead>
+                                <TableHead className="border text-white whitespace-nowrap">Absen Masuk</TableHead>
+                                <TableHead className="border text-white whitespace-nowrap">Lokasi Absen</TableHead>
                                 <TableHead className="border text-white whitespace-nowrap">Detail Lokasi</TableHead>
-                                <TableHead className="border text-white whitespace-nowrap">Catatan Masuk</TableHead>
-                                <TableHead className="border text-white whitespace-nowrap">Jam Pulang</TableHead>
-                                <TableHead className="border text-white whitespace-nowrap">Lokasi Pulang</TableHead>
-                                <TableHead className="border text-white whitespace-nowrap">Detail Pulang</TableHead>
-                                <TableHead className="border text-white whitespace-nowrap">Catatan Pulang</TableHead>
+                                <TableHead className="border text-white whitespace-nowrap">Catatan</TableHead>
+                                <TableHead className="border text-white whitespace-nowrap">Absen Pulang</TableHead>
+                                <TableHead className="border text-white whitespace-nowrap">Lokasi Absen</TableHead>
+                                <TableHead className="border text-white whitespace-nowrap">Detail Lokasi</TableHead>
+                                <TableHead className="border text-white whitespace-nowrap">Catatan</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>

@@ -19,7 +19,7 @@ import { GroupPage } from "./pages/JadwalShift/GroupPage";
 // import { KehadiranPage } from "./components/Kehadiran/KehadiranPage";
 import { DataKehadiranPage } from "./pages/Kehadiran/DataKehadiranPage";
 import { RekapKehadiranPage } from "./pages/Kehadiran/RekapKehadiranPage";
-import { RequestAbsenPage } from "./components/RequestAbsenPage";
+import { RequestAbsenPage } from "./pages/RequestAbsence/RequestAbsenPage";
 
 // Pages - Cuti, Izin, Lembur
 import { DataCutiPage } from "./components/Cuti/DataCutiPage";
@@ -115,6 +115,7 @@ const App = () => (
                     {/* <Route path="kehadiran-page" element={<KehadiranPage />} /> */}
                     <Route path="data-kehadiran" element={<DataKehadiranPage />} />
                     <Route path="rekap-kehadiran" element={<RekapKehadiranPage />} />
+                    <Route path="request-absen" element={<RequestAbsenPage />} />
                     <Route path="data-cuti" element={<DataCutiPage />} />
                     <Route path="data-izin" element={<DataIzinPage />} />
                     <Route path="pinjaman" element={<PinjamanPage />} />
@@ -123,7 +124,6 @@ const App = () => (
 
                   {/*  KARYAWAN ONLY */}
                   <Route element={<RoleRoute allowedRoles={["KARYAWAN"]} />}>
-                    <Route path="request-absen" element={<RequestAbsenPage />} />
                     <Route path="pengunduran-diri" element={<PengunduranDiriPage />} />
                   </Route>
 

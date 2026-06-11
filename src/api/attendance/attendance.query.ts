@@ -47,6 +47,7 @@ export const useCreateAttendanceRecap = (onSuccessReset?: () => void) => {
             console.error("Create recap error:", err);
             const errorMessage = err.response?.data?.message || err.message || "Gagal membuat rekap kehadiran";
             Swal.fire("Gagal", errorMessage, "error");
+            onSuccessReset?.();
         },
     });
 };
