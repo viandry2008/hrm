@@ -109,7 +109,7 @@ const normalizeEmployeeDetail = (employee: any) => {
     jabatanId: employee.position_id ? String(employee.position_id) : employee.position?.id ? String(employee.position.id) : '',
     bagian: employee.section?.name || '',
     bagianId: employee.section_id ? String(employee.section_id) : employee.section?.id ? String(employee.section.id) : '',
-    companyId: employee.company_id ? String(employee.company_id) : employee.company?.id ? String(employee.company.id) : '',
+    branchId: employee.branch_id ? String(employee.branch_id) : employee.branch?.id ? String(employee.branch.id) : '',
     kategori: latestContract?.category?.name || '',
     kategoriId: latestContract?.category?.id ? String(latestContract.category.id) : employee.grade_id ? String(employee.grade_id) : '',
     tanggalBergabung: employee.join_date || '',

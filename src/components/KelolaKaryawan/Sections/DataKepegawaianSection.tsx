@@ -9,7 +9,7 @@ import { useGetDepartments } from "@/api/division/division.query";
 import { useGetSections } from "@/api/section/section.query";
 import { useGetCategories } from "@/api/category/category.query";
 import { useGetMaritals } from "@/api/marital/marital.query";
-import { useGetCompanys } from "@/api/company/company.query";
+import { useGetBranches } from "@/api/branch/branch.query";
 
 interface DataKepegawaianSectionProps {
   updateForm: (key: string, value: any) => void;
@@ -18,7 +18,7 @@ interface DataKepegawaianSectionProps {
 }
 
 const DataKepegawaianSection = ({ updateForm, formData, errors }: DataKepegawaianSectionProps) => {
-  const { data: companyData, isLoading: isLoadingCompany } = useGetCompanys({
+  const { data: branchData, isLoading: isLoadingBranch } = useGetBranches({
     search: "",
     page: 1,
     limit: 100,
@@ -54,7 +54,7 @@ const DataKepegawaianSection = ({ updateForm, formData, errors }: DataKepegawaia
     limit: 100,
   });
 
-  const companies = companyData?.data ?? [];
+  const branches = branchData?.data ?? [];
   const positions = positionData?.data ?? [];
   const departments = departmentData?.data ?? [];
   const sections = sectionsData?.data ?? [];
@@ -62,9 +62,9 @@ const DataKepegawaianSection = ({ updateForm, formData, errors }: DataKepegawaia
 
   const maritals = maritalsData?.data ?? [];
 
-  const companyOptions = companies.map((company) => ({
-    value: company.id.toString(),
-    label: company.name,
+  const branchOptions = branches.map((branch) => ({
+    value: branch.id.toString(),
+    label: branch.name,
   }));
 
   const positionOptions = positions.map((pos) => ({
@@ -164,8 +164,8 @@ const DataKepegawaianSection = ({ updateForm, formData, errors }: DataKepegawaia
         id="field-lokasi"
         error={errors?.lokasi}
         onValueChange={(value) => updateForm("lokasi", value)}
-        loading={isLoadingCompany}
-        options={companyOptions}
+        loading={isLoadingBranch}
+        options={branchOptions}
       />
 
       <FormInput

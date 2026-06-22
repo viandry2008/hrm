@@ -9,8 +9,11 @@ export const ENDPOINTS = {
     // trial
     TRIAL_REGISTER: "register",
 
-    // department / division
+    // company
     COMPANIES: "/companies",
+
+    // branches
+    BRANCHES: "/branches",
 
     // department / division
     DEPARTMENTS: "/departments",

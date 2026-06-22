@@ -62,7 +62,7 @@ export interface EmployeeItem {
     address_domicile: string | null;
     department_id: number;
     position_id: number;
-    company_id: number;
+    branch_id: number;
     grade_id: number;
     join_date: string;
     end_date: string | null;
@@ -121,7 +121,7 @@ export interface EmployeePostRequest {
     marital_status_id?: number | null;
     department_id?: number | null;
     position_id?: number | null;
-    company_id?: number | null;
+    branch_id?: number | null;
     grade_id?: number | null;
     bank_id?: number | null;
     address_ktp?: string | null;

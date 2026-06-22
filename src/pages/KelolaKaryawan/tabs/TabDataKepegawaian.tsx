@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Check, X, Edit } from 'lucide-react';
-import { useGetCompanys } from '@/api/company/company.query';
+import { Check, X, Edit } from 'lucide-react';;
+import { useGetBranches } from '@/api/branch/branch.query';
 import { useGetPositions } from '@/api/position/position.query';
 import { useGetDepartments } from '@/api/division/division.query';
 import { useGetSections } from '@/api/section/section.query';
@@ -22,7 +22,7 @@ const withCurrentOption = (
 };
 
 const TabDataKepegawaian = ({ data }: any) => {
-  const { data: companyData, isLoading: isLoadingCompany } = useGetCompanys({
+  const { data: branchData, isLoading: isLoadingBranch } = useGetBranches({
     search: "",
     page: 1,
     limit: 100,
@@ -53,13 +53,13 @@ const TabDataKepegawaian = ({ data }: any) => {
     limit: 100,
   });
 
-  const locationOptions = withCurrentOption(
-    (companyData?.data ?? []).map((company: any) => ({
-      value: company.id.toString(),
-      label: company.name,
+  const branchOptions = withCurrentOption(
+    (branchData?.data ?? []).map((branch: any) => ({
+      value: branch.id.toString(),
+      label: branch.name,
     })),
-    data?.companyId || '',
-    data?.company || ''
+    data?.branchId || '',
+    data?.branch || ''
   );
   const departmentOptions = withCurrentOption(
     (departmentData?.data ?? []).map((department: any) => ({
@@ -143,7 +143,7 @@ const TabDataKepegawaian = ({ data }: any) => {
         divisi: data.divisiId || '',
         jabatan: data.jabatanId || '',
         bagian: data.bagianId || '',
-        lokasiKerja: data.companyId || '',
+        lokasiKerja: data.branchId || '',
         tanggalBergabung: data.tanggalBergabung || '',
         tanggalKontrak: data.tanggalKontrak || '',
         selesaiKontrak: data.selesaiKontrak || '',
@@ -174,7 +174,7 @@ const TabDataKepegawaian = ({ data }: any) => {
     appendIfValue('department_id', formData.divisi);
     appendIfValue('section_id', formData.bagian);
     appendIfValue('position_id', formData.jabatan);
-    appendIfValue('company_id', formData.lokasiKerja);
+    appendIfValue('branch_id', formData.lokasiKerja);
     appendIfValue('grade_id', formData.kategoriKaryawan);
     appendIfValue('contract_category_id', formData.kategoriKaryawan);
     appendIfValue('join_date', formData.tanggalBergabung);
@@ -207,7 +207,7 @@ const TabDataKepegawaian = ({ data }: any) => {
           <FormSelect label="Divisi" required id="divisi" placeholder="-- Pilih Divisi --" value={formData.divisi} onValueChange={(value) => handleInputChange('divisi', value)} loading={isLoadingDepartments} emptyMessage="Tidak ada data divisi" options={departmentOptions} disabled={!isEditing} />
           <FormSelect label="Jabatan" required id="jabatan" placeholder="-- Pilih Jabatan --" value={formData.jabatan} onValueChange={(value) => handleInputChange('jabatan', value)} loading={isLoadingPositions} emptyMessage="Tidak ada data jabatan" options={positionOptions} disabled={!isEditing} />
           <FormSelect label="Bagian" required id="bagian" placeholder="-- Pilih Bagian --" value={formData.bagian} onValueChange={(value) => handleInputChange('bagian', value)} loading={isLoadingSections} emptyMessage="Tidak ada data bagian" options={sectionOptions} disabled={!isEditing} />
-          <FormSelect label="Lokasi Kerja" required id="lokasiKerja" placeholder="-- Pilih Lokasi --" value={formData.lokasiKerja} onValueChange={(value) => handleInputChange('lokasiKerja', value)} loading={isLoadingCompany} emptyMessage="Tidak ada data lokasi kerja" options={locationOptions} disabled={!isEditing} />
+          <FormSelect label="Lokasi Kerja" required id="lokasiKerja" placeholder="-- Pilih Lokasi --" value={formData.lokasiKerja} onValueChange={(value) => handleInputChange('lokasiKerja', value)} loading={isLoadingBranch} emptyMessage="Tidak ada data lokasi kerja" options={branchOptions} disabled={!isEditing} />
           <FormInput label="Tanggal Bergabung" required id="tanggalBergabung" type="date" value={formData.tanggalBergabung} onChange={(value) => handleInputChange('tanggalBergabung', value)} disabled={!isEditing} />
           <FormInput label="Tanggal Kontrak" required id="tanggalKontrak" type="date" value={formData.tanggalKontrak} onChange={(value) => handleInputChange('tanggalKontrak', value)} disabled={!isEditing} />
           <FormInput label="Selesai Kontrak" required id="selesaiKontrak" type="date" value={formData.selesaiKontrak} onChange={(value) => handleInputChange('selesaiKontrak', value)} disabled={!isEditing} />

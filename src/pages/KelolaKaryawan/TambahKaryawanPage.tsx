@@ -162,7 +162,7 @@ const TambahKaryawanPage = () => {
         appendIfValue("gender", data.jeniskelamin ? genderMap[data.jeniskelamin] ?? data.jeniskelamin : undefined);
         appendIfValue("department_id", parseIntString(data.divisi));
         appendIfValue("position_id", parseIntString(data.jabatan));
-        appendIfValue("company_id", 1);
+        appendIfValue("branch_id", parseIntString(data.lokasi));
         appendIfValue("grade_id", parseIntString(data.kategori));
         appendIfValue("contract_category_id", parseIntString(data.kategori));
         appendIfValue("status", data.akun);
