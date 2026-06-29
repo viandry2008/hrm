@@ -50,5 +50,6 @@ export const ENDPOINTS = {
     // shifts & attendances
     SHIFTS: "/shifts",
     ATTENDANCES: "/attendances",
+    ATTENDANCE_REQUESTS: "attendance-requests",
     ATTENDANCES_RECAPS: "/attendances/recaps",
 };

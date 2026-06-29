@@ -1,6 +1,6 @@
 import apiClient from "../client";
 import { ENDPOINTS } from "../endpoints";
-import { ShiftListResponse, AttendanceListResponse, AttendanceRecapListResponse, AttendanceRecapCreateRequest, AttendanceRecapCreateResponse, AttendanceRecapDeleteResponse } from "./attendance.types";
+import { ShiftListResponse, AttendanceListResponse, AttendanceRequestListResponse, AttendanceRecapListResponse, AttendanceRecapCreateRequest, AttendanceRecapCreateResponse, AttendanceRecapDeleteResponse } from "./attendance.types";
 
 export const getShiftsApi = async (
     params: { search?: string; page?: number; limit?: number }
@@ -21,6 +21,16 @@ export const getAttendancesApi = async (
     }
 
     const { data } = await apiClient.get(ENDPOINTS.ATTENDANCES, { params: cleanedParams });
+    return data;
+};
+
+export const getAttendanceRequestsApi = async (
+    params: { search?: string; page?: number; limit?: number } = {}
+): Promise<AttendanceRequestListResponse> => {
+    const cleanedParams: Record<string, any> = { ...params };
+    Object.keys(cleanedParams).forEach((key) => cleanedParams[key] === undefined && delete cleanedParams[key]);
+
+    const { data } = await apiClient.get<AttendanceRequestListResponse>(ENDPOINTS.ATTENDANCE_REQUESTS, { params: cleanedParams });
     return data;
 };
 

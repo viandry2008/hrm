@@ -132,6 +132,86 @@ export interface AttendanceListResponse {
     };
 }
 
+export interface AttendanceRequestBranch {
+    id: number;
+    company_id: number;
+    name: string;
+    branch_type: string;
+    latitude: string | null;
+    longitude: string | null;
+    radius_meter: number | null;
+    address: string | null;
+    created_at: string | null;
+    updated_at: string | null;
+}
+
+export interface AttendanceRequestAttendance {
+    id: number;
+    employee_id: number;
+    branch_id: number;
+    attendance_request_id: number;
+    attendance_method: string | null;
+    attendance_date: string | null;
+    clock_in: string | null;
+    clock_out: string | null;
+    break_start: string | null;
+    break_end: string | null;
+    clock_in_location: string | null;
+    clock_in_location_detail: string | null;
+    clock_in_latitude: string | null;
+    clock_in_longitude: string | null;
+    clock_out_location: string | null;
+    clock_out_location_detail: string | null;
+    clock_out_latitude: string | null;
+    clock_out_longitude: string | null;
+    notes: string | null;
+    clock_out_notes: string | null;
+    status: string | null;
+    shift_id: number | null;
+    device_model: string | null;
+    created_at: string | null;
+    updated_at: string | null;
+    deleted_at: string | null;
+}
+
+export interface AttendanceRequestItem {
+    id: number;
+    employee_id: number;
+    branch_id: number;
+    request_date: string;
+    request_type: string;
+    reason: string | null;
+    latitude: string | null;
+    longitude: string | null;
+    location: string | null;
+    requested_clock_in_at: string | null;
+    attachment: string | null;
+    status: string;
+    approved_by: number | null;
+    approved_at: string | null;
+    rejection_reason: string | null;
+    created_at: string;
+    updated_at: string;
+    deleted_at: string | null;
+    employee: AttendanceEmployee;
+    branch: AttendanceRequestBranch | null;
+    approver: AttendanceEmployee | null;
+    attendances: AttendanceRequestAttendance[];
+}
+
+export interface AttendanceRequestListResponse {
+    success: boolean;
+    code: number;
+    message: string;
+    data: AttendanceRequestItem[];
+    meta: {
+        current_page: number;
+        per_page: number;
+        total: number;
+        last_page: number;
+    };
+}
+
 export interface AttendanceRecapItem {
     id: number;
     periode_absen: string;

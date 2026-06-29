@@ -1,6 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getShiftsApi, getAttendancesApi, getAttendanceRecapsApi, createAttendanceRecapApi, downloadAttendanceRecapApi, deleteAttendanceRecapApi } from "./attendance.api";
-import { ShiftListResponse, AttendanceListResponse, AttendanceRecapListResponse, AttendanceRecapCreateRequest } from "./attendance.types";
+import { getShiftsApi, getAttendancesApi, getAttendanceRequestsApi, getAttendanceRecapsApi, createAttendanceRecapApi, downloadAttendanceRecapApi, deleteAttendanceRecapApi } from "./attendance.api";
+import { ShiftListResponse, AttendanceListResponse, AttendanceRequestListResponse, AttendanceRecapListResponse, AttendanceRecapCreateRequest } from "./attendance.types";
 import Swal from "sweetalert2";
 
 export const useGetShifts = (params: { search?: string; page?: number; limit?: number } = {}) => {
@@ -14,6 +14,13 @@ export const useGetAttendances = (params: { search?: string; shift?: number | nu
     return useQuery<AttendanceListResponse>({
         queryKey: ["Attendances", params],
         queryFn: () => getAttendancesApi(params),
+    });
+};
+
+export const useGetAttendanceRequests = (params: { search?: string; page?: number; limit?: number } = {}) => {
+    return useQuery<AttendanceRequestListResponse>({
+        queryKey: ["AttendanceRequests", params],
+        queryFn: () => getAttendanceRequestsApi(params),
     });
 };
 
